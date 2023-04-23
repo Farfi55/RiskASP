@@ -7,7 +7,7 @@ using UnityEngine;
 public class Continent : MonoBehaviour
 {
     public string Name;
-    public List<Territory> Territories;
+    public List<Territory> Territories = new();
     public int BonusTroops;
     public Color Color;
 
@@ -22,7 +22,7 @@ public class Continent : MonoBehaviour
         if (Territories.Count == 0)
             Debug.LogError($"Continent {Name} has no territories", this);
 
-        var territory = Territories.First(t => t.Continent != this);
+        var territory = Territories.FirstOrDefault(t => t.Continent != this);
         if (territory != null)
             Debug.LogError($"Continent {Name} has territory {territory.Name} that does not belong to it", this);
         
@@ -33,7 +33,7 @@ public class Continent : MonoBehaviour
     
     public bool IsComplete()
     {
-        var owner = Territories[0].Owner;
+        var owner = Territories.First().Owner;
         return Territories.All(t => t.Owner == owner);
     }
     
@@ -41,19 +41,28 @@ public class Continent : MonoBehaviour
     {
         if (!IsComplete())
             return null;
-        return Territories[0].Owner;
+        return Territories.First().Owner;
     }
+
+    public bool IsOwnedByPlayer(Player player)
+    {
+        return Territories.All(t => t.Owner == player);
+    }
+
 
 
     [MenuItem("CONTEXT/Continent/load child territories")]
     static void DoubleMass(MenuCommand command)
     {
         Continent continent = (Continent)command.context;
-        continent.Territories = new List<Territory>();
+        continent.Territories = new ();
         foreach (Transform child in continent.transform)
         {
             continent.Territories.Add(child.GetComponent<Territory>());
         }
+        // not needed as Continent is not a prefab
+        // PrefabUtility.RecordPrefabInstancePropertyModifications(continent);
+        
     }
-    
+
 }

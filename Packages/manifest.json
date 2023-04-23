@@ -2,7 +2,7 @@
   "dependencies": {
     "com.unity.collab-proxy": "2.0.3",
     "com.unity.feature.2d": "1.0.0",
-    "com.unity.ide.rider": "3.0.18",
+    "com.unity.ide.rider": "3.0.21",
     "com.unity.ide.visualstudio": "2.0.17",
     "com.unity.ide.vscode": "1.2.5",
     "com.unity.test-framework": "1.1.31",
@@ -40,6 +40,17 @@
     "com.unity.modules.video": "1.0.0",
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
-    "com.unity.modules.xr": "1.0.0"
-  }
+    "com.unity.modules.xr": "1.0.0",
+    "com.cakeslice.outline-effect": "2.1.1"
+  },
+  "scopedRegistries": [
+    {
+      "name": "package.openupm.com",
+      "url": "https://package.openupm.com",
+      "scopes": [
+        "com.cakeslice.outline-effect",
+        "com.openupm"
+      ]
+    }
+  ]
 }

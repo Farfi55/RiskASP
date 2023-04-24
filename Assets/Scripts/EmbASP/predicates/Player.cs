@@ -6,6 +6,12 @@ namespace EmbASP.predicates
 	public class Player
 	{
 		[Param(0)] private string _name;
+
+		public string Name
+		{
+			get => _name;
+			set => _name = value;
+		}
 		
 	}
 }

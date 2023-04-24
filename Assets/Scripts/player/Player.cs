@@ -70,5 +70,10 @@ namespace player
         {
             _territories.Add(territory);
         }
+
+        public int GetTotalTroopBonus()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

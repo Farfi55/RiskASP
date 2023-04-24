@@ -1,6 +1,7 @@
 using System;
 using player;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -21,7 +22,7 @@ namespace map
         
         private void Awake()
         {
-            _territory.onStateChanged += UpdateGraphics;
+            _territory.OnStateChanged += UpdateGraphics;
         }
 
 

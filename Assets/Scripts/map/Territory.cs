@@ -19,7 +19,8 @@ namespace map
         public Player Owner;
         public int Troops { get; private set; }
 
-        public Action onStateChanged;
+        public Action OnStateChanged;
+        public Action<Player,Player> OnOwnerChanged;
 
 
         public void Start()
@@ -59,7 +60,7 @@ namespace map
         public void AddTroops(int amount)
         {
             Troops += amount;
-            onStateChanged?.Invoke();
+            OnStateChanged?.Invoke();
         }
 
         public void RemoveTroops(int amount)
@@ -71,7 +72,7 @@ namespace map
                 Troops = 0;
             }
 
-            onStateChanged?.Invoke();
+            OnStateChanged?.Invoke();
         }
 
         public void SetOwner(Player newOwner)
@@ -82,11 +83,9 @@ namespace map
                 Debug.LogWarning($"Tried to set owner of {Name} to {newOwner.Name}, but it already is owned by {newOwner.Name}!");
                 return;
             }
-            
-            // oldOwner.LoseTerritory(this);
-            // newOwner.WinTerritory(this);
             Owner = newOwner;
-            onStateChanged?.Invoke();
+            OnOwnerChanged?.Invoke(oldOwner, newOwner);
+            OnStateChanged?.Invoke();
         }
         
         public void SetOwner(Player newOwner, int troops)
@@ -98,7 +97,7 @@ namespace map
         public void SetTroops(int troops)
         {
             Troops = troops;
-            onStateChanged?.Invoke();
+            OnStateChanged?.Invoke();
         }
         
         
@@ -135,7 +134,7 @@ namespace map
             return NeighbourTerritories.Any(neighbour => neighbour.Owner == Owner);
         }
 
-        public int GetAvailableTroopsToAttack()
+        public int GetAvailableTroops()
         {
             return Troops - 1;
         }

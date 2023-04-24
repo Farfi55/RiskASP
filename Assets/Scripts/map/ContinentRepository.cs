@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace map
 {
-    class ContinentRepository : MonoBehaviour
+    public class ContinentRepository : MonoBehaviour
     {
         public static ContinentRepository Instance { get; private set; }
 

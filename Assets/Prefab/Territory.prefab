@@ -58,7 +58,7 @@ Transform:
   m_GameObject: {fileID: 7257965793165761802}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 4.9236, y: 2.3709, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7548961143167598487}
@@ -105,7 +105,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 5
-  m_Sprite: {fileID: 10911, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: c92d1a1d9c886c87b958c0abf1609405, type: 3}
   m_Color: {r: 0.5754717, g: 0.5727572, b: 0.5727572, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -333,7 +333,6 @@ GameObject:
   - component: {fileID: 8117319427863881804}
   - component: {fileID: 8555191733399419778}
   - component: {fileID: 8721257312363954568}
-  - component: {fileID: 5328821125233697150}
   - component: {fileID: 872297048197491866}
   m_Layer: 0
   m_Name: Territory
@@ -374,7 +373,6 @@ MonoBehaviour:
   Continent: {fileID: 0}
   NeighbourTerritories: []
   Owner: {fileID: 0}
-  Troops: 0
 --- !u!114 &8555191733399419778
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -443,20 +441,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &5328821125233697150
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8117319427863881802}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fbf3575480402db40813e763382412fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  color: 0
-  eraseRenderer: 0
 --- !u!60 &872297048197491866
 PolygonCollider2D:
   m_ObjectHideFlags: 0

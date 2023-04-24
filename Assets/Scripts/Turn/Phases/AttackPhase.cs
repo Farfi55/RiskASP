@@ -19,6 +19,7 @@ namespace Turn.Phases
 
         public void Start(Player player)
         {
+            _gm.NextTurnPhase(); // TODO: remove this line
             throw new System.NotImplementedException();
         }
 

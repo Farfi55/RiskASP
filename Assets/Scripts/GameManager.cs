@@ -26,8 +26,6 @@ public class GameManager : MonoBehaviour
 
     private IPhase _currentPhase;
 
-    private IPhase[] _phases;
-    
     public int Turn => _turn;
     private int _turn;
     public ReinforcePhase _reinforcePhase { get; private set; }
@@ -47,9 +45,9 @@ public class GameManager : MonoBehaviour
             Instance = this;
         }
 
-        SetupPhases();
         _tr = TerritoryRepository.Instance;
         _cr = ContinentRepository.Instance;
+        SetupPhases();
     }
 
     private void SetupPhases()
@@ -61,20 +59,12 @@ public class GameManager : MonoBehaviour
         _fortifyPhase = new FortifyPhase(this, cr, tr);
         _emptyPhase = new EmptyPhase();
         _currentPhase = _emptyPhase;
-        
-        _phases = new IPhase[]
-        {
-            _reinforcePhase,
-            _attackPhase,
-            _fortifyPhase
-        };
     }
 
 
     private void Start()
     {
         SetupGame();
-        
         NextTurn();
     }
 
@@ -89,16 +79,17 @@ public class GameManager : MonoBehaviour
         _tr.RandomlyAssignTerritories(Players);
         DistributeTroops();
         EnqueuePlayers();
+        _turn = 0;
     }
 
     private void EnqueuePlayers()
     {
+        _playerQueue = new Queue<Player>();
+        
         var playerOrder = Enumerable.Range(0, NPlayers).ToList();
         playerOrder.Shuffle();
         foreach (var i in playerOrder) 
             _playerQueue.Enqueue(Players[i]);
-        
-        _playerQueue = new Queue<Player>();
     }
 
     private void DistributeTroops()
@@ -150,12 +141,4 @@ public class GameManager : MonoBehaviour
         throw new NotImplementedException();
     }
 
-}
-
-
-internal enum GameState
-{
-    Setup,
-    Play,
-    GameOver
 }

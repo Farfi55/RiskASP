@@ -107,13 +107,17 @@ namespace map
 
         public void RandomlyAssignTerritories(List<Player> players)
         {
+            
             var territories = Territories.Values.ToList();
             territories.Shuffle();
-            players.Shuffle();
+            
+            var playerOrder = Enumerable.Range(0, players.Count).ToList();
+            playerOrder.Shuffle();
+            
             var playerIndex = 0;
             foreach (var territory in territories)
             {
-                var player = players[playerIndex];
+                var player = players[playerOrder[playerIndex]];
                 territory.SetOwner(player);
                 player.AddTerritory(territory);
                 

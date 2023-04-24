@@ -17,7 +17,7 @@ namespace map
 
         public List<Territory> NeighbourTerritories = new();
         public Player Owner;
-        public int Troops;
+        public int Troops { get; private set; }
 
         public Action onStateChanged;
 

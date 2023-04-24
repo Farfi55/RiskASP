@@ -56,7 +56,10 @@ namespace map
             var playerIndex = 0;
             foreach (var territory in territories)
             {
-                territory.SetOwner(players[playerIndex]);
+                var player = players[playerIndex];
+                territory.SetOwner(player);
+                player.AddTerritory(territory);
+                
                 playerIndex = (playerIndex + 1) % players.Count;
             }
 

@@ -35,6 +35,15 @@ public class GameManager : MonoBehaviour
         }
 
         TerritoryRepository.Instance.RandomlyAssignTerritories(Players);
+        DistributeTroops();
     }
-    
+
+    private void DistributeTroops()
+    {
+        int[] troopsPerNumberOfPlayer = { -1, -1, 50, 35, 30, 25, 20 };
+        int troopsPerPlayer = troopsPerNumberOfPlayer[_nPlayers];
+        
+        foreach (var player in Players)
+            player.RandomlyDistributeTroops(troopsPerPlayer);
+    }
 }

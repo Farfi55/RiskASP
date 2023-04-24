@@ -389,6 +389,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _territory: {fileID: 8117319427863881804}
   _territorySpriteRenderer: {fileID: 8721257312363954568}
+  _troopsCountBackgroundSpriteRenderer: {fileID: 6139532522500424749}
   _troopsCountText: {fileID: 6655826879564974252}
 --- !u!212 &8721257312363954568
 SpriteRenderer:

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using map;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace player
 {
@@ -11,32 +12,32 @@ namespace player
         private string _name;
         public string Name => _name;
         
-        public HashSet<Territory> Territories;
-        public PlayerColor Color;
+        public HashSet<Territory> _territories = new();
+        [FormerlySerializedAs("Color")] public PlayerColor _color;
 
         public void LoseTerritory(Territory territory)
         {
-            Territories.Remove(territory);
+            _territories.Remove(territory);
         }
 
         public void WinTerritory(Territory territory)
         {
-            Territories.Add(territory);
+            _territories.Add(territory);
         }
     
         public int GetTroopsInTerritories()
         {
-            return Territories.Sum(territory => territory.Troops);
+            return _territories.Sum(territory => territory.Troops);
         }
     
         public int GetTerritoryCount()
         {
-            return Territories.Count;
+            return _territories.Count;
         }
     
         public bool HasTerritory(Territory territory)
         {
-            return Territories.Contains(territory);
+            return _territories.Contains(territory);
         }
     
         public int GetTerritoryCountBonus()
@@ -49,11 +50,25 @@ namespace player
             _name = newName;
             gameObject.name = $"Player {newName}";
         }
-    
-    
-    
-    
-    
 
+
+        public void RandomlyDistributeTroops(int troops)
+        {
+            foreach (var territory in _territories) 
+                territory.SetTroops(1);
+            troops -= _territories.Count;
+            
+            while (troops > 0)
+            {
+                var territory = _territories.ElementAt(Random.Range(0, _territories.Count));
+                territory.AddTroops(1);
+                troops--;
+            }
+        }
+
+        public void AddTerritory(Territory territory)
+        {
+            _territories.Add(territory);
+        }
     }
 }

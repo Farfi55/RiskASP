@@ -12,6 +12,7 @@ namespace map
 
         [SerializeField] private Territory _territory;
         [SerializeField] private SpriteRenderer _territorySpriteRenderer;
+        [SerializeField] private SpriteRenderer _troopsCountBackgroundSpriteRenderer;
         [SerializeField] private TMP_Text _troopsCountText;
         private PlayerColor _playerColor;
 
@@ -26,7 +27,7 @@ namespace map
 
         private void UpdateGraphics()
         {
-            _playerColor = _territory.Owner.Color;
+            _playerColor = _territory.Owner._color;
             UpdateColor();
             SetTroopsCount(_territory.Troops);
         }
@@ -39,6 +40,7 @@ namespace map
                 SetColor(_playerColor.Highlight);
             else
                 SetColor(_playerColor.Normal);
+            _troopsCountBackgroundSpriteRenderer.color = _playerColor.Normal;
         }
 
         private void SetTroopsCount(int territoryTroops)

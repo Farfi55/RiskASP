@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using map;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 namespace player
 {
@@ -12,20 +14,10 @@ namespace player
         private string _name;
         public string Name => _name;
         
-        public HashSet<Territory> _territories = new();
-        [FormerlySerializedAs("Color")] public PlayerColor _color;
+        private readonly HashSet<Territory> _territories = new();
+        [FormerlySerializedAs("Color")] public PlayerColor Color;
 
-        public void LoseTerritory(Territory territory)
-        {
-            _territories.Remove(territory);
-        }
-
-        public void WinTerritory(Territory territory)
-        {
-            _territories.Add(territory);
-        }
-    
-        public int GetTroopsInTerritories()
+        public int GetTroopsCountInTerritories()
         {
             return _territories.Sum(territory => territory.Troops);
         }
@@ -40,7 +32,7 @@ namespace player
             return _territories.Contains(territory);
         }
     
-        public int GetTerritoryCountBonus()
+        private int GetTerritoryCountBonus()
         {
             return GetTerritoryCount() / 3;
         }
@@ -66,14 +58,17 @@ namespace player
             }
         }
 
-        public void AddTerritory(Territory territory)
-        {
-            _territories.Add(territory);
-        }
+        public void AddTerritory(Territory territory) => _territories.Add(territory);
+        public void RemoveTerritory(Territory territory) => _territories.Remove(territory);
 
         public int GetTotalTroopBonus()
         {
-            throw new System.NotImplementedException();
+            var continentBonus = ContinentRepository.Instance.GetContinentBonusForPlayer(this);
+            var territoriesBonus = GetTerritoryCountBonus();
+            return territoriesBonus + continentBonus;
         }
+
+        public bool IsDead() => _territories.Count == 0;
+        public bool IsAlive() => _territories.Count > 0;
     }
 }

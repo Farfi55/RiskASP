@@ -7,6 +7,8 @@ class ActionReader : MonoBehaviour
 {
     public static ActionReader Instance { get; private set; }
 
+    private Queue<PlayerAction> _actions = new();
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -18,17 +20,14 @@ class ActionReader : MonoBehaviour
             Instance = this;
         }
     }
-    
-    Queue<ReinforceAction> _reinforceActions = new();
 
-
-    public IEnumerator<ReinforceAction> ReadNextReinforceAction()
+    public void AddAction(PlayerAction action)
     {
-        while (_reinforceActions.Count == 0)
-        {
-            // TODO: implement better solution
-            yield return null;
-        }
-        yield return _reinforceActions.Dequeue();
+        _actions.Enqueue(action);
     }
+    
+    
+    
+    
+
 }

@@ -30,7 +30,7 @@ namespace player
         {
             PlayerColor color = GetRandomUnusedColor();
             var player = Instantiate(_playerPrefab, _playerParent);
-            player._color = color;
+            player.Color = color;
             player.SetName(color.name);
             return player;
         }
@@ -39,7 +39,7 @@ namespace player
         {
             var players = GameManager.Instance.Players;
 
-            var unusedColors = _allPlayerColors.Except(players.Select(p => p._color)).ToList();
+            var unusedColors = _allPlayerColors.Except(players.Select(p => p.Color)).ToList();
             if (unusedColors.Count == 0)
                 throw new Exception("No more colors available");
             return unusedColors[UnityEngine.Random.Range(0, unusedColors.Count)];

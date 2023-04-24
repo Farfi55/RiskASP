@@ -6,16 +6,15 @@ using UnityEngine;
 
 namespace Turn.Phases
 {
-    class FortifyPhase : IPhase
+    public class FortifyPhase : IPhase
     {
-        private GameManager _gm;
-        private ContinentRepository _cr;
-        private TerritoryRepository _tr;
+        private readonly GameManager _gm;
+        private readonly ContinentRepository _cr;
+        private readonly TerritoryRepository _tr;
 
-        public int _troopsToPlace { get; private set; } = 0;
         public Action OnTroopsToPlaceChanged;
 
-        public void Setup(GameManager gameManager, ContinentRepository continentRepository,
+        public FortifyPhase(GameManager gameManager, ContinentRepository continentRepository,
             TerritoryRepository territoryRepository)
         {
             _gm = gameManager;
@@ -25,7 +24,6 @@ namespace Turn.Phases
 
         public void Start(Player player)
         {
-            _troopsToPlace = player.GetTotalTroopBonus();
             OnTroopsToPlaceChanged?.Invoke();
         }
 
@@ -38,19 +36,18 @@ namespace Turn.Phases
 
                 fortifyAction.From.RemoveTroops(fortifyAction.MovedTroops);
                 fortifyAction.To.AddTroops(fortifyAction.MovedTroops);
-                _troopsToPlace -= fortifyAction.MovedTroops;
-
                 OnTroopsToPlaceChanged?.Invoke();
             }
+            else
+                Debug.LogWarning($"FortifyPhase: Received action of type {action.GetType().Name}");
         }
 
 
         public void End(Player player)
         {
-            throw new NotImplementedException();
         }
-        
-        
+
+
         private bool CheckActionValidity(Player player, FortifyAction action)
         {
             if (player != action.Player)
@@ -67,7 +64,13 @@ namespace Turn.Phases
                     $"FortifyAction: Moved troops ({action.MovedTroops}) is greater than available troops ({action.From.GetAvailableTroops()})");
             else if (!_tr.CanReachTerritory(action.From, action.To))
             {
-                
+                Debug.LogError(
+                    $"FortifyAction: From territory ({action.From.Name}) cannot reach to territory ({action.To.Name})");
+            }
+            else if (action.MovedTroops <= 0)
+            {
+                Debug.LogError(
+                    $"FortifyAction: Moved troops ({action.MovedTroops}) is less than or equal to 0");
             }
             else
             {
@@ -78,6 +81,5 @@ namespace Turn.Phases
             // something went wrong
             return false;
         }
-        
     }
 }

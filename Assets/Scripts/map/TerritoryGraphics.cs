@@ -28,7 +28,7 @@ namespace map
 
         private void UpdateGraphics()
         {
-            _playerColor = _territory.Owner._color;
+            _playerColor = _territory.Owner.Color;
             UpdateColor();
             SetTroopsCount(_territory.Troops);
         }

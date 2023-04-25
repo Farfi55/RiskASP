@@ -1,12 +1,15 @@
 using player;
 
-public abstract class PlayerAction
+namespace Actions
 {
-    public Player Player { get; }
-
-    public PlayerAction(Player player)
+    public abstract class PlayerAction
     {
-        Player = player;
+        public Player Player { get; }
+
+        public PlayerAction(Player player)
+        {
+            Player = player;
+        }
     }
 }
 

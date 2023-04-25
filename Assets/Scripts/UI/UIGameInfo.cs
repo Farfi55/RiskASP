@@ -32,7 +32,7 @@ namespace UI
             _gm.OnPlayerTurnChanged += OnPlayerTurnChanged;
             _gm.OnTurnPhaseChanged += OnTurnPhaseChanged;
             
-            _gm._reinforcePhase.OnTroopsToPlaceChanged += () =>
+            _gm.ReinforcePhase.OnTroopsToPlaceChanged += () =>
             {
                 if (_gm.CurrentPhase is ReinforcePhase reinforcePhase)
                     DisplayReinforceInfo(reinforcePhase);

@@ -1,4 +1,5 @@
 using System;
+using Actions;
 using map;
 using player;
 using UnityEngine;
@@ -35,11 +36,8 @@ namespace Turn.Phases
 
         public void OnAction(Player player, PlayerAction action)
         {
-            if (action is PlaceTroopsAction placeTroopsAction)
+            if (action is ReinforceAction placeTroopsAction)
             {
-                if (CheckActionValidity(player, placeTroopsAction))
-                    return;
-
                 placeTroopsAction.Territory.AddTroops(placeTroopsAction.Troops);
                 _remainingTroopsToPlace -= placeTroopsAction.Troops;
             }
@@ -51,23 +49,6 @@ namespace Turn.Phases
         }
 
 
-        private bool CheckActionValidity(Player player, PlaceTroopsAction action)
-        {
-            if (action == null)
-                Debug.LogError($"ReinforcePhase: Received null action");
-            else if (player != action.Player)
-                Debug.LogError($"ReinforcePhase: Player ({action.Player.Name}) is not the current player ({player.Name})");
-            else if (action.Territory.Owner != player)
-                Debug.LogError(
-                    $"ReinforcePhase: Territory ({action.Territory.Name} owned by {action.Territory.Owner.Name}) is not owned by the player ({player.Name})");
-            else if (action.Troops > _remainingTroopsToPlace)
-                Debug.LogError(
-                    $"ReinforcePhase: Player ({player.Name}) tried to place more troops ({action.Troops}) than they have left ({_remainingTroopsToPlace})");
-            else
-                return true;
-
-            return false;
-        }
 
         public void End(Player player)
         {

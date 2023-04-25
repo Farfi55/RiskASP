@@ -1,4 +1,5 @@
 using System;
+using Actions;
 using map;
 using player;
 using Unity.VisualScripting;
@@ -31,11 +32,13 @@ namespace Turn.Phases
         {
             if (action is FortifyAction fortifyAction)
             {
-                if (CheckActionValidity(player, fortifyAction))
-                    return;
-
                 fortifyAction.From.RemoveTroops(fortifyAction.MovedTroops);
                 fortifyAction.To.AddTroops(fortifyAction.MovedTroops);
+                _gm.NextTurnPhase();
+            }
+            else if(action is EndPhaseAction)
+            {
+                _gm.NextTurnPhase();
             }
             else
                 Debug.LogWarning($"FortifyPhase: Received action of type {action.GetType().Name}");
@@ -45,40 +48,6 @@ namespace Turn.Phases
         public void End(Player player)
         {
         }
-
-
-        private bool CheckActionValidity(Player player, FortifyAction action)
-        {
-            if (player != action.Player)
-                Debug.LogError(
-                    $"FortifyAction: Player ({action.Player.Name}) is not the current player ({player.Name})");
-            else if (action.From.Owner == action.Player)
-                Debug.LogError(
-                    $"FortifyAction: From territory ({action.From.Name} owned by {action.From.Owner.Name}) is not owned by the player ({player.Name})");
-            else if (action.To.Owner == action.Player)
-                Debug.LogError(
-                    $"FortifyAction: To territory ({action.To.Name} owned by {action.To.Owner.Name}) is not owned by the player ({player.Name})");
-            else if (action.MovedTroops > action.From.GetAvailableTroops())
-                Debug.LogError(
-                    $"FortifyAction: Moved troops ({action.MovedTroops}) is greater than available troops ({action.From.GetAvailableTroops()})");
-            else if (!_tr.CanReachTerritory(action.From, action.To))
-            {
-                Debug.LogError(
-                    $"FortifyAction: From territory ({action.From.Name}) cannot reach to territory ({action.To.Name})");
-            }
-            else if (action.MovedTroops <= 0)
-            {
-                Debug.LogError(
-                    $"FortifyAction: Moved troops ({action.MovedTroops}) is less than or equal to 0");
-            }
-            else
-            {
-                // nothing went wrong
-                return true;
-            }
-
-            // something went wrong
-            return false;
-        }
+        
     }
 }

@@ -14,27 +14,29 @@ public class GameManager : MonoBehaviour
     
     private TerritoryRepository _tr;
     private ContinentRepository _cr;
+    private BattleSimulator _bs;
 
-    [SerializeField]
-    private int _nPlayers = 2;
     public int NPlayers => _nPlayers;
+    [SerializeField] private int _nPlayers = 2;
     
     public List<Player> Players;
 
     private Queue<Player> _playerQueue = new();
-    private Player _currentPlayer;
+    
     public Player CurrentPlayer => _currentPlayer;
-
-    private IPhase _currentPhase;
-    public IPhase CurrentPhase => _currentPhase;
-
+    private Player _currentPlayer;
+    
     public int Turn => _turn;
     private int _turn;
-  
-    public ReinforcePhase _reinforcePhase { get; private set; }
-    public AttackPhase _attackPhase { get; private set; }
-    public FortifyPhase _fortifyPhase { get; private set; }
-    public EmptyPhase _emptyPhase { get; private set; }
+
+    public IPhase CurrentPhase => _currentPhase;
+    private IPhase _currentPhase;
+
+    
+    public ReinforcePhase ReinforcePhase { get; private set; }
+    public AttackPhase AttackPhase { get; private set; }
+    public FortifyPhase FortifyPhase { get; private set; }
+    public EmptyPhase EmptyPhase { get; private set; }
 
       
     public Action<IPhase, IPhase> OnTurnPhaseChanged;
@@ -45,12 +47,11 @@ public class GameManager : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
+            Debug.LogWarning("There is more than one GameManager in the scene");
             Destroy(gameObject);
         }
         else
-        {
             Instance = this;
-        }
 
         _tr = TerritoryRepository.Instance;
         _cr = ContinentRepository.Instance;
@@ -59,13 +60,11 @@ public class GameManager : MonoBehaviour
 
     private void SetupPhases()
     {
-        var cr = ContinentRepository.Instance;
-        var tr = TerritoryRepository.Instance;
-        _reinforcePhase = new ReinforcePhase(this, cr, tr);
-        _attackPhase = new AttackPhase(this, cr, tr);
-        _fortifyPhase = new FortifyPhase(this, cr, tr);
-        _emptyPhase = new EmptyPhase();
-        SetTurnPhase(_emptyPhase);
+        ReinforcePhase = new ReinforcePhase(this, _cr, _tr);
+        AttackPhase = new AttackPhase(this, _cr, _tr, _bs);
+        FortifyPhase = new FortifyPhase(this, _cr, _tr);
+        EmptyPhase = new EmptyPhase();
+        SetTurnPhase(EmptyPhase);
     }
 
 
@@ -113,17 +112,17 @@ public class GameManager : MonoBehaviour
         _currentPhase.End(_currentPlayer);
         IPhase nextTurnPhase = _currentPhase switch
         {
-            ReinforcePhase => _attackPhase,
-            AttackPhase => _fortifyPhase,
-            FortifyPhase => _emptyPhase,
-            EmptyPhase => _emptyPhase,
+            global::Turn.Phases.ReinforcePhase => AttackPhase,
+            global::Turn.Phases.AttackPhase => FortifyPhase,
+            global::Turn.Phases.FortifyPhase => EmptyPhase,
+            global::Turn.Phases.EmptyPhase => EmptyPhase,
             _ => throw new ArgumentOutOfRangeException()
         };
         
         SetTurnPhase(nextTurnPhase);
 
         
-        if (_currentPhase == _emptyPhase)
+        if (_currentPhase == EmptyPhase)
         { 
             NextTurn();
         }
@@ -140,7 +139,7 @@ public class GameManager : MonoBehaviour
         _playerQueue.Enqueue(_currentPlayer);
         
         _turn++;
-        SetTurnPhase(_reinforcePhase);
+        SetTurnPhase(ReinforcePhase);
         OnPlayerTurnChanged?.Invoke(oldPlayer, _currentPlayer);
     }
 

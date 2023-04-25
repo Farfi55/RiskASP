@@ -16,6 +16,7 @@ namespace player
         public string Name => _name;
         
         private readonly HashSet<Territory> _territories = new();
+        public IEnumerable<Territory> Territories => _territories;
         [FormerlySerializedAs("Color")] public PlayerColor Color;
 
         public int GetTroopsCountInTerritories()

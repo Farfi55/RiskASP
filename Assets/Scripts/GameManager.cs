@@ -40,6 +40,8 @@ public class GameManager : MonoBehaviour
     public EmptyPhase EmptyPhase { get; private set; }
 
       
+    public Action<IPhase> OnPhaseStarted;
+    public Action<IPhase> OnPhaseEnded;
     public Action<IPhase, IPhase> OnTurnPhaseChanged;
     public Action<Player, Player> OnPlayerTurnChanged;
     
@@ -114,7 +116,7 @@ public class GameManager : MonoBehaviour
     
     public void NextTurnPhase()
     {
-        _currentPhase.End(_currentPlayer);
+        EndTurnPhase();
         IPhase nextTurnPhase = _currentPhase switch
         {
             global::TurnPhases.ReinforcePhase => AttackPhase,
@@ -132,7 +134,9 @@ public class GameManager : MonoBehaviour
             NextTurn();
         }
     }
+
     
+
     public void HandlePlayerAction(PlayerAction action)
     {
         if (action.Player != _currentPlayer)
@@ -156,8 +160,18 @@ public class GameManager : MonoBehaviour
         OnPlayerTurnChanged?.Invoke(oldPlayer, _currentPlayer);
     }
 
-    private void StartTurnPhase() => _currentPhase.Start(_currentPlayer);
+    private void StartTurnPhase()
+    {
+        _currentPhase.Start(_currentPlayer);
+        OnPhaseStarted?.Invoke(_currentPhase);
+    }
 
+    private void EndTurnPhase()
+    {
+        _currentPhase.End(_currentPlayer);
+        OnPhaseEnded?.Invoke(_currentPhase);
+    }
+    
     private void SetTurnPhase(IPhase phase)
     {
         var oldPhase = _currentPhase;

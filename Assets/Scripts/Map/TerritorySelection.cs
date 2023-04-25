@@ -18,8 +18,8 @@ namespace Map
         private bool _isSelected;
         private bool _isDisabled;
 
-        public Action<TerritorySelection> OnSelect;
-        public Action<TerritorySelection> OnUnselect;
+        public Action<TerritorySelection> OnSelected;
+        public Action<TerritorySelection> OnUnselected;
 
         public Action<TerritorySelection> OnSelectedChanged;
         public Action<TerritorySelection> OnHoverChanged;
@@ -48,8 +48,8 @@ namespace Map
         public void SetSelected(bool value)
         {
             _isSelected = value;
-            if (_isSelected) OnSelect?.Invoke(this);
-            else OnUnselect?.Invoke(this);
+            if (_isSelected) OnSelected?.Invoke(this);
+            else OnUnselected?.Invoke(this);
             OnSelectedChanged?.Invoke(this);
             OnStateChanged?.Invoke(this);
         }

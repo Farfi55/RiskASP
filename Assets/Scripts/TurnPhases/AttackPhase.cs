@@ -74,10 +74,9 @@ namespace TurnPhases
             if (attackResult.HasAttackerWonTerritory())
             {
                 attackResult.Target.SetOwner(attackAction.Player, 0);
+                SetState(AttackState.Reinforcing);
             }
-
-
-            SetState(AttackState.Reinforcing);
+            
 
             Debug.Log($"AttackPhase: Attacked {attackResult.Target.Name} from {attackResult.Origin.Name}, " +
                       $"result: {attackResult.AttackerLosses} losses for attacker, " +

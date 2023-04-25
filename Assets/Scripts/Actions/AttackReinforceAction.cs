@@ -16,6 +16,7 @@ namespace Actions
         {
             AttackAction = attackAction;
             ReinforcingTroops = reinforcingTroops;
+            
             if(!IsValid())
                 throw new ArgumentException("AttackReinforceAction is not valid");
         }

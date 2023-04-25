@@ -13,7 +13,8 @@ namespace Actions
         {
             Territory = territory;
             Troops = troops;
-            if (IsValid())
+            
+            if (!IsValid())
                 throw new System.ArgumentException("PlaceTroopsAction is not valid");
         }
 

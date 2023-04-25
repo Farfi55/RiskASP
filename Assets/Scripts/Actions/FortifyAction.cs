@@ -13,12 +13,12 @@ namespace Actions
 
         public FortifyAction(Player player, Territory from, Territory to, int movedTroops) : base(player)
         {
-            if (!IsValid())
-                throw new ArgumentException("FortifyAction is not valid");
-
             From = from;
             To = to;
             MovedTroops = movedTroops;
+         
+            if (!IsValid())
+                throw new ArgumentException("FortifyAction is not valid");
         }
 
         private bool IsValid()

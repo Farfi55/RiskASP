@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Actions;
 using UnityEngine;
 
-class ActionReader : MonoBehaviour
+public class ActionReader : MonoBehaviour
 {
     public static ActionReader Instance { get; private set; }
 

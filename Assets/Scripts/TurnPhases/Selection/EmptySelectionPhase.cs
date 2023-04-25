@@ -10,7 +10,7 @@ namespace TurnPhases.Selection
         {
         }
 
-        public void OnSelected(Player player, TerritorySelection selection)
+        public void OnClicked(Player player, TerritorySelection selection)
         {
         }
 

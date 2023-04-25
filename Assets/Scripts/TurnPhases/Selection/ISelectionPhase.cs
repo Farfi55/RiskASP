@@ -8,10 +8,8 @@ namespace TurnPhases.Selection
     {
         void Start(Player player);
         
-        void OnSelected(Player player, TerritorySelection selection);
-        
-        void OnUnselected(Player player, TerritorySelection selection);
-        
+        void OnClicked(Player player, TerritorySelection selection);
+
         void End(Player player);
     }
 }

@@ -5,7 +5,7 @@ using Map;
 public class AttackResult
 {
     public AttackAction AttackAction { get; }
-    
+
     public int AttackerLosses { get; }
     public int DefenderLosses { get; }
 
@@ -13,20 +13,22 @@ public class AttackResult
     /// all troops left in the attacking territory
     /// </summary>
     public int RemainingAttackingTroops { get; }
+
+    public int RemainingAvailableAttackingTroops => RemainingAttackingTroops - 1;
     public int RemainingDefendingTroops { get; }
 
     public Territory Origin => AttackAction.Origin;
     public Territory Target => AttackAction.Target;
     public int AttackingTroops => AttackAction.Troops;
     public int DefendingTroops { get; }
-    
+
 
     public AttackResult(
-        AttackAction attackAction, 
-        int attackerLosses, 
-        int defenderLosses, 
-        int remainingAttackingTroops, 
-        int remainingDefendingTroops, 
+        AttackAction attackAction,
+        int attackerLosses,
+        int defenderLosses,
+        int remainingAttackingTroops,
+        int remainingDefendingTroops,
         int defendingTroops)
     {
         AttackAction = attackAction;
@@ -36,9 +38,8 @@ public class AttackResult
         RemainingDefendingTroops = remainingDefendingTroops;
         DefendingTroops = defendingTroops;
     }
-    
+
     public bool HasAttackerWonTerritory() => RemainingDefendingTroops == 0;
 
-    public int MaxPossibleLosses() => Math.Min(AttackingTroops, DefendingTroops);
-
+    public int GetMinTroopsToMoveAfterWin() => Math.Min(Math.Min(AttackingTroops, 3), RemainingAvailableAttackingTroops);
 }

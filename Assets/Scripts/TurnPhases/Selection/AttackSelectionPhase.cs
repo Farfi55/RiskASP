@@ -21,6 +21,8 @@ namespace TurnPhases.Selection
 
         private AttackResult _lastAttackResult;
 
+        private int _reinforcementsToMove;
+
         public AttackSelectionPhase(GameManager gm, SelectionManager sm, ActionReader ar)
         {
             _gm = gm;
@@ -30,80 +32,158 @@ namespace TurnPhases.Selection
             _attackPhase.OnAttackStateChanged += OnAttackStateChanged;
         }
 
-        private void OnAttacked(AttackResult result) => _lastAttackResult = result;
-        
-        private void OnAttackStateChanged()
+        private void OnAttacked(AttackResult result)
         {
-            
+            _lastAttackResult = result;
+            UnselectAll();
         }
 
+        private void OnAttackStateChanged()
+        {
+            if (State == AttackState.Attacking)
+            {
+                UnselectAll();
+                EnableTerritoriesToAttackFrom(_gm.CurrentPlayer);
+            }
+            else if (State == AttackState.Moving)
+            {
+                EnableTerritoriesToConfirmMove();
+            }
+        }
 
 
         public void Start(Player player)
         {
-            _from = null;
-            _to = null;
+            UnselectAll();
             _lastAttackResult = null;
-            
-            _sm.EnablePlayerTerritoriesWithAttackPossibility(player);
+            _reinforcementsToMove = 0;
+            EnableTerritoriesToAttackFrom(player);
         }
 
-        public void OnSelected(Player player, TerritorySelection selection)
+        public void OnClicked(Player player, TerritorySelection selection)
         {
             if (selection == null) throw new ArgumentNullException(selection.Territory.Name);
+
+            if (!selection.IsSelected) OnSelected(player, selection);
+            else OnUnselected(player, selection);
+        }
+
+        private void OnSelected(Player player, TerritorySelection selection)
+        {
+            if (State == AttackState.Moving)
+                return;
             
             if (_from == null)
             {
                 _from = selection;
-                _sm.DisableAllTerritories();
-                _from.Enable();
-                _sm.EnableEnemyNeighbourTerritories(_from.Territory);
+                _from.Select();
+                EnableTerritoriesToAttack(player);
             }
             else if (_to == null)
             {
-                if(_from == selection) 
+                if (_from == selection)
                     throw new Exception("Cannot attack from a territory to itself");
                 _to = selection;
-
-                if (State == AttackState.Attacking)
-                {
-                    var troops = Math.Min(_from.Territory.GetAvailableTroops(), 3);
-                    var action = new AttackAction(player, _from.Territory, _to.Territory, troops);
-                    _ar.AddAction(action);
-                }
-                else if (State == AttackState.Reinforcing)
-                {
-                    var troops = _from.Territory.GetAvailableTroops();
-                    var attackAction = _lastAttackResult.AttackAction;
-                    var action = new AttackReinforceAction(player, attackAction, troops);
-                    _ar.AddAction(action);
-                }
+                _to.Select();
+                
+                CreateAttackAction(player);
+                UnselectAll();
             }
+        }
+
+        private void CreateAttackAction(Player player)
+        {
+            var troops = Math.Min(_from.Territory.GetAvailableTroops(), 3);
+            var action = new AttackAction(player, _from.Territory, _to.Territory, troops);
+            _ar.AddAction(action);
         }
 
         public void OnUnselected(Player player, TerritorySelection selection)
         {
-            if(_from == selection)
-                _from = null;
-            else if(_to == selection)
+            if (State == AttackState.Attacking)
+                OnUnselectedAttacking(player, selection);
+            else if (State == AttackState.Moving)
+                OnUnselectedMoving(player, selection);
+        }
+
+
+        private void OnUnselectedAttacking(Player player, TerritorySelection selection)
+        {
+            if (_from == selection)
+            {
+                UnselectAll();
+                EnableTerritoriesToAttackFrom(player);
+            }
+            else if (_to == selection)
+            {
+                _to.Unselect();
                 _to = null;
-            
+                EnableTerritoriesToAttack(player);
+            }
+            else Debug.LogError($"Territory {selection.Territory.Name} is not from or to");
+        }
+
+        private void OnUnselectedMoving(Player player, TerritorySelection selection)
+        {
+            if (_from == selection)
+            {
+                SetTroopsToMove(_lastAttackResult.GetMinTroopsToMoveAfterWin());
+                CreateMoveAction(player);
+            }
+            else if (_to == selection)
+            {
+                SetTroopsToMove(_from.Territory.GetAvailableTroops());
+                CreateMoveAction(player);
+            }
+            else Debug.LogError($"Territory {selection.Territory.Name} is not from or to");
+        }
+
+        private void CreateMoveAction(Player player)
+        {
+            var action = new AttackReinforceAction(player, _lastAttackResult.AttackAction, _reinforcementsToMove);
+            _ar.AddAction(action);
         }
 
         public void End(Player player)
         {
             UnselectAll();
         }
-        
+
+
+        private void EnableTerritoriesToAttackFrom(Player player)
+        {
+            _sm.DisableAllTerritories();
+            _sm.EnablePlayerTerritoriesWithAttackPossibility(player);
+        }
+
+        private void EnableTerritoriesToAttack(Player player)
+        {
+            _sm.DisableAllTerritories();
+            _sm.EnableEnemyNeighbourTerritories(_from.Territory);
+            _sm.EnableTerritory(_from);
+        }
+
+
+        private void EnableTerritoriesToConfirmMove()
+        {
+            _sm.DisableAllTerritories();
+            _sm.EnableTerritories(_from, _to);
+        }
 
         private void UnselectAll()
         {
-            if(_from) _from.Unselect();
-            if(_to) _to.Unselect();
+            if (_from) _from.Unselect();
+            if (_to) _to.Unselect();
             _from = null;
             _to = null;
-                
         }
-        
+
+        public void SetTroopsToMove(int troops)
+        {
+            if (State == AttackState.Moving)
+                _reinforcementsToMove = troops;
+            else
+                Debug.LogError("Cannot set troops to move when not in moving state");
+        }
     }
 }

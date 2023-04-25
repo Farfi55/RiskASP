@@ -34,7 +34,7 @@ namespace Actions
                 return false;
             }
 
-            var minReinforcing = Math.Min(AttackingTroops, From.GetAvailableTroops());
+            var minReinforcing = Math.Min(Math.Min(AttackingTroops, 3), From.GetAvailableTroops());
             if(ReinforcingTroops < minReinforcing)
             {
                 LogError($"Reinforcing troops ({ReinforcingTroops}) is less than the minimum ({minReinforcing})");

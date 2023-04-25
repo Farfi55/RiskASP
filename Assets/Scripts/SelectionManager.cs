@@ -43,7 +43,7 @@ public class SelectionManager : MonoBehaviour
         var ar = ActionReader.Instance; 
         _reinforceSelectionPhase = new ReinforceSelectionPhase(_gm, this, ar);
         _attackSelectionPhase = new AttackSelectionPhase(_gm, this, ar);
-        _fortifySelectionPhase = new FortifySelectionPhase();
+        _fortifySelectionPhase = new FortifySelectionPhase(_gm, this, ar);
         _emptySelectionPhase = new EmptySelectionPhase();
         SetPhase(_emptySelectionPhase);
         
@@ -63,15 +63,7 @@ public class SelectionManager : MonoBehaviour
     {
         foreach (var territorySelection in TerritoryToSelectionMap.Values)
         {
-            territorySelection.OnSelected += (selection) =>
-            {
-                _currentSelectionPhase.OnSelected(_gm.CurrentPlayer, selection);
-            };
-            
-            territorySelection.OnUnselected += (selection) =>
-            {
-                _currentSelectionPhase.OnUnselected(_gm.CurrentPlayer, selection);
-            };
+            territorySelection.OnClicked += selection => _currentSelectionPhase.OnClicked(_gm.CurrentPlayer, selection);
         }
 
         _gm.OnTurnPhaseChanged += OnTurnPhaseChanged;
@@ -105,12 +97,45 @@ public class SelectionManager : MonoBehaviour
             territorySelection.Disable();
     }
 
+
+    public void EnableTerritory(Territory territory) => EnableTerritory(TerritoryToSelectionMap[territory]);
+    public void EnableTerritory(TerritorySelection territory)
+    {
+        territory.Enable();
+    }
+    public void EnableTerritories(params TerritorySelection[] territories)
+    {
+        foreach (var territory in territories)
+            EnableTerritory(territory);
+    }
+    
+    public void DisableTerritory(Territory territory) => DisableTerritory(TerritoryToSelectionMap[territory]);
+    public void DisableTerritory(TerritorySelection territory)
+    {
+        territory.Disable();
+    }
+
+    public void DisableTerritories(params TerritorySelection[] territories)
+    {
+        foreach (var territory in territories)
+            DisableTerritory(territory);
+    }
+
     public void EnablePlayerTerritoriesWithAttackPossibility(Player player)
     {
         foreach (var territory in player.Territories)
         {
             if (territory.GetAvailableTroops() > 0 && territory.HasAnyNeighbourEnemy())
-                TerritoryToSelectionMap[territory].Enable();
+                EnableTerritory(territory);
+        }
+    }
+    
+    public void EnablePlayerTerritoriesWithAvailableTroops(Player player)
+    {
+        foreach (var territory in player.Territories)
+        {
+            if (territory.GetAvailableTroops() > 0)
+                EnableTerritory(territory);
         }
     }
 
@@ -126,6 +151,19 @@ public class SelectionManager : MonoBehaviour
         {
             if (neighbour.Owner != territory.Owner)
                 TerritoryToSelectionMap[neighbour].Enable();
+        }
+    }
+
+    public void EnablePlayerTerritoriesReachableFrom(Player player, TerritorySelection from)
+    {
+        
+        foreach (var territory in player.Territories)
+        {
+            if(territory == from.Territory)
+                continue;
+            
+            if (_tr.CanReachTerritory(from.Territory, territory))
+                TerritoryToSelectionMap[territory].Enable();
         }
     }
 }

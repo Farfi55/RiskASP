@@ -33,23 +33,24 @@ namespace TurnPhases.Selection
             _selectedTerritory = null;
         }
 
-        public void OnSelected(Player player, TerritorySelection selection)
+        public void OnClicked(Player player, TerritorySelection selection)
         {
-            Unselect();
-            _selectedTerritory = selection;
-            var troopsToPlace = _reinforcePhase.RemainingTroopsToPlace;
-            var action = new ReinforceAction(player, selection.Territory, troopsToPlace);
-            _ar.AddAction(action);
-        }
-
-        public void OnUnselected(Player player, TerritorySelection selection)
-        {
-            if (_selectedTerritory == selection)
+            if (_selectedTerritory != null)
             {
-                _selectedTerritory = null;
+                Unselect();
+                return;
             }
+            
+            _selectedTerritory = selection;
+            _selectedTerritory.Select();
+            
+            // TODO: add a way to select how many troops to place
+            // var troopsToPlace = _reinforcePhase.RemainingTroopsToPlace;
+            var action = new ReinforceAction(player, selection.Territory, 1);
+            _ar.AddAction(action);
+            Unselect();
         }
-
+        
         public void End(Player player)
         {
             Unselect();

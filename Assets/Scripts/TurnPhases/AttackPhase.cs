@@ -75,7 +75,7 @@ namespace TurnPhases
             if (attackResult.HasAttackerWonTerritory())
             {
                 attackResult.Target.SetOwner(attackAction.Player, 0);
-                SetState(AttackState.Reinforcing);
+                SetState(AttackState.Moving);
             }
             
 
@@ -87,7 +87,7 @@ namespace TurnPhases
 
         private void HandleAttackReinforceAction(AttackReinforceAction attackReinforceAction)
         {
-            if (_state != AttackState.Reinforcing)
+            if (_state != AttackState.Moving)
                 Debug.LogWarning($"AttackPhase: Cannot reinforce while in state {_state}");
 
             var troops = attackReinforceAction.ReinforcingTroops;
@@ -116,6 +116,6 @@ namespace TurnPhases
     public enum AttackState
     {
         Attacking,
-        Reinforcing,
+        Moving,
     }
 }

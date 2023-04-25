@@ -25,6 +25,8 @@ namespace Map
         public Action<TerritorySelection> OnHoverChanged;
         public Action<TerritorySelection> OnDisabledChanged;
         public Action<TerritorySelection> OnStateChanged;
+        
+        public Action<TerritorySelection> OnClicked;
 
 
         private void OnMouseEnter() => SetHovered(true);
@@ -34,7 +36,7 @@ namespace Map
         private void OnMouseDown()
         {
             if (!_isDisabled)
-                ToggleSelect();
+                OnClicked?.Invoke(this);
         }
 
 

@@ -36,7 +36,7 @@ namespace map
         private void UpdateColor()
         {
             if (_isSelected)
-                SetColor(_playerColor.Disabled);
+                SetColor(_playerColor.Selected);
             else if (_isHovered)
                 SetColor(_playerColor.Highlight);
             else

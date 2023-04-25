@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: feb182a9a4514fb4b2037d20a24a640e, type: 3}
   m_Name: Green
   m_EditorClassIdentifier: 
+  Disabled: {r: 0.12941179, g: 0.48235294, b: 0.23529412, a: 1}
   Normal: {r: 0.18431371, g: 0.7176471, b: 0.3410337, a: 1}
   Highlight: {r: 0.25490192, g: 0.83137256, b: 0.4278431, a: 1}
-  Disabled: {r: 0.12941179, g: 0.48235294, b: 0.23529412, a: 1}
+  Selected: {r: 0.3600481, g: 0.8773585, b: 0.5148893, a: 1}

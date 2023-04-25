@@ -4,6 +4,8 @@ namespace Turn.Phases
 {
     public class EmptyPhase : IPhase
     {
+        public string Name => "Empty";
+        
         public void Start(Player player)
         {
         }

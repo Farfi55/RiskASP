@@ -8,11 +8,12 @@ namespace Turn.Phases
 {
     public class FortifyPhase : IPhase
     {
+        public string Name => "Fortify";
+        
         private readonly GameManager _gm;
         private readonly ContinentRepository _cr;
         private readonly TerritoryRepository _tr;
 
-        public Action OnTroopsToPlaceChanged;
 
         public FortifyPhase(GameManager gameManager, ContinentRepository continentRepository,
             TerritoryRepository territoryRepository)
@@ -24,7 +25,6 @@ namespace Turn.Phases
 
         public void Start(Player player)
         {
-            OnTroopsToPlaceChanged?.Invoke();
         }
 
         public void OnAction(Player player, PlayerAction action)
@@ -36,7 +36,6 @@ namespace Turn.Phases
 
                 fortifyAction.From.RemoveTroops(fortifyAction.MovedTroops);
                 fortifyAction.To.AddTroops(fortifyAction.MovedTroops);
-                OnTroopsToPlaceChanged?.Invoke();
             }
             else
                 Debug.LogWarning($"FortifyPhase: Received action of type {action.GetType().Name}");

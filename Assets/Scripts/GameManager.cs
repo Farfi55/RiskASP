@@ -23,15 +23,22 @@ public class GameManager : MonoBehaviour
 
     private Queue<Player> _playerQueue = new();
     private Player _currentPlayer;
+    public Player CurrentPlayer => _currentPlayer;
 
     private IPhase _currentPhase;
+    public IPhase CurrentPhase => _currentPhase;
 
     public int Turn => _turn;
     private int _turn;
+  
     public ReinforcePhase _reinforcePhase { get; private set; }
     public AttackPhase _attackPhase { get; private set; }
     public FortifyPhase _fortifyPhase { get; private set; }
     public EmptyPhase _emptyPhase { get; private set; }
+
+      
+    public Action<IPhase, IPhase> OnTurnPhaseChanged;
+    public Action<Player, Player> OnPlayerTurnChanged;
     
 
     private void Awake()
@@ -58,7 +65,7 @@ public class GameManager : MonoBehaviour
         _attackPhase = new AttackPhase(this, cr, tr);
         _fortifyPhase = new FortifyPhase(this, cr, tr);
         _emptyPhase = new EmptyPhase();
-        _currentPhase = _emptyPhase;
+        SetTurnPhase(_emptyPhase);
     }
 
 
@@ -104,7 +111,7 @@ public class GameManager : MonoBehaviour
     public void NextTurnPhase()
     {
         _currentPhase.End(_currentPlayer);
-        _currentPhase = _currentPhase switch
+        IPhase nextTurnPhase = _currentPhase switch
         {
             ReinforcePhase => _attackPhase,
             AttackPhase => _fortifyPhase,
@@ -112,8 +119,10 @@ public class GameManager : MonoBehaviour
             EmptyPhase => _emptyPhase,
             _ => throw new ArgumentOutOfRangeException()
         };
+        
+        SetTurnPhase(nextTurnPhase);
 
-        StartTurnPhase();
+        
         if (_currentPhase == _emptyPhase)
         { 
             NextTurn();
@@ -122,6 +131,7 @@ public class GameManager : MonoBehaviour
 
     private void NextTurn()
     {
+        var oldPlayer = _currentPlayer;
         do
         {
             _currentPlayer = _playerQueue.Dequeue();
@@ -130,12 +140,21 @@ public class GameManager : MonoBehaviour
         _playerQueue.Enqueue(_currentPlayer);
         
         _turn++;
-        _currentPhase = _reinforcePhase;
-        StartTurnPhase();
+        SetTurnPhase(_reinforcePhase);
+        OnPlayerTurnChanged?.Invoke(oldPlayer, _currentPlayer);
     }
 
     private void StartTurnPhase() => _currentPhase.Start(_currentPlayer);
 
+    private void SetTurnPhase(IPhase phase)
+    {
+        var oldPhase = _currentPhase;
+        _currentPhase = phase;
+        StartTurnPhase();
+        OnTurnPhaseChanged?.Invoke(oldPhase, _currentPhase);
+    }
+    
+    
     private void GameOver()
     {
         throw new NotImplementedException();

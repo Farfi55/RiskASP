@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: feb182a9a4514fb4b2037d20a24a640e, type: 3}
   m_Name: UNDEFINED
   m_EditorClassIdentifier: 
+  Disabled: {r: 1, g: 0, b: 1, a: 1}
   Normal: {r: 1, g: 0, b: 1, a: 1}
   Highlight: {r: 1, g: 0, b: 1, a: 1}
-  Disabled: {r: 1, g: 0, b: 1, a: 1}
+  Selected: {r: 1, g: 0, b: 1, a: 1}

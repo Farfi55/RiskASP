@@ -5,6 +5,8 @@ namespace Turn.Phases
 {
     public class AttackPhase : IPhase
     {
+        public string Name => "Attack";
+        
         private readonly GameManager _gm;
         private readonly ContinentRepository _cr;
         private readonly TerritoryRepository _tr;
@@ -20,17 +22,17 @@ namespace Turn.Phases
         public void Start(Player player)
         {
             _gm.NextTurnPhase(); // TODO: remove this line
-            throw new System.NotImplementedException();
         }
 
         public void OnAction(Player player, PlayerAction action)
         {
-            throw new System.NotImplementedException();
+            // TODO: implement
         }
 
         public void End(Player player)
         {
-            throw new System.NotImplementedException();
+            
+            // TODO: implement
         }
     }
 }

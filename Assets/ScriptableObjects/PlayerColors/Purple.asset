@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: feb182a9a4514fb4b2037d20a24a640e, type: 3}
   m_Name: Purple
   m_EditorClassIdentifier: 
-  Normal: {r: 0.51966673, g: 0.08187969, b: 0.754717, a: 1}
-  Highlight: {r: 0.69036806, g: 0.21804914, b: 0.9433962, a: 1}
-  Disabled: {r: 0.4199789, g: 0.0768957, b: 0.6037736, a: 1}
+  Disabled: {r: 0.38439915, g: 0.06563723, b: 0.5566038, a: 1}
+  Normal: {r: 0.48530173, g: 0.06341223, b: 0.7075472, a: 1}
+  Highlight: {r: 0.63743836, g: 0.19450872, b: 0.8773585, a: 1}
+  Selected: {r: 0.7676052, g: 0.41304737, b: 0.9622642, a: 1}

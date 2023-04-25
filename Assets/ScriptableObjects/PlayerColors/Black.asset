@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: feb182a9a4514fb4b2037d20a24a640e, type: 3}
   m_Name: Black
   m_EditorClassIdentifier: 
+  Disabled: {r: 0.13207549, g: 0.13207549, b: 0.13207549, a: 1}
   Normal: {r: 0.23584908, g: 0.23584908, b: 0.23584908, a: 1}
   Highlight: {r: 0.3490566, g: 0.3490566, b: 0.3490566, a: 1}
-  Disabled: {r: 0.13207549, g: 0.13207549, b: 0.13207549, a: 1}
+  Selected: {r: 0.4811321, g: 0.4811321, b: 0.4811321, a: 1}

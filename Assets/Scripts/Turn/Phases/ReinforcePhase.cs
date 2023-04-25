@@ -1,3 +1,4 @@
+using System;
 using map;
 using player;
 using UnityEngine;
@@ -6,10 +7,16 @@ namespace Turn.Phases
 {
     public class ReinforcePhase : IPhase
     {
+        public string Name => "Reinforce";
+        
         private readonly GameManager _gm;
         private readonly ContinentRepository _cr;
         private readonly TerritoryRepository _tr;
+        public int RemainingTroopsToPlace => _remainingTroopsToPlace;
         private int _remainingTroopsToPlace;
+        
+        public Action OnTroopsToPlaceChanged;
+        
 
         public ReinforcePhase(GameManager gameManager, ContinentRepository continentRepository,
             TerritoryRepository territoryRepository)
@@ -22,6 +29,7 @@ namespace Turn.Phases
         public void Start(Player player)
         {
             _remainingTroopsToPlace = player.GetTotalTroopBonus();
+            OnTroopsToPlaceChanged?.Invoke();
             if (_remainingTroopsToPlace == 0) _gm.NextTurnPhase();
         }
 

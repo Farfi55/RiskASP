@@ -84,6 +84,8 @@ namespace Map
                 return;
             }
             Owner = newOwner;
+            if(oldOwner != null) oldOwner.RemoveTerritory(this);
+            newOwner.AddTerritory(this);
             OnOwnerChanged?.Invoke(oldOwner, newOwner);
             OnStateChanged?.Invoke();
         }

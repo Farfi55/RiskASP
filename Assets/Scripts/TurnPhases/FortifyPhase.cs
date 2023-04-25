@@ -1,11 +1,9 @@
-using System;
 using Actions;
-using map;
+using Map;
 using player;
-using Unity.VisualScripting;
 using UnityEngine;
 
-namespace Turn.Phases
+namespace TurnPhases
 {
     public class FortifyPhase : IPhase
     {

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Actions;
 using Extensions;
-using map;
+using Map;
 using player;
-using Turn.Phases;
+using TurnPhases;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -113,10 +113,10 @@ public class GameManager : MonoBehaviour
         _currentPhase.End(_currentPlayer);
         IPhase nextTurnPhase = _currentPhase switch
         {
-            global::Turn.Phases.ReinforcePhase => AttackPhase,
-            global::Turn.Phases.AttackPhase => FortifyPhase,
-            global::Turn.Phases.FortifyPhase => EmptyPhase,
-            global::Turn.Phases.EmptyPhase => EmptyPhase,
+            global::TurnPhases.ReinforcePhase => AttackPhase,
+            global::TurnPhases.AttackPhase => FortifyPhase,
+            global::TurnPhases.FortifyPhase => EmptyPhase,
+            global::TurnPhases.EmptyPhase => EmptyPhase,
             _ => throw new ArgumentOutOfRangeException()
         };
         

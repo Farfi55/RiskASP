@@ -1,5 +1,5 @@
 using System;
-using map;
+using Map;
 using player;
 using UnityEngine;
 

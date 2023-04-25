@@ -1,6 +1,6 @@
 using System;
 using Actions;
-using map;
+using Map;
 
 public class AttackResult
 {

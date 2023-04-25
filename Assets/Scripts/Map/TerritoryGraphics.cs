@@ -5,7 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace map
+namespace Map
 {
     public class TerritoryGraphics : MonoBehaviour
     {

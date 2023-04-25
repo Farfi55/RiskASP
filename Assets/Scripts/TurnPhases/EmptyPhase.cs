@@ -1,7 +1,7 @@
 using Actions;
 using player;
 
-namespace Turn.Phases
+namespace TurnPhases
 {
     public class EmptyPhase : IPhase
     {

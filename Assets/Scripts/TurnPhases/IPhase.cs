@@ -1,8 +1,7 @@
 using Actions;
-using map;
 using player;
 
-namespace Turn.Phases
+namespace TurnPhases
 {
     public interface IPhase
     {

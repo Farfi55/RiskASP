@@ -8,7 +8,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace map
+namespace Map
 {
     public class Territory : MonoBehaviour
     {

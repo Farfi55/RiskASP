@@ -1,10 +1,10 @@
 using System;
 using Actions;
-using map;
+using Map;
 using player;
 using UnityEngine;
 
-namespace Turn.Phases
+namespace TurnPhases
 {
     public class ReinforcePhase : IPhase
     {

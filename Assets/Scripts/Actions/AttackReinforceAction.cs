@@ -4,12 +4,12 @@ using player;
 
 namespace Actions
 {
-    class AttackReinforceAction: AttackPhaseAction
+    public class AttackReinforceAction: AttackPhaseAction
     {
         private AttackAction AttackAction { get; }
         public int ReinforcingTroops { get; }
-        public Territory From => AttackAction.From;
-        public Territory To => AttackAction.To;
+        public Territory From => AttackAction.Origin;
+        public Territory To => AttackAction.Target;
         public int AttackingTroops => AttackAction.Troops;
 
         public AttackReinforceAction(Player player, AttackAction attackAction, int reinforcingTroops) : base(player)
@@ -17,7 +17,7 @@ namespace Actions
             AttackAction = attackAction;
             ReinforcingTroops = reinforcingTroops;
             if(!IsValid())
-                throw new System.ArgumentException("AttackReinforceAction is not valid");
+                throw new ArgumentException("AttackReinforceAction is not valid");
         }
 
         private bool IsValid()

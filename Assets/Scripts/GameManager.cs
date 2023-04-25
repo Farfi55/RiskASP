@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Actions;
 using Extensions;
 using map;
 using player;
@@ -126,6 +127,14 @@ public class GameManager : MonoBehaviour
         { 
             NextTurn();
         }
+    }
+    
+    public void HandlePlayerAction(PlayerAction action)
+    {
+        if (action.Player != _currentPlayer)
+            throw new ArgumentException("PlayerAction is not from current player");
+
+        _currentPhase.OnAction(_currentPlayer, action);
     }
 
     private void NextTurn()

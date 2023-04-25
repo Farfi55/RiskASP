@@ -6,14 +6,14 @@ namespace Actions
 {
     public class AttackAction : AttackPhaseAction
     {
-        public Territory From { get; }
-        public Territory To { get; }
+        public Territory Origin { get; }
+        public Territory Target { get; }
         public int Troops { get; }
-        
-        public AttackAction(Player player, Territory from, Territory to, int troops) : base(player)
+
+        public AttackAction(Player player, Territory origin, Territory target, int troops) : base(player)
         {
-            From = from;
-            To = to;
+            Origin = origin;
+            Target = target;
             Troops = troops;
             if (!IsValid())
                 throw new ArgumentException("AttackAction is not valid");
@@ -32,9 +32,9 @@ namespace Actions
                 LogError($"Troops ({Troops}) is greater than 3");
                 return false;
             }
-            if(Troops > From.GetAvailableTroops())
+            if(Troops > Origin.GetAvailableTroops())
             {
-                LogError($"Troops ({Troops}) is greater than available troops ({From.GetAvailableTroops()})");
+                LogError($"Troops ({Troops}) is greater than available troops ({Origin.GetAvailableTroops()})");
                 return false;
             }
             if(Troops < 1)
@@ -42,19 +42,19 @@ namespace Actions
                 LogError($"Troops ({Troops}) is less than 1");
                 return false;
             }
-            if(From.Owner != Player)
+            if(Origin.Owner != Player)
             {
-                LogError($"From territory ({From.Name} owned by {From.Owner.Name}) is not owned by the player ({Player.Name})");
+                LogError($"Origin territory ({Origin.Name} owned by {Origin.Owner.Name}) is not owned by the player ({Player.Name})");
                 return false;
             }
-            if (To.Owner == Player)
+            if (Target.Owner == Player)
             {
-                LogError($"To territory ({To.Name} is a friendly territory)");
+                LogError($"Target territory ({Target.Name} is a friendly territory)");
                 return false;
             }
-            if (!From.IsNeighbourOf(To))
+            if (!Origin.IsNeighbourOf(Target))
             {
-                LogError($"From territory ({From.Name}) is not a neighbour of To territory ({To.Name})");
+                LogError($"Origin territory ({Origin.Name}) is not a neighbour of Target territory ({Target.Name})");
                 return false;
             }
 

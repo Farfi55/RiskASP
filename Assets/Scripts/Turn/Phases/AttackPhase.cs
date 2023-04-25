@@ -1,3 +1,4 @@
+using System;
 using Actions;
 using map;
 using player;
@@ -14,7 +15,10 @@ namespace Turn.Phases
         private readonly TerritoryRepository _tr;
         private readonly BattleSimulator _bs;
 
-        private AttackState _state = AttackState.Attack;
+        public AttackState State => _state;
+        private AttackState _state = AttackState.Attacking;
+        public Action<AttackResult> OnAttacked;
+        public Action<AttackReinforceAction> OnReinforced;
 
 
         public AttackPhase(
@@ -32,7 +36,6 @@ namespace Turn.Phases
 
         public void Start(Player player)
         {
-            _gm.NextTurnPhase(); // TODO: remove this line
         }
 
         public void OnAction(Player player, PlayerAction action)
@@ -43,7 +46,7 @@ namespace Turn.Phases
                 HandleAttackReinforceAction(attackReinforceAction);
             else if (action is EndPhaseAction)
             {
-                if (_state == AttackState.Attack)
+                if (_state == AttackState.Attacking)
                     _gm.NextTurnPhase();
                 else
                     Debug.LogWarning($"AttackPhase: Cannot end Attack phase while in state {_state}");
@@ -54,22 +57,56 @@ namespace Turn.Phases
 
         private void HandleAttackAction(AttackAction attackAction)
         {
+            if (_state != AttackState.Attacking)
+            {
+                Debug.LogWarning($"AttackPhase: Cannot attack while in state {_state}");
+                return;
+            }
+
+            var attackResult = _bs.SimulateAttack(attackAction);
+
+            attackResult.Origin.RemoveTroops(attackResult.AttackerLosses);
+            attackResult.Target.RemoveTroops(attackResult.DefenderLosses);
+
+            if (attackResult.HasAttackerWonTerritory())
+            {
+                attackResult.Target.SetOwner(attackAction.Player, 0);
+            }
+
+
+            _state = AttackState.Reinforcing;
+
+            Debug.Log($"AttackPhase: Attacked {attackResult.Target.Name} from {attackResult.Origin.Name}, " +
+                      $"result: {attackResult.AttackerLosses} losses for attacker, " +
+                      $"{attackResult.DefenderLosses} losses for defender");
+            OnAttacked?.Invoke(attackResult);
         }
 
         private void HandleAttackReinforceAction(AttackReinforceAction attackReinforceAction)
         {
-            throw new System.NotImplementedException();
+            if (_state != AttackState.Reinforcing)
+                Debug.LogWarning($"AttackPhase: Cannot reinforce while in state {_state}");
+
+            var troops = attackReinforceAction.ReinforcingTroops;
+            attackReinforceAction.From.RemoveTroops(troops);
+            attackReinforceAction.To.AddTroops(troops);
+
+
+            _state = AttackState.Attacking;
+
+            Debug.Log(
+                $"AttackPhase: Reinforced {troops} troops from {attackReinforceAction.From.Name} to {attackReinforceAction.To.Name}");
+            OnReinforced?.Invoke(attackReinforceAction);
         }
 
         public void End(Player player)
         {
-            // TODO: implement
         }
     }
 
-    internal enum AttackState
+    public enum AttackState
     {
-        Attack,
-        Reinforce,
+        Attacking,
+        Reinforcing,
     }
 }

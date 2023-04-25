@@ -1,4 +1,5 @@
 using System;
+using Actions;
 using player;
 using TMPro;
 using Turn.Phases;
@@ -37,12 +38,34 @@ namespace UI
                 if (_gm.CurrentPhase is ReinforcePhase reinforcePhase)
                     DisplayReinforceInfo(reinforcePhase);
             };
+            _gm.AttackPhase.OnAttacked += (attackResult) =>
+            {
+                if (_gm.CurrentPhase is AttackPhase attackPhase)
+                    DisplayAttackResult(attackPhase, attackResult);
+            };
+            _gm.AttackPhase.OnReinforced += (reinforceAction) =>
+            {
+                if (_gm.CurrentPhase is AttackPhase attackPhase)
+                    DisplayAttackReinforce(attackPhase, reinforceAction);
+            };
             
             UpdatePlayerText(_gm.CurrentPlayer);
             UpdateTurnText(_gm.Turn);
             UpdateTurnPhaseText(_gm.CurrentPhase);
         }
 
+
+        private void DisplayAttackResult(AttackPhase attackPhase, AttackResult attackResult)
+        {
+            _extraInfo[1].gameObject.SetActive(true);
+            _extraInfoTexts[1].text = $"Losses: Atk: {attackResult.AttackerLosses}, Def: {attackResult.DefenderLosses}";
+        }
+
+        private void DisplayAttackReinforce(AttackPhase attackPhase, AttackReinforceAction reinforceAction)
+        {
+            _extraInfo[2].gameObject.SetActive(true);
+            _extraInfoTexts[2].text = $"Reinforced with: {reinforceAction.ReinforcingTroops} troops";
+        }
 
         private void UpdatePlayerText(Player player) => _playerTurnText.text = $"{player.Name}'s Turn";
         private void UpdateTurnText(int turn) => _turnText.text = $"Turn {turn}";
@@ -66,9 +89,6 @@ namespace UI
                 case ReinforcePhase reinforcePhase:
                     DisplayReinforceInfo(reinforcePhase);
                     break;
-                case AttackPhase attackPhase:
-                    DisplayAttackInfo(attackPhase);
-                    break;
             }
         }
 
@@ -78,10 +98,6 @@ namespace UI
             _extraInfoTexts[0].text = $"Reinforcements: {reinforcePhase.RemainingTroopsToPlace}";
         } 
         
-        private void DisplayAttackInfo(AttackPhase attackPhase)
-        {
-            throw new NotImplementedException();
-        }
         
         private void OnPlayerTurnChanged(Player oldPlayer, Player newPlayer)
         {

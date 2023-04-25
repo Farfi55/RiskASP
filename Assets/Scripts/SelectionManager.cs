@@ -10,8 +10,11 @@ public class SelectionManager : MonoBehaviour
             Destroy(gameObject);
         else
             Instance = this;
-
     }
+    
+    
+    
+    
         
         
         

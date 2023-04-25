@@ -9,15 +9,15 @@ namespace TurnPhases
     public class ReinforcePhase : IPhase
     {
         public string Name => "Reinforce";
-        
+
         private readonly GameManager _gm;
         private readonly ContinentRepository _cr;
         private readonly TerritoryRepository _tr;
         public int RemainingTroopsToPlace => _remainingTroopsToPlace;
         private int _remainingTroopsToPlace;
-        
+
         public Action OnTroopsToPlaceChanged;
-        
+
 
         public ReinforcePhase(GameManager gameManager, ContinentRepository continentRepository,
             TerritoryRepository territoryRepository)
@@ -41,6 +41,17 @@ namespace TurnPhases
                 placeTroopsAction.Territory.AddTroops(placeTroopsAction.Troops);
                 _remainingTroopsToPlace -= placeTroopsAction.Troops;
             }
+            else if (action is EndPhaseAction)
+            {
+                if (_remainingTroopsToPlace > 0)
+                {
+                    Debug.Log($"Player {player.Name} ended Reinforce phase with {_remainingTroopsToPlace} troops to place, distributing randomly");
+                    player.RandomlyDistributeTroops(_remainingTroopsToPlace);
+                    _remainingTroopsToPlace = 0;
+                }
+                
+                _gm.NextTurnPhase();
+            }
             else
                 Debug.LogError($"ReinforcePhase: Received action of type {action.GetType().Name}");
 
@@ -49,10 +60,8 @@ namespace TurnPhases
         }
 
 
-
         public void End(Player player)
         {
-            
         }
     }
 }

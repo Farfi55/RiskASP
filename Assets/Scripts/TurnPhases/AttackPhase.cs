@@ -17,8 +17,10 @@ namespace TurnPhases
 
         public AttackState State => _state;
         private AttackState _state = AttackState.Attacking;
+        
         public Action<AttackResult> OnAttacked;
         public Action<AttackReinforceAction> OnReinforced;
+        public Action OnAttackStateChanged;
 
 
         public AttackPhase(
@@ -36,6 +38,7 @@ namespace TurnPhases
 
         public void Start(Player player)
         {
+            SetState(AttackState.Attacking);
         }
 
         public void OnAction(Player player, PlayerAction action)
@@ -74,7 +77,7 @@ namespace TurnPhases
             }
 
 
-            _state = AttackState.Reinforcing;
+            SetState(AttackState.Reinforcing);
 
             Debug.Log($"AttackPhase: Attacked {attackResult.Target.Name} from {attackResult.Origin.Name}, " +
                       $"result: {attackResult.AttackerLosses} losses for attacker, " +
@@ -90,9 +93,8 @@ namespace TurnPhases
             var troops = attackReinforceAction.ReinforcingTroops;
             attackReinforceAction.From.RemoveTroops(troops);
             attackReinforceAction.To.AddTroops(troops);
-
-
-            _state = AttackState.Attacking;
+            
+            SetState(AttackState.Attacking);
 
             Debug.Log(
                 $"AttackPhase: Reinforced {troops} troops from {attackReinforceAction.From.Name} to {attackReinforceAction.To.Name}");
@@ -102,6 +104,13 @@ namespace TurnPhases
         public void End(Player player)
         {
         }
+        
+        private void SetState(AttackState state)
+        {
+            _state = state;
+            OnAttackStateChanged?.Invoke();
+        }
+        
     }
 
     public enum AttackState

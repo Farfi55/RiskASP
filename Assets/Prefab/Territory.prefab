@@ -331,6 +331,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8117319427863881805}
   - component: {fileID: 8117319427863881804}
+  - component: {fileID: 5853463515120772916}
   - component: {fileID: 8555191733399419778}
   - component: {fileID: 8721257312363954568}
   - component: {fileID: 872297048197491866}
@@ -373,6 +374,19 @@ MonoBehaviour:
   Continent: {fileID: 0}
   NeighbourTerritories: []
   Owner: {fileID: 0}
+--- !u!114 &5853463515120772916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8117319427863881802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6ca51aa9c89421c910eb78843175a77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _territory: {fileID: 8117319427863881804}
 --- !u!114 &8555191733399419778
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -386,6 +400,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _territory: {fileID: 8117319427863881804}
+  _territorySelection: {fileID: 5853463515120772916}
   _territorySpriteRenderer: {fileID: 8721257312363954568}
   _troopsCountBackgroundSpriteRenderer: {fileID: 6139532522500424749}
   _troopsCountText: {fileID: 6655826879564974252}

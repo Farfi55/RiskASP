@@ -1,0 +1,74 @@
+using System;
+using UnityEngine;
+using Action = it.unical.mat.embasp.languages.pddl.Action;
+
+namespace Map
+{
+    [RequireComponent(typeof(Collider2D))]
+    public class TerritorySelection : MonoBehaviour
+    {
+        public Territory Territory => _territory;
+        [SerializeField] private Territory _territory;
+
+        public bool IsHovered => _isHovered;
+        public bool IsSelected => _isSelected;
+        public bool IsDisabled => _isDisabled;
+
+        private bool _isHovered;
+        private bool _isSelected;
+        private bool _isDisabled;
+
+        public Action<TerritorySelection> OnSelect;
+        public Action<TerritorySelection> OnUnselect;
+
+        public Action<TerritorySelection> OnSelectedChanged;
+        public Action<TerritorySelection> OnHoverChanged;
+        public Action<TerritorySelection> OnDisabledChanged;
+        public Action<TerritorySelection> OnStateChanged;
+
+
+        private void OnMouseEnter() => SetHovered(true);
+
+        private void OnMouseExit() => SetHovered(false);
+        
+        private void OnMouseDown()
+        {
+            if (!_isDisabled)
+                ToggleSelect();
+        }
+
+
+        private void SetHovered(bool value)
+        {
+            _isHovered = value;
+            OnHoverChanged?.Invoke(this);
+            OnStateChanged?.Invoke(this);
+        }
+
+        public void SetSelected(bool value)
+        {
+            _isSelected = value;
+            if (_isSelected) OnSelect?.Invoke(this);
+            else OnUnselect?.Invoke(this);
+            OnSelectedChanged?.Invoke(this);
+            OnStateChanged?.Invoke(this);
+        }
+
+        public void SetDisabled(bool value)
+        {
+            _isDisabled = value;
+            if (_isDisabled && _isSelected) SetSelected(false);
+
+            OnDisabledChanged?.Invoke(this);
+            OnStateChanged?.Invoke(this);
+        }
+
+
+        public void ToggleSelect() => SetSelected(!_isSelected);
+        public void Select() => SetSelected(true);
+        public void Unselect() => SetSelected(false);
+
+        public void Disable() => SetDisabled(true);
+        public void Enable() => SetDisabled(false);
+    }
+}

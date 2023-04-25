@@ -26,9 +26,13 @@ class ActionReader : MonoBehaviour
     {
         _actions.Enqueue(action);
     }
-    
-    
-    
-    
 
+    private void Update()
+    {
+        while (_actions.Count > 0)
+        {
+            var action = _actions.Dequeue();
+            GameManager.Instance.HandlePlayerAction(action);
+        }
+    }
 }

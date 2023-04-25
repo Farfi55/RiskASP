@@ -102,10 +102,14 @@ public class GameManager : MonoBehaviour
     private void DistributeTroops()
     {
         int[] troopsPerNumberOfPlayer = { -1, -1, 50, 35, 30, 25, 20 };
-        int troopsPerPlayer = troopsPerNumberOfPlayer[NPlayers];
-        
+
         foreach (var player in Players)
+        {
+            int troopsPerPlayer = troopsPerNumberOfPlayer[NPlayers];
+            player.ClearTroops();
+            troopsPerPlayer = player.DistributeNTroopsPerTerritory(1, troopsPerPlayer);   
             player.RandomlyDistributeTroops(troopsPerPlayer);
+        }
     }
     
     public void NextTurnPhase()

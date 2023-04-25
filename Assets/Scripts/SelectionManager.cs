@@ -42,7 +42,7 @@ public class SelectionManager : MonoBehaviour
     {
         var ar = ActionReader.Instance; 
         _reinforceSelectionPhase = new ReinforceSelectionPhase(_gm, this, ar);
-        _attackSelectionPhase = new AttackSelectionPhase();
+        _attackSelectionPhase = new AttackSelectionPhase(_gm, this, ar);
         _fortifySelectionPhase = new FortifySelectionPhase();
         _emptySelectionPhase = new EmptySelectionPhase();
         SetPhase(_emptySelectionPhase);
@@ -105,11 +105,11 @@ public class SelectionManager : MonoBehaviour
             territorySelection.Disable();
     }
 
-    public void EnablePlayerTerritoriesWithAvailableTroops(Player player)
+    public void EnablePlayerTerritoriesWithAttackPossibility(Player player)
     {
         foreach (var territory in player.Territories)
         {
-            if (territory.GetAvailableTroops() > 0)
+            if (territory.GetAvailableTroops() > 0 && territory.HasAnyNeighbourEnemy())
                 TerritoryToSelectionMap[territory].Enable();
         }
     }
@@ -118,5 +118,14 @@ public class SelectionManager : MonoBehaviour
     {
         foreach (var territory in player.Territories)
             TerritoryToSelectionMap[territory].Enable();
+    }
+
+    public void EnableEnemyNeighbourTerritories(Territory territory)
+    {
+        foreach (var neighbour in territory.NeighbourTerritories)
+        {
+            if (neighbour.Owner != territory.Owner)
+                TerritoryToSelectionMap[neighbour].Enable();
+        }
     }
 }

@@ -57,8 +57,6 @@ namespace Map
         public void SetDisabled(bool value)
         {
             _isDisabled = value;
-            if (_isDisabled && _isSelected) SetSelected(false);
-
             OnDisabledChanged?.Invoke(this);
             OnStateChanged?.Invoke(this);
         }

@@ -58,6 +58,7 @@ public class GameManager : MonoBehaviour
 
         _tr = TerritoryRepository.Instance;
         _cr = ContinentRepository.Instance;
+        _bs = BattleSimulator.Instance;
         SetupPhases();
     }
 

@@ -7,12 +7,22 @@ namespace EmbASP.predicates
 	{
 		[Param(0)] private string _name;
 
-		public string Name
+		public Player(string name)
 		{
-			get => _name;
-			set => _name = value;
+			_name = name;
 		}
-		
+
+		public Player(){}
+
+		public string get_name()
+		{
+			return _name;
+		}
+
+		public void set_name(string name)
+		{
+			_name = name;
+		}
 	}
 }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using EmbASP.predicates;
 using it.unical.mat.embasp.@base;
 using it.unical.mat.embasp.languages.asp;
@@ -13,7 +14,7 @@ namespace EmbASP
 {
     public class AIController
     {
-        private Handler _handler = new DesktopHandler(new DLV2DesktopService("../../Executables/dlv2.exe"));
+        private Handler _handler = new DesktopHandler(new DLV2DesktopService("./Executables/dlv2.exe"));
         public void ConfigAsp()
         {
             ASPMapper.Instance.RegisterClass(typeof(Player));
@@ -31,30 +32,38 @@ namespace EmbASP
 
             InputProgram input = new ASPInputProgram();
             
-            string ai1 = @"./AIs/ai1.dlv";
+            string ai1 = @"./AIs/ai1.txt";
 
-            //if (File.Exists(ai1))
-            //{
-                //string str = System.IO.File.ReadAllText(ai1);
-                //input.AddProgram(str);
-                input.AddFilesPath(ai1);
-            //}
+            if (File.Exists(ai1))
+            {
+                string str = System.IO.File.ReadAllText(ai1);
+                input.AddProgram(str);
+                //input.AddFilesPath(ai1);   Non funziona 
+                
+                
+                //input.AddObjectInput( objs );
+            }
             _handler.AddProgram(input);
             AnswerSets answerSets = (AnswerSets)_handler.StartSync();
 
             Debug.Log(answerSets.Answersets);
+            List<Player> players = new List<Player>();
             foreach (AnswerSet answerSet in answerSets.Answersets)
             {
-                Player player = new Player();
+                
                 foreach (object obj in answerSet.Atoms)
                 {
                     if (typeof(Player).IsInstanceOfType(obj))
                     {
-                        player = (Player)obj;
+                        players.Add((Player)obj);
                     }
                     
-                    Debug.Log("atom: " + player.Name);
                 }
+            }
+
+            foreach (Player p1 in players)
+            {
+                Debug.Log(p1.get_name());
             }
 
 

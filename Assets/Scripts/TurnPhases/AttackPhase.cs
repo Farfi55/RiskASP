@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Actions;
 using JetBrains.Annotations;
 using Map;
@@ -18,11 +20,19 @@ namespace TurnPhases
 
         public AttackState State => _state;
         private AttackState _state = AttackState.Attacking;
-        
+
+        public int AttackTurn => _attackTurn;
+        private int _attackTurn;
+
+
+        private List<AttackResult> _attackResults = new ();
+        public AttackResult LastAttackResult => _attackResults.Last();
+        public IEnumerable<AttackResult> AttackResults => _attackResults;
+
         public Action<AttackResult> OnAttacked;
         public Action<AttackReinforceAction> OnReinforced;
         public Action OnAttackStateChanged;
-
+        public Action OnAttackTurn;
 
         public AttackPhase(
             GameManager gameManager,
@@ -34,14 +44,21 @@ namespace TurnPhases
             _cr = continentRepository;
             _tr = territoryRepository;
             _bs = battleSimulator;
+            
+            //todo: remove line
+            OnAttackTurn += () => Debug.Log($"Attack turn: {_attackTurn}");
         }
 
 
         public void Start(Player player)
         {
+            _attackResults.Clear();
+            _attackTurn = 1;
             SetState(AttackState.Attacking);
+            OnAttackTurn?.Invoke();
         }
 
+        // ReSharper disable Unity.PerformanceAnalysis
         public void OnAction(Player player, PlayerAction action)
         {
             if (action is AttackAction attackAction)
@@ -59,6 +76,7 @@ namespace TurnPhases
                 Debug.LogError($"AttackPhase: Received action of type {action.GetType().Name}");
         }
 
+        // ReSharper disable Unity.PerformanceAnalysis
         private void HandleAttackAction(AttackAction attackAction)
         {
             if (_state != AttackState.Attacking)
@@ -71,18 +89,23 @@ namespace TurnPhases
 
             attackResult.Origin.RemoveTroops(attackResult.AttackerLosses);
             attackResult.Target.RemoveTroops(attackResult.DefenderLosses);
+            _attackResults.Add(attackResult);
 
+            
             if (attackResult.HasAttackerWonTerritory())
             {
                 attackResult.Target.SetOwner(attackAction.Player, 0);
                 SetState(AttackState.Moving);
             }
             
-
+            
             Debug.Log($"AttackPhase: Attacked {attackResult.Target.Name} from {attackResult.Origin.Name}, " +
                       $"result: {attackResult.AttackerLosses} losses for attacker, " +
                       $"{attackResult.DefenderLosses} losses for defender");
+            
             OnAttacked?.Invoke(attackResult);
+            _attackTurn++;
+            OnAttackTurn?.Invoke();
         }
 
         private void HandleAttackReinforceAction(AttackReinforceAction attackReinforceAction)
@@ -99,6 +122,8 @@ namespace TurnPhases
             Debug.Log(
                 $"AttackPhase: Reinforced {troops} troops from {attackReinforceAction.From.Name} to {attackReinforceAction.To.Name}");
             OnReinforced?.Invoke(attackReinforceAction);
+            _attackTurn++;
+            OnAttackTurn?.Invoke();
         }
 
         public void End(Player player)

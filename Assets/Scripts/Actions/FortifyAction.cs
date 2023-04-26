@@ -29,12 +29,12 @@ namespace Actions
                 LogError($"Player ({Player.Name}) is not the current player ({gm.CurrentPlayer.Name})");
                 return false;
             }
-            if (From.Owner == Player)
+            if (From.Owner != Player)
             {
                 LogError($"From territory ({From.Name} owned by {From.Owner.Name}) is not owned by the player ({Player.Name})");
                 return false;
             }
-            if (To.Owner == Player)
+            if (To.Owner != Player)
             {
                 LogError($"To territory ({To.Name} owned by {To.Owner.Name}) is not owned by the player ({Player.Name})");
                 return false;

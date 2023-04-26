@@ -19,8 +19,6 @@ namespace TurnPhases.Selection
         private TerritorySelection _from;
         private TerritorySelection _to;
 
-        private AttackResult _lastAttackResult;
-
         private int _reinforcementsToMove;
 
         public AttackSelectionPhase(GameManager gm, SelectionManager sm, ActionReader ar)
@@ -28,17 +26,10 @@ namespace TurnPhases.Selection
             _gm = gm;
             _sm = sm;
             _ar = ar;
-            _attackPhase.OnAttacked += OnAttacked;
-            _attackPhase.OnAttackStateChanged += OnAttackStateChanged;
+            _attackPhase.OnAttackTurn += OnAttackTurn;
         }
 
-        private void OnAttacked(AttackResult result)
-        {
-            _lastAttackResult = result;
-            UnselectAll();
-        }
-
-        private void OnAttackStateChanged()
+        private void OnAttackTurn()
         {
             if (State == AttackState.Attacking)
             {
@@ -55,7 +46,6 @@ namespace TurnPhases.Selection
         public void Start(Player player)
         {
             UnselectAll();
-            _lastAttackResult = null;
             _reinforcementsToMove = 0;
             EnableTerritoriesToAttackFrom(player);
         }
@@ -87,7 +77,6 @@ namespace TurnPhases.Selection
                 _to.Select();
                 
                 CreateAttackAction(player);
-                UnselectAll();
             }
         }
 
@@ -127,7 +116,7 @@ namespace TurnPhases.Selection
         {
             if (_from == selection)
             {
-                SetTroopsToMove(_lastAttackResult.GetMinTroopsToMoveAfterWin());
+                SetTroopsToMove(_attackPhase.LastAttackResult.GetMinTroopsToMoveAfterWin());
                 CreateMoveAction(player);
             }
             else if (_to == selection)
@@ -140,7 +129,8 @@ namespace TurnPhases.Selection
 
         private void CreateMoveAction(Player player)
         {
-            var action = new AttackReinforceAction(player, _lastAttackResult.AttackAction, _reinforcementsToMove);
+            var attackAction = _attackPhase.LastAttackResult.AttackAction;
+            var action = new AttackReinforceAction(player, attackAction, _reinforcementsToMove);
             _ar.AddAction(action);
         }
 

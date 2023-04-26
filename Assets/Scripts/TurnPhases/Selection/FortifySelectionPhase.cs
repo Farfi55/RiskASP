@@ -33,6 +33,15 @@ namespace TurnPhases.Selection
 
         public void OnClicked(Player player, TerritorySelection selection)
         {
+            if (!selection.IsSelected)
+                OnSelect(player, selection);
+            else
+                OnUnselect(player, selection);
+            
+        }
+
+        private void OnSelect(Player player, TerritorySelection selection)
+        {
             if(_from == null)
             {
                 _from = selection;
@@ -42,18 +51,27 @@ namespace TurnPhases.Selection
             }
             else if(_to == null)
             {
-                if(selection == _from)
-                    return;
-                
                 _to = selection;
                 _to.Select();
                 
                 EnableTerritoriesToConfirmFortify(player);
             }
-            else
+        }
+        
+        private void OnUnselect(Player player, TerritorySelection selection)
+        {
+            if(selection == _to)
             {
+                // todo: add a way to chose number of troops 
+                _troopsToMove = _from.Territory.GetAvailableTroops();
+                    
                 var action = new FortifyAction(player, _from.Territory, _to.Territory, _troopsToMove);
                 _ar.AddAction(action);
+            }
+            else
+            {
+                UnselectAll();
+                EnableTerritoriesToFortifyFrom(player);
             }
         }
 

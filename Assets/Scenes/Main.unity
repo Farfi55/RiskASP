@@ -2088,7 +2088,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 286686166d245e64bbe3ad872878ba11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _nPlayers: 4
+  _nPlayers: 2
   Players: []
 --- !u!4 &280334211
 Transform:

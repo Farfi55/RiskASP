@@ -31,8 +31,8 @@ public class BattleSimulator : MonoBehaviour
         var attackerRolls = RollDices(attackingTroops);
         var defenderRolls = RollDices(defendingTroops);
 
-        Array.Sort(attackerRolls);
-        Array.Sort(defenderRolls);
+        attackerRolls = attackerRolls.OrderByDescending(c => c).ToArray();
+        defenderRolls = defenderRolls.OrderByDescending(c => c).ToArray();
 
         var attackerLosses = 0;
         var defenderLosses = 0;
@@ -60,14 +60,13 @@ public class BattleSimulator : MonoBehaviour
 
     private int Roll() => UnityEngine.Random.Range(1, 7);
 
-    private int[] RollDices(int dices)
+    private IList<int> RollDices(int dices)
     {
+        // var rolls = new List<int>(dices);
         var rolls = new int[dices];
 
-        for (int i = 0; i < dices; i++)
-        {
+        for (int i = 0; i < dices; i++) 
             rolls[i] = Roll();
-        }
 
         return rolls;
     }

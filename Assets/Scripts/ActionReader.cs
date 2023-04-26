@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Actions;
 using UnityEngine;
 
-class ActionReader : MonoBehaviour
+public class ActionReader : MonoBehaviour
 {
     public static ActionReader Instance { get; private set; }
 
@@ -25,9 +26,13 @@ class ActionReader : MonoBehaviour
     {
         _actions.Enqueue(action);
     }
-    
-    
-    
-    
 
+    private void Update()
+    {
+        while (_actions.Count > 0)
+        {
+            var action = _actions.Dequeue();
+            GameManager.Instance.HandlePlayerAction(action);
+        }
+    }
 }

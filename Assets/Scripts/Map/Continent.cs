@@ -4,7 +4,7 @@ using player;
 using UnityEditor;
 using UnityEngine;
 
-namespace map
+namespace Map
 {
     public class Continent : MonoBehaviour
     {

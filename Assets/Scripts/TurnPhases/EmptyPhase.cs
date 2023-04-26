@@ -1,9 +1,12 @@
+using Actions;
 using player;
 
-namespace Turn.Phases
+namespace TurnPhases
 {
     public class EmptyPhase : IPhase
     {
+        public string Name => "Empty";
+        
         public void Start(Player player)
         {
         }

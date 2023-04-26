@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using map;
+using Extensions;
+using Map;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
@@ -15,6 +16,7 @@ namespace player
         public string Name => _name;
         
         private readonly HashSet<Territory> _territories = new();
+        public IEnumerable<Territory> Territories => _territories;
         [FormerlySerializedAs("Color")] public PlayerColor Color;
 
         public int GetTroopsCountInTerritories()
@@ -43,13 +45,23 @@ namespace player
             gameObject.name = $"Player {newName}";
         }
 
-
+        
+        
+        public int DistributeNTroopsPerTerritory(int troopsPerTerritory, int troops)
+        {
+            var territories = _territories.ToList();
+            territories.Shuffle();
+            for (int i = 0; i < territories.Count && troops > 0; i++)
+            {
+                int troopsToAdd = Mathf.Min(troopsPerTerritory, troops);
+                territories[i].AddTroops(troopsToAdd);
+                troops -= troopsToAdd;
+            }
+            return troops;
+        }
+        
         public void RandomlyDistributeTroops(int troops)
         {
-            foreach (var territory in _territories) 
-                territory.SetTroops(1);
-            troops -= _territories.Count;
-            
             while (troops > 0)
             {
                 var territory = _territories.ElementAt(Random.Range(0, _territories.Count));
@@ -70,5 +82,10 @@ namespace player
 
         public bool IsDead() => _territories.Count == 0;
         public bool IsAlive() => _territories.Count > 0;
+
+        public void ClearTroops()
+        {
+            foreach (var territory in _territories) territory.SetTroops(0);
+        }
     }
 }

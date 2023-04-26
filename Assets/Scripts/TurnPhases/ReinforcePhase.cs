@@ -1,15 +1,23 @@
-using map;
+using System;
+using Actions;
+using Map;
 using player;
 using UnityEngine;
 
-namespace Turn.Phases
+namespace TurnPhases
 {
     public class ReinforcePhase : IPhase
     {
+        public string Name => "Reinforce";
+
         private readonly GameManager _gm;
         private readonly ContinentRepository _cr;
         private readonly TerritoryRepository _tr;
+        public int RemainingTroopsToPlace => _remainingTroopsToPlace;
         private int _remainingTroopsToPlace;
+
+        public Action OnTroopsToPlaceChanged;
+
 
         public ReinforcePhase(GameManager gameManager, ContinentRepository continentRepository,
             TerritoryRepository territoryRepository)
@@ -22,18 +30,27 @@ namespace Turn.Phases
         public void Start(Player player)
         {
             _remainingTroopsToPlace = player.GetTotalTroopBonus();
+            OnTroopsToPlaceChanged?.Invoke();
             if (_remainingTroopsToPlace == 0) _gm.NextTurnPhase();
         }
 
         public void OnAction(Player player, PlayerAction action)
         {
-            if (action is PlaceTroopsAction placeTroopsAction)
+            if (action is ReinforceAction placeTroopsAction)
             {
-                if (CheckActionValidity(player, placeTroopsAction))
-                    return;
-
                 placeTroopsAction.Territory.AddTroops(placeTroopsAction.Troops);
                 _remainingTroopsToPlace -= placeTroopsAction.Troops;
+            }
+            else if (action is EndPhaseAction)
+            {
+                if (_remainingTroopsToPlace > 0)
+                {
+                    Debug.Log($"Player {player.Name} ended Reinforce phase with {_remainingTroopsToPlace} troops to place, distributing randomly");
+                    player.RandomlyDistributeTroops(_remainingTroopsToPlace);
+                    _remainingTroopsToPlace = 0;
+                }
+                
+                _gm.NextTurnPhase();
             }
             else
                 Debug.LogError($"ReinforcePhase: Received action of type {action.GetType().Name}");
@@ -43,27 +60,8 @@ namespace Turn.Phases
         }
 
 
-        private bool CheckActionValidity(Player player, PlaceTroopsAction action)
-        {
-            if (action == null)
-                Debug.LogError($"ReinforcePhase: Received null action");
-            else if (player != action.Player)
-                Debug.LogError($"ReinforcePhase: Player ({action.Player.Name}) is not the current player ({player.Name})");
-            else if (action.Territory.Owner != player)
-                Debug.LogError(
-                    $"ReinforcePhase: Territory ({action.Territory.Name} owned by {action.Territory.Owner.Name}) is not owned by the player ({player.Name})");
-            else if (action.Troops > _remainingTroopsToPlace)
-                Debug.LogError(
-                    $"ReinforcePhase: Player ({player.Name}) tried to place more troops ({action.Troops}) than they have left ({_remainingTroopsToPlace})");
-            else
-                return true;
-
-            return false;
-        }
-
         public void End(Player player)
         {
-            
         }
     }
 }

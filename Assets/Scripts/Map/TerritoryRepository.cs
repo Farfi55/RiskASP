@@ -5,7 +5,7 @@ using Extensions;
 using player;
 using UnityEngine;
 
-namespace map
+namespace Map
 {
     public class TerritoryRepository : MonoBehaviour
     {

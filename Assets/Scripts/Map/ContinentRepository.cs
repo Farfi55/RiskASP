@@ -4,7 +4,7 @@ using System.Linq;
 using player;
 using UnityEngine;
 
-namespace map
+namespace Map
 {
     public class ContinentRepository : MonoBehaviour
     {

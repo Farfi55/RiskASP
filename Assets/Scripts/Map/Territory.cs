@@ -8,7 +8,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace map
+namespace Map
 {
     public class Territory : MonoBehaviour
     {
@@ -84,6 +84,8 @@ namespace map
                 return;
             }
             Owner = newOwner;
+            if(oldOwner != null) oldOwner.RemoveTerritory(this);
+            newOwner.AddTerritory(this);
             OnOwnerChanged?.Invoke(oldOwner, newOwner);
             OnStateChanged?.Invoke();
         }

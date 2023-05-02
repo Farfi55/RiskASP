@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using EmbASP.predicates;
+﻿using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using it.unical.mat.embasp.@base;
 using it.unical.mat.embasp.languages.asp;
 using it.unical.mat.embasp.platforms.desktop;
@@ -14,9 +13,29 @@ namespace EmbASP
 {
     public class AIController
     {
-        private Handler _handler = new DesktopHandler(new DLV2DesktopService("./Executables/dlv2.exe"));
+        private Handler _handler;
+        private string ai1;
         public void ConfigAsp()
         {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) 
+            {
+                ai1 = @".\AIs\ai3";
+                _handler = new DesktopHandler(new DLV2DesktopService("./Executables/dlv2.exe"));
+            }
+            else{
+                ai1 = @"./AIs/ai3";
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    _handler = new DesktopHandler(new DLV2DesktopService("./Executables/dlv2-linux"));
+                }
+                else
+                {
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                    {
+                        _handler = new DesktopHandler(new DLV2DesktopService("./Executables/dlv2-mac"));
+                    }
+                }
+            }
             ASPMapper.Instance.RegisterClass(typeof(Player));
             /*
             ASPMapper.Instance.RegisterClass(typeof(AfterAttackMove));
@@ -31,17 +50,15 @@ namespace EmbASP
             ASPMapper.Instance.RegisterClass(typeof(UnitsToPlace));*/
 
             InputProgram input = new ASPInputProgram();
-            
-            string ai1 = @"./AIs/ai1.txt";
 
             if (File.Exists(ai1))
             {
                 string str = System.IO.File.ReadAllText(ai1);
                 input.AddProgram(str);
-                //input.AddFilesPath(ai1);   Non funziona 
+                //input.AddFilesPath(ai1);  // Non funziona 
                 
                 
-                //input.AddObjectInput( objs );
+                //Debug.Log(input.Programs.ToString());
             }
             _handler.AddProgram(input);
             AnswerSets answerSets = (AnswerSets)_handler.StartSync();
@@ -66,11 +83,7 @@ namespace EmbASP
                 Debug.Log(p1.get_name());
             }
 
-
-
         }
-        
-
         
 
     }

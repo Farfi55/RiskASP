@@ -26,6 +26,10 @@ public class GameManager : MonoBehaviour
     
     public Player CurrentPlayer => _currentPlayer;
     private Player _currentPlayer;
+
+
+    public GamePhase GamePhase => _gamePhase;
+    private GamePhase _gamePhase = GamePhase.Setup;
     
     public int Turn => _turn;
     private int _turn;
@@ -44,7 +48,7 @@ public class GameManager : MonoBehaviour
     public Action<IPhase> OnPhaseEnded;
     public Action<IPhase, IPhase> OnTurnPhaseChanged;
     public Action<Player, Player> OnPlayerTurnChanged;
-    
+
 
     private void Awake()
     {
@@ -55,6 +59,7 @@ public class GameManager : MonoBehaviour
         }
         else
             Instance = this;
+        SetGamePhase(GamePhase.Setup);
 
         _tr = TerritoryRepository.Instance;
         _cr = ContinentRepository.Instance;
@@ -75,6 +80,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         SetupGame();
+        SetGamePhase(GamePhase.Playing);
         NextTurn();
     }
 
@@ -180,11 +186,24 @@ public class GameManager : MonoBehaviour
         StartTurnPhase();
         OnTurnPhaseChanged?.Invoke(oldPhase, _currentPhase);
     }
+
+    private void SetGamePhase(GamePhase gamePhase)
+    {
+        _gamePhase = gamePhase;
+    }
     
     
     private void GameOver()
     {
+        SetGamePhase(GamePhase.Over);
         throw new NotImplementedException();
     }
 
+}
+
+public enum GamePhase
+{
+    Setup,
+    Playing,
+    Over
 }

@@ -17,6 +17,7 @@ namespace TurnPhases
         private int _remainingTroopsToPlace;
 
         public Action OnTroopsToPlaceChanged;
+        public Action<ReinforceAction> OnTroopsPlaced;
 
 
         public ReinforcePhase(GameManager gameManager, ContinentRepository continentRepository,
@@ -39,6 +40,7 @@ namespace TurnPhases
             if (action is ReinforceAction placeTroopsAction)
             {
                 placeTroopsAction.Territory.AddTroops(placeTroopsAction.Troops);
+                OnTroopsPlaced?.Invoke(placeTroopsAction);
                 _remainingTroopsToPlace -= placeTroopsAction.Troops;
             }
             else if (action is EndPhaseAction)

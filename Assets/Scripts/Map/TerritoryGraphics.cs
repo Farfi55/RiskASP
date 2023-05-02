@@ -1,4 +1,5 @@
 using System;
+using Actions;
 using player;
 using TMPro;
 using Unity.VisualScripting;
@@ -15,6 +16,8 @@ namespace Map
         [SerializeField] private SpriteRenderer _territorySpriteRenderer;
         [SerializeField] private SpriteRenderer _troopsCountBackgroundSpriteRenderer;
         [SerializeField] private TMP_Text _troopsCountText;
+        [SerializeField] private TroopCountChangedEffect _troopsChangedEffectPrefab;
+        [SerializeField] private Transform _troopsChangedEffectParent;
         private PlayerColor _playerColor;
 
         private bool _isHovered;
@@ -26,8 +29,23 @@ namespace Map
             _territory.OnStateChanged += UpdateGraphics;
             if(_territorySelection != null)
                 _territorySelection.OnStateChanged += OnStateChangedTerritorySelection;
-            else Debug.LogWarning("TerritorySelection is null");
+            else 
+                Debug.LogWarning("TerritorySelection is null");
+            
+            _territory.OnTroopsChanged += OnTroopsChanged;
         }
+
+
+        private void OnTroopsChanged(int oldTroops, int newTroops)
+        {
+            if(GameManager.Instance.GamePhase == GamePhase.Setup)
+                return;
+            
+            var difference = newTroops - oldTroops;
+            var troopCountChangedEffect = InstantiateTroopCountChangedEffect();
+            troopCountChangedEffect.SetTroopText(difference);
+        }
+
 
         private void OnStateChangedTerritorySelection(TerritorySelection territorySelection)
         {
@@ -35,6 +53,13 @@ namespace Map
             _isHovered = territorySelection.IsHovered;
             _isDisabled = territorySelection.IsDisabled;
             UpdateColor();
+        }
+        
+        private TroopCountChangedEffect InstantiateTroopCountChangedEffect()
+        {
+            var troopCountChangedEffect = Instantiate(_troopsChangedEffectPrefab, _troopsChangedEffectParent);
+            troopCountChangedEffect.SetTerritory(_territory);
+            return troopCountChangedEffect;
         }
 
 

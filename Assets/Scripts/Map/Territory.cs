@@ -21,7 +21,8 @@ namespace Map
 
         public Action OnStateChanged;
         public Action<Player,Player> OnOwnerChanged;
-
+        public Action<int, int> OnTroopsChanged;
+        
 
         public void Start()
         {
@@ -59,12 +60,15 @@ namespace Map
 
         public void AddTroops(int amount)
         {
+            var oldTroops = Troops;
             Troops += amount;
+            OnTroopsChanged?.Invoke(oldTroops, Troops);
             OnStateChanged?.Invoke();
         }
 
         public void RemoveTroops(int amount)
         {
+            var oldTroops = Troops;
             Troops -= amount;
             if (Troops < 0)
             {
@@ -72,6 +76,7 @@ namespace Map
                 Troops = 0;
             }
 
+            OnTroopsChanged?.Invoke(oldTroops, Troops);
             OnStateChanged?.Invoke();
         }
 
@@ -102,8 +107,6 @@ namespace Map
             OnStateChanged?.Invoke();
         }
         
-        
-
 
         public IEnumerable<Territory> GetEnemyNeighbours()
         {

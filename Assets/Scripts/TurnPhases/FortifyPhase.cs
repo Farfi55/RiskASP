@@ -1,3 +1,4 @@
+using System;
 using Actions;
 using Map;
 using player;
@@ -12,6 +13,8 @@ namespace TurnPhases
         private readonly GameManager _gm;
         private readonly ContinentRepository _cr;
         private readonly TerritoryRepository _tr;
+
+        public Action<FortifyAction> OnFortifyAction;
 
 
         public FortifyPhase(GameManager gameManager, ContinentRepository continentRepository,
@@ -32,6 +35,7 @@ namespace TurnPhases
             {
                 fortifyAction.From.RemoveTroops(fortifyAction.MovedTroops);
                 fortifyAction.To.AddTroops(fortifyAction.MovedTroops);
+                OnFortifyAction?.Invoke(fortifyAction);
                 _gm.NextTurnPhase();
             }
             else if(action is EndPhaseAction)

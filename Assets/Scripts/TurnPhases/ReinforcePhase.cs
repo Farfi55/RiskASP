@@ -51,8 +51,8 @@ namespace TurnPhases
                     player.RandomlyDistributeTroops(_remainingTroopsToPlace);
                     _remainingTroopsToPlace = 0;
                 }
-                
                 _gm.NextTurnPhase();
+                return;
             }
             else
                 Debug.LogError($"ReinforcePhase: Received action of type {action.GetType().Name}");

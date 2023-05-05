@@ -143,7 +143,6 @@ public class GameManager : MonoBehaviour
     }
 
     
-
     public void HandlePlayerAction(PlayerAction action)
     {
         if (action.Player != _currentPlayer)

@@ -4,6 +4,9 @@ using it.unical.mat.embasp.@base;
 using it.unical.mat.embasp.languages.asp;
 using it.unical.mat.embasp.platforms.desktop;
 using it.unical.mat.embasp.specializations.dlv2.desktop;
+using Map;
+using TurnPhases.AI;
+using UnityEditor.Tilemaps;
 using UnityEngine;
 using Player = EmbASP.predicates.Player;
 
@@ -14,16 +17,25 @@ namespace EmbASP
     public class AIController
     {
         private Handler _handler;
-        private string ai1;
+        private string aiRenforcement;
+        private string aiAttack;
+        private string aiFortify;
+        private string aiFacts;
         public void ConfigAsp()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) 
             {
-                ai1 = @".\AIs\ai3";
-                _handler = new DesktopHandler(new DLV2DesktopService("./Executables/dlv2.exe"));
+                aiRenforcement = @".\AIs\aiRenforcement";
+                aiAttack = @".\AIs\aiAttack";
+                aiFortify = @".\AIs\aiFortify";
+                aiFacts = @".\AIs\aiFacts";
+                _handler = new DesktopHandler(new DLV2DesktopService(".\\Executables\\dlv2.exe"));
             }
             else{
-                ai1 = @"./AIs/ai3";
+                aiRenforcement = @"./AIs/aiRenforcement";
+                aiAttack = @"./AIs/aiAttack";
+                aiFortify = @"./AIs/aiFortify";
+                aiFacts = @"./AIs/aiFacts";
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
                     _handler = new DesktopHandler(new DLV2DesktopService("./Executables/dlv2-linux"));
@@ -51,15 +63,7 @@ namespace EmbASP
 
             InputProgram input = new ASPInputProgram();
 
-            if (File.Exists(ai1))
-            {
-                string str = System.IO.File.ReadAllText(ai1);
-                input.AddProgram(str);
-                //input.AddFilesPath(ai1);  // Non funziona 
-                
-                
-                //Debug.Log(input.Programs.ToString());
-            }
+            
             _handler.AddProgram(input);
             AnswerSets answerSets = (AnswerSets)_handler.StartSync();
 
@@ -84,7 +88,31 @@ namespace EmbASP
             }
 
         }
+
+
+        private void loadAi(string aiPath, InputProgram inputProgram)
+        {
+            if (File.Exists(aiPath) && File.Exists(aiFacts))
+            {
+                string str = System.IO.File.ReadAllText(aiPath);
+                inputProgram.AddProgram(str);
+                str = System.IO.File.ReadAllText(aiFacts);
+                inputProgram.AddProgram(str);
+            }
+        }
         
+        public InputProgram StartRenforcement()
+        {
+            InputProgram inputProgram = new ASPInputProgram();
+            loadAi(aiRenforcement, inputProgram);
+
+            FortifyAIPhase.Start(player, inputProgram);
+            
+            _handler.AddProgram(inputProgram);
+            
+            
+            //_handler.StartAsync((o) => { bot.setReinforcementAS((AnswerSets) o); });
+        }
 
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using Actions;
+using EmbASP;
 using it.unical.mat.embasp.@base;
 using it.unical.mat.embasp.languages.asp;
 using Map;
@@ -27,16 +28,19 @@ namespace TurnPhases.AI
             _tr = tr;
         }
 
-        public void Start(Player player, InputProgram inputProgram)
+        public void Start(Player player)
         {
             
-            throw new NotImplementedException();
+            AIController controller = new AIController();
+            controller.ConfigAsp();
+            controller.StartRenforcement(player, TerritoryRepository.Instance);
         }
 
         public void OnResponse(AnswerSet answerSet)
         {
             throw new NotImplementedException();
         }
+
 
         public void End(Player player)
         {

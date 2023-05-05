@@ -1,7 +1,9 @@
 using Actions;
+using EmbASP.predicates;
+using it.unical.mat.embasp.@base;
 using it.unical.mat.embasp.languages.asp;
 using Map;
-using player;
+using Player = player.Player;
 
 namespace TurnPhases.AI
 {
@@ -19,9 +21,11 @@ namespace TurnPhases.AI
             _ar = ar;
         }
 
-        public void Start(Player player)
+        public void Start(Player player, InputProgram inputProgram)
         {
-            throw new System.NotImplementedException();
+            // inputProgram.AddObjectInput(new Phase("reinforce"));
+            // inputProgram.AddObjectInput(new UnitsToPlace(_reinforcePhase.RemainingTroopsToPlace));
+            
         }
 
         public void OnResponse(AnswerSet answerSet)

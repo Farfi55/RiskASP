@@ -1,5 +1,6 @@
 using System;
 using Actions;
+using it.unical.mat.embasp.@base;
 using it.unical.mat.embasp.languages.asp;
 using Map;
 using player;
@@ -11,19 +12,24 @@ namespace TurnPhases.AI
     {
         private readonly GameManager _gm;
         private readonly ActionReader _ar;
+        private readonly TerritoryRepository _tr;
+        
+        
 
         private AttackPhase _attackPhase => _gm.AttackPhase;
         public AttackState State => _attackPhase.State;
 
         
-        public AttackAIPhase(GameManager gm, ActionReader ar)
+        public AttackAIPhase(GameManager gm, ActionReader ar, TerritoryRepository tr)
         {
             _gm = gm;
             _ar = ar;
+            _tr = tr;
         }
 
-        public void Start(Player player)
+        public void Start(Player player, InputProgram inputProgram)
         {
+            
             throw new NotImplementedException();
         }
 

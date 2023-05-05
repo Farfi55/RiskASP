@@ -1,4 +1,5 @@
 using Actions;
+using it.unical.mat.embasp.@base;
 using it.unical.mat.embasp.languages.asp;
 using Map;
 using player;
@@ -19,7 +20,7 @@ namespace TurnPhases.AI
             _ar = ar;
         }
 
-        public void Start(Player player)
+        public void Start(Player player, InputProgram inputProgram)
         {
             throw new System.NotImplementedException();
         }

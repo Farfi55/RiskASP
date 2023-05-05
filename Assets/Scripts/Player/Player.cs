@@ -45,8 +45,7 @@ namespace player
             gameObject.name = $"Player {newName}";
         }
 
-        
-        
+
         public int DistributeNTroopsPerTerritory(int troopsPerTerritory, int troops)
         {
             var territories = _territories.ToList();

@@ -19,12 +19,11 @@ namespace player
     {
         private GameManager _gm;
 
-        [SerializeField] private string _brainFilePath;
 
-        [SerializeField] private string _reinforceBrainPath;
+        [SerializeField] private string _constantsBrainPath;
+        [Space(10)] [SerializeField] private string _reinforceBrainPath;
         [SerializeField] private string _attackBrainPath;
         [SerializeField] private string _fortifyBrainPath;
-        [SerializeField] private string _constantsBrainPath;
 
         public IAIPhase currentPhase { get; private set; }
         private Handler _handler;
@@ -40,27 +39,28 @@ namespace player
         {
             _gm = GameManager.Instance;
             SetupPhases();
-            LoadExecutable();
+            _handler = LoadExecutable();
             RegisterClassesToMapper();
         }
 
-        
 
         private void SetupPhases()
         {
             var ar = ActionReader.Instance;
             var tr = TerritoryRepository.Instance;
-            
+
             reinforcePhase = new ReinforceAIPhase(_gm, ar);
             attackPhase = new AttackAIPhase(_gm, ar, tr);
             fortifyPhase = new FortifyAIPhase(_gm, ar);
             emptyPhase = new EmptyAIPhase();
+            currentPhase = emptyPhase;
+        }
 
-            _gm.OnTurnPhaseChanged += (_, newPhase) =>
-            {
-                var phase = TurnPhaseToAIPhase(newPhase);
-                SetCurrentPhase(phase);
-            };
+        // called from BotPlayer
+        public void OnTurnPhaseChanged(IPhase oldPhase, IPhase newPhase)
+        {
+            var phase = TurnPhaseToAIPhase(newPhase);
+            SetCurrentPhase(phase);
         }
 
         private IAIPhase TurnPhaseToAIPhase(IPhase newPhase)
@@ -80,10 +80,10 @@ namespace player
         }
 
 
-        public void HandleCommunication(Player p)
+        public void HandleCommunication(Player player)
         {
             InputProgram inputProgram = CreateProgram();
-            currentPhase.Start(p, inputProgram);
+            currentPhase.Start(player, inputProgram);
             _handler.AddProgram(inputProgram);
             _handler.StartAsync(new PhasesCallback(this, inputProgram, _handler));
         }
@@ -104,7 +104,7 @@ namespace player
             public void Callback(Output output)
             {
                 _handler.RemoveProgram(_inputProgram);
-                
+
                 AnswerSet answerSet;
                 var answerSets = (AnswerSets)output;
                 var optimalAnswerSet = answerSets.GetOptimalAnswerSets();
@@ -121,32 +121,44 @@ namespace player
         {
             string currentBrain = currentPhase switch
             {
-                ReinforceAIPhase _ => _reinforceBrainPath,
-                AttackAIPhase _ => _attackBrainPath,
-                FortifyAIPhase _ => _fortifyBrainPath,
-                _ => throw new ArgumentOutOfRangeException()
+                ReinforceAIPhase => _reinforceBrainPath,
+                AttackAIPhase => _attackBrainPath,
+                FortifyAIPhase => _fortifyBrainPath,
+                _ => ""
             };
 
             InputProgram inputProgram = new ASPInputProgram();
-            LoadBrain(currentBrain, inputProgram);
+            LoadConstants(inputProgram);
+
+            // todo: uncomment when brains are ready
+            // LoadBrain(currentBrain, inputProgram);
 
             return inputProgram;
         }
 
-        private void LoadBrain(string aiPath, InputProgram inputProgram)
+        private void LoadConstants(InputProgram inputProgram)
         {
-            if (File.Exists(aiPath) && File.Exists(_constantsBrainPath))
-            {
-                string str = File.ReadAllText(aiPath);
-                inputProgram.AddProgram(str);
-                str = File.ReadAllText(_constantsBrainPath);
-                inputProgram.AddProgram(str);
-            }
+            if(_constantsBrainPath == "")
+                return;
+            
+            if (!File.Exists(_constantsBrainPath))
+                throw new IOException("Constants file not found");
+            string str = File.ReadAllText(_constantsBrainPath);
+            inputProgram.AddProgram(str);
+        }
+
+        private void LoadBrain(string brainPath, InputProgram inputProgram)
+        {
+            if(brainPath == "")
+                throw new Exception("Brain path not set");
+            if (!File.Exists(brainPath))
+                throw new IOException("Brain file not found");
+            string str = File.ReadAllText(brainPath);
+            inputProgram.AddProgram(str);
         }
 
 
-
-        void LoadExecutable()
+        private Handler LoadExecutable()
         {
             var separator = Path.DirectorySeparatorChar;
             string executablePath;
@@ -164,7 +176,7 @@ namespace player
             }
             else throw new Exception("OS not supported");
 
-            _handler = new DesktopHandler(new DLV2DesktopService(executablePath));
+            return new DesktopHandler(new DLV2DesktopService(executablePath));
         }
 
 

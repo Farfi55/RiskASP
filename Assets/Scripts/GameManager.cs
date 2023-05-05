@@ -59,6 +59,7 @@ public class GameManager : MonoBehaviour
         }
         else
             Instance = this;
+        
         SetGamePhase(GamePhase.Setup);
 
         _tr = TerritoryRepository.Instance;
@@ -86,11 +87,13 @@ public class GameManager : MonoBehaviour
 
     private void SetupGame()
     {
+        if (Players.Count == 0)
+            Players.AddRange(FindObjectsByType<Player>(FindObjectsInactive.Exclude, FindObjectsSortMode.None));
+        
         for (var i = Players.Count; i < NPlayers; i++)
         {
             Players.Add(PlayerCreator.Instance.NewPlayer());
         }
-        
 
         _tr.RandomlyAssignTerritories(Players);
         DistributeTroops();

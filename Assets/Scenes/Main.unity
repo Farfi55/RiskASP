@@ -2088,7 +2088,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 286686166d245e64bbe3ad872878ba11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _nPlayers: 2
+  _nPlayers: 3
   Players: []
 --- !u!4 &280334211
 Transform:
@@ -8387,6 +8387,68 @@ Transform:
   m_Father: {fileID: 305473743}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &741728110
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 1197010546}
+    m_Modifications:
+    - target: {fileID: 2704742226423634088, guid: 729e66ac09ea56e7c95d6e785e98c838, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 729e66ac09ea56e7c95d6e785e98c838, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4.261346
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 729e66ac09ea56e7c95d6e785e98c838, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.501556
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 729e66ac09ea56e7c95d6e785e98c838, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.013631632
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 729e66ac09ea56e7c95d6e785e98c838, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 729e66ac09ea56e7c95d6e785e98c838, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 729e66ac09ea56e7c95d6e785e98c838, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 729e66ac09ea56e7c95d6e785e98c838, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 729e66ac09ea56e7c95d6e785e98c838, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 729e66ac09ea56e7c95d6e785e98c838, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 729e66ac09ea56e7c95d6e785e98c838, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6030655713958463109, guid: 729e66ac09ea56e7c95d6e785e98c838, type: 3}
+      propertyPath: m_Name
+      value: Human Player
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 729e66ac09ea56e7c95d6e785e98c838, type: 3}
+--- !u!4 &741728111 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2704742226423634088, guid: 729e66ac09ea56e7c95d6e785e98c838, type: 3}
+  m_PrefabInstance: {fileID: 741728110}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &752165218
 GameObject:
   m_ObjectHideFlags: 0
@@ -9343,8 +9405,8 @@ LineRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -5
   m_Positions:
-  - {x: -11.086549, y: 7.96879, z: -0.36469555}
-  - {x: -9.767406, y: 8.149595, z: -0.4041391}
+  - {x: -10.969178, y: 7.640151, z: -0.36469555}
+  - {x: -9.79088, y: 8.173069, z: -0.4041391}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.2
@@ -13237,10 +13299,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1197010545}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.261346, y: 2.501556, z: 0.013631632}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 741728111}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -25569,8 +25632,8 @@ LineRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -5
   m_Positions:
-  - {x: 1.4160975, y: 5.614133, z: -0.36469555}
-  - {x: 2.3012512, y: 5.5771604, z: -0.4041391}
+  - {x: 1.6112581, y: 5.8865447, z: -0.36469555}
+  - {x: 2.2635112, y: 5.4706, z: -0.4041391}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.2
@@ -25831,8 +25894,8 @@ LineRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -5
   m_Positions:
-  - {x: 1.0969006, y: 4.716896, z: -0.36469555}
-  - {x: 2.3653824, y: 4.6772385, z: -0.4041391}
+  - {x: 1.3463073, y: 4.60369, z: -0.36469555}
+  - {x: 2.190267, y: 4.602947, z: -0.4041391}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.2

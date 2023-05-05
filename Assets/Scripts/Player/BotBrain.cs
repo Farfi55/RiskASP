@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using EmbASP;
 using it.unical.mat.embasp.@base;
@@ -22,6 +23,33 @@ namespace player
         public EmptyAIPhase emptyPhase { get; private set; }
 
 
+        private void Awake()
+        {
+            SetupPhases();
+
+            LoadExecutable();
+            LoadBrainFile();
+        }
+
+        private void SetupPhases()
+        {
+            reinforcePhase = new ReinforceAIPhase();
+            attackPhase = new AttackAIPhase();
+            fortifyPhase = new FortifyAIPhase();
+            emptyPhase = new EmptyAIPhase();
+        }
+
+        void LoadBrainFile()
+        {
+            
+        }
+        
+        void LoadExecutable()
+        {
+            
+        }
+        
+        
         
         
     }

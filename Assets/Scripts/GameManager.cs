@@ -198,6 +198,10 @@ public class GameManager : MonoBehaviour
         throw new NotImplementedException();
     }
 
+    public bool IsCurrentPlayer(Player player)
+    {
+        return _currentPlayer == player;
+    }
 }
 
 public enum GamePhase

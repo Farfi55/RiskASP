@@ -17,8 +17,13 @@ namespace player
         
         private readonly HashSet<Territory> _territories = new();
         public IEnumerable<Territory> Territories => _territories;
-        [FormerlySerializedAs("Color")] public PlayerColor Color;
+        public PlayerColor Color;
 
+        
+        public bool IsHuman() => GetComponent<HumanPlayer>() != null;
+        public bool IsBot() => GetComponent<BotPlayer>() != null;
+        
+        
         public int GetTroopsCountInTerritories()
         {
             return _territories.Sum(territory => territory.Troops);

@@ -7,6 +7,8 @@ using it.unical.mat.embasp.@base;
 using it.unical.mat.embasp.languages.asp;
 using it.unical.mat.embasp.platforms.desktop;
 using it.unical.mat.embasp.specializations.dlv2.desktop;
+using Map;
+using TurnPhases;
 using TurnPhases.AI;
 using UnityEngine;
 
@@ -15,18 +17,19 @@ namespace player
     [CreateAssetMenu(fileName = "new Bot Brain", menuName = "BotBrain", order = 0)]
     public class BotBrain : ScriptableObject
     {
+        private GameManager _gm;
+
         [SerializeField] private string _brainFilePath;
 
-        [SerializeField] private string _filePathAiRenforcement;
-        [SerializeField] private string _filePathAiAttack;
-        [SerializeField] private string _filePathAiFortify;
-        [SerializeField] private string _filePathAiFacts;
+        [SerializeField] private string _reinforceBrainPath;
+        [SerializeField] private string _attackBrainPath;
+        [SerializeField] private string _fortifyBrainPath;
+        [SerializeField] private string _constantsBrainPath;
 
-        public IAIPhase CurrentPhase => _currentPhase;
-        private IAIPhase _currentPhase;
+        public IAIPhase currentPhase { get; private set; }
         private Handler _handler;
 
-    
+
         public ReinforceAIPhase reinforcePhase { get; private set; }
         public AttackAIPhase attackPhase { get; private set; }
         public FortifyAIPhase fortifyPhase { get; private set; }
@@ -35,121 +38,149 @@ namespace player
 
         private void Awake()
         {
+            _gm = GameManager.Instance;
             SetupPhases();
             LoadExecutable();
-            LoadBrainFile();
-            ConfigEmbAsp();
+            RegisterClassesToMapper();
         }
+
+        
 
         private void SetupPhases()
         {
-            reinforcePhase = new ReinforceAIPhase();
-            attackPhase = new AttackAIPhase();
-            fortifyPhase = new FortifyAIPhase();
+            var ar = ActionReader.Instance;
+            var tr = TerritoryRepository.Instance;
+            
+            reinforcePhase = new ReinforceAIPhase(_gm, ar);
+            attackPhase = new AttackAIPhase(_gm, ar, tr);
+            fortifyPhase = new FortifyAIPhase(_gm, ar);
             emptyPhase = new EmptyAIPhase();
-        }
 
-        
-        public void HandleComunication(Player p)
-        {
-            InputProgram input = InitAI();
-            _currentPhase.Start(p, input);
-            _handler.AddProgram(input);
-            _handler.StartAsync(new PhasesCallback());
-        }
-
-        internal class PhasesCallback : ICallback
-        {
-            BotBrain _botBrain;
-            public void Callback(Output o)
+            _gm.OnTurnPhaseChanged += (_, newPhase) =>
             {
-                var answersets = (AnswerSets)o; 
-                _botBrain.CurrentPhase.OnResponse(answersets.Answersets[0]);
+                var phase = TurnPhaseToAIPhase(newPhase);
+                SetCurrentPhase(phase);
+            };
+        }
+
+        private IAIPhase TurnPhaseToAIPhase(IPhase newPhase)
+        {
+            return newPhase switch
+            {
+                ReinforcePhase => reinforcePhase,
+                AttackPhase => attackPhase,
+                FortifyPhase => fortifyPhase,
+                _ => emptyPhase
+            };
+        }
+
+        private void SetCurrentPhase(IAIPhase phase)
+        {
+            currentPhase = phase;
+        }
+
+
+        public void HandleCommunication(Player p)
+        {
+            InputProgram inputProgram = CreateProgram();
+            currentPhase.Start(p, inputProgram);
+            _handler.AddProgram(inputProgram);
+            _handler.StartAsync(new PhasesCallback(this, inputProgram, _handler));
+        }
+
+        private class PhasesCallback : ICallback
+        {
+            private BotBrain _botBrain;
+            private InputProgram _inputProgram;
+            private Handler _handler;
+
+            public PhasesCallback(BotBrain botBrain, InputProgram inputProgram, Handler handler)
+            {
+                _botBrain = botBrain;
+                _inputProgram = inputProgram;
+                _handler = handler;
+            }
+
+            public void Callback(Output output)
+            {
+                _handler.RemoveProgram(_inputProgram);
+                
+                AnswerSet answerSet;
+                var answerSets = (AnswerSets)output;
+                var optimalAnswerSet = answerSets.GetOptimalAnswerSets();
+
+                if (optimalAnswerSet.Count > 0)
+                    answerSet = optimalAnswerSet[0];
+                else answerSet = answerSets.Answersets[0];
+
+                _botBrain.currentPhase.OnResponse(answerSet);
             }
         }
-        
-        public InputProgram InitAI()
+
+        public InputProgram CreateProgram()
         {
-            string currentAI = _currentPhase switch
+            string currentBrain = currentPhase switch
             {
-                ReinforceAIPhase _ => _filePathAiRenforcement,
-                AttackAIPhase _ => _filePathAiAttack,
-                FortifyAIPhase _ => _filePathAiFortify,
+                ReinforceAIPhase _ => _reinforceBrainPath,
+                AttackAIPhase _ => _attackBrainPath,
+                FortifyAIPhase _ => _fortifyBrainPath,
                 _ => throw new ArgumentOutOfRangeException()
             };
-            
-            InputProgram input = new ASPInputProgram();
-            LoadAi(currentAI, input);
 
-            return input;
+            InputProgram inputProgram = new ASPInputProgram();
+            LoadBrain(currentBrain, inputProgram);
+
+            return inputProgram;
         }
-        
-        private void LoadAi(string aiPath, InputProgram inputProgram)
+
+        private void LoadBrain(string aiPath, InputProgram inputProgram)
         {
-            if (File.Exists(aiPath) && File.Exists(_filePathAiFacts))
+            if (File.Exists(aiPath) && File.Exists(_constantsBrainPath))
             {
-                string str = System.IO.File.ReadAllText(aiPath);
+                string str = File.ReadAllText(aiPath);
                 inputProgram.AddProgram(str);
-                str = System.IO.File.ReadAllText(_filePathAiFacts);
+                str = File.ReadAllText(_constantsBrainPath);
                 inputProgram.AddProgram(str);
             }
         }
-        
-        
-        void LoadBrainFile()
-        {
-            var separator = Path.DirectorySeparatorChar;
-            _filePathAiRenforcement = $@".{separator}AIs{separator}ReinforcementAI";
-            _filePathAiAttack = $@".{separator}AIs{separator}AttackAI";
-            _filePathAiFortify = $@".{separator}AIs{separator}FortifyAI";
-            _filePathAiFacts = $@".{separator}AIs{separator}Facts";
-        }
-        
-        
-        
+
+
+
         void LoadExecutable()
         {
             var separator = Path.DirectorySeparatorChar;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) 
+            string executablePath;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-
-                _handler = new DesktopHandler(new DLV2DesktopService($".{separator}Executables{separator}dlv2.exe"));
+                executablePath = $".{separator}Executables{separator}dlv2.exe";
             }
-            else{
-
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                {
-                    _handler = new DesktopHandler(new DLV2DesktopService($".{separator}Executables{separator}dlv2-linux"));
-                }
-                else
-                {
-                    if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                    {
-                        _handler = new DesktopHandler(new DLV2DesktopService($".{separator}Executables{separator}dlv2-mac"));
-                    }
-                }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                executablePath = $".{separator}Executables{separator}dlv2-linux";
             }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                executablePath = $".{separator}Executables{separator}dlv2-mac";
+            }
+            else throw new Exception("OS not supported");
+
+            _handler = new DesktopHandler(new DLV2DesktopService(executablePath));
         }
 
 
-
-
-
-        void ConfigEmbAsp()
+        void RegisterClassesToMapper()
         {
-            
             ASPMapper.Instance.RegisterClass(typeof(EmbASP.predicates.Player));
             ASPMapper.Instance.RegisterClass(typeof(AfterAttackMove));
             ASPMapper.Instance.RegisterClass(typeof(Attack));
             ASPMapper.Instance.RegisterClass(typeof(AttackResult));
             ASPMapper.Instance.RegisterClass(typeof(Move));
             ASPMapper.Instance.RegisterClass(typeof(Place));
-            
+
             ASPMapper.Instance.RegisterClass(typeof(StopAttacking));
             ASPMapper.Instance.RegisterClass(typeof(TerritoryControl));
             ASPMapper.Instance.RegisterClass(typeof(Turn));
             ASPMapper.Instance.RegisterClass(typeof(UnitsToPlace));
-            
         }
     }
 }

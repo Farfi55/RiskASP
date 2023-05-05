@@ -101,12 +101,12 @@ namespace EmbASP
             }
         }
         
-        public InputProgram StartRenforcement()
+        public void StartRenforcement()
         {
             InputProgram inputProgram = new ASPInputProgram();
             loadAi(aiRenforcement, inputProgram);
 
-            FortifyAIPhase.Start(player, inputProgram);
+            // FortifyAIPhase.Start(player, inputProgram);
             
             _handler.AddProgram(inputProgram);
             

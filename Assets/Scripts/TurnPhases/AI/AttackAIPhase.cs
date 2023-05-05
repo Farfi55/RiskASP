@@ -27,13 +27,10 @@ namespace TurnPhases.AI
             _ar = ar;
             _tr = tr;
         }
-
-        public void Start(Player player)
+        
+        public void Start(Player player, InputProgram inputProgram)
         {
-            
-            AIController controller = new AIController();
-            controller.ConfigAsp();
-            controller.StartRenforcement(player, TerritoryRepository.Instance);
+            throw new NotImplementedException();
         }
 
         public void OnResponse(AnswerSet answerSet)

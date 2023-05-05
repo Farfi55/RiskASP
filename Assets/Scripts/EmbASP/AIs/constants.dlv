@@ -1,0 +1,62 @@
+﻿% continent(ID, reward) 
+
+continent("n_america", 5).
+continent("s_america", 2).
+continent("africa",    3).
+continent("europe",    5).
+continent("asia",      7).
+continent("australia", 2).
+
+
+% territory(ID, Continent).
+territory("alaska",                   "n_america").
+territory("alberta",                  "n_america").
+territory("central_america",          "n_america").
+territory("eastern_us",               "n_america").
+territory("greenland",                "n_america").
+territory("northwest_territory",      "n_america").
+territory("ontario",                  "n_america").
+territory("quebec",                   "n_america").
+territory("western_us",               "n_america").
+
+territory("argentina",                "s_america").
+territory("brazil",                   "s_america").
+territory("peru",                     "s_america").
+territory("venezuela",                "s_america").
+
+territory("congo",                    "africa").
+territory("east_africa",              "africa").
+territory("egypt",                    "africa").
+territory("madagascar",               "africa").
+territory("north_africa",             "africa").
+territory("south_africa",             "africa").
+
+territory("great_britain",            "europe").
+territory("iceland",                  "europe").
+territory("northern_europe",          "europe").
+territory("scandinavia",              "europe").
+territory("southern_europe",          "europe").
+territory("ukraine",                  "europe").
+territory("western_europe",           "europe").
+
+territory("afghanistan",              "asia").
+territory("china",                    "asia").
+territory("india",                    "asia").
+territory("irkutsk",                  "asia").
+territory("japan",                    "asia").
+territory("kamchatka",                "asia").
+territory("middle_east",              "asia").
+territory("mongolia",                 "asia").
+territory("siam",                     "asia").
+territory("siberia",                  "asia").
+territory("ural",                     "asia").
+territory("yakutsk",                  "asia").
+
+territory("eastern_australia",        "australia").
+territory("indonesia",                "australia").
+territory("new_guinea",               "australia").
+territory("western_australia",        "australia").
+
+
+
+connection(ID1, ID2) :- connection(ID2, ID1).

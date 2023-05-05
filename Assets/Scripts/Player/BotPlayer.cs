@@ -7,17 +7,20 @@ namespace player
     [RequireComponent(typeof(Player))]
     public class BotPlayer : MonoBehaviour
     {
-        public BotBrain botBrain { get; private set; }
+        public BotBrain botBrain => _botBrain;
+        [SerializeField] private BotBrain _botBrain;
         private Player _player;
         private GameManager _gm;
 
 
         private void Awake()
         {
-            _gm = GameManager.Instance;
-            
             _player = GetComponent<Player>();
-            
+        }
+
+        private void OnEnable()
+        {
+            _gm = GameManager.Instance;
             _gm.OnTurnPhaseChanged += OnTurnPhaseChanged;
             _gm.AttackPhase.OnAttacked += OnAttacked;
         }
@@ -27,19 +30,16 @@ namespace player
             if (!_gm.IsCurrentPlayer(_player))
                 return;
             
-            botBrain.HandleCommunication(_player);
+            _botBrain.HandleCommunication(_player);
 
         }
 
         private void OnTurnPhaseChanged(IPhase oldPhase, IPhase newPhase)
         {
-            
-        }
-
-
-        private void StartTurn()
-        {
-            botBrain.HandleCommunication(_player);
+            if (!_gm.IsCurrentPlayer(_player))
+                return;
+            _botBrain.OnTurnPhaseChanged(oldPhase, newPhase);
+            _botBrain.HandleCommunication(_player);
         }
     }
 }

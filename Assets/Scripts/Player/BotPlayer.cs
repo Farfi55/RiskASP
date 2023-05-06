@@ -16,6 +16,11 @@ namespace player
         private void Awake()
         {
             _player = GetComponent<Player>();
+            if (_botBrain == null)
+            {
+                Debug.Log("BotPlayer Awake: BotBrain is null, finding a BotBrain in the scene");
+                _botBrain = FindObjectOfType<BotBrain>();
+            }
         }
 
         private void OnEnable()
@@ -36,8 +41,9 @@ namespace player
 
         private void OnTurnPhaseChanged(IPhase oldPhase, IPhase newPhase)
         {
-            if (!_gm.IsCurrentPlayer(_player))
+            if (!_gm.IsCurrentPlayer(_player) || _gm.GamePhase != GamePhase.Playing)
                 return;
+            
             _botBrain.OnTurnPhaseChanged(oldPhase, newPhase);
             _botBrain.HandleCommunication(_player);
         }

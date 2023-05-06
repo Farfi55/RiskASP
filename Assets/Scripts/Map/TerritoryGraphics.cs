@@ -35,6 +35,11 @@ namespace Map
             _territory.OnTroopsChanged += OnTroopsChanged;
         }
 
+        private void Start()
+        {
+            _playerColor = _territory.Owner.Color;
+        }
+
 
         private void OnTroopsChanged(int oldTroops, int newTroops)
         {

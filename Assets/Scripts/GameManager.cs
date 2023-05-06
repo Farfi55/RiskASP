@@ -66,6 +66,7 @@ public class GameManager : MonoBehaviour
         _cr = ContinentRepository.Instance;
         _bs = BattleSimulator.Instance;
         SetupPhases();
+        CreatePlayers();
     }
 
     private void SetupPhases()
@@ -87,6 +88,14 @@ public class GameManager : MonoBehaviour
 
     private void SetupGame()
     {
+        _tr.RandomlyAssignTerritories(Players);
+        DistributeTroops();
+        EnqueuePlayers();
+        _turn = 0;
+    }
+
+    private void CreatePlayers()
+    {
         if (Players.Count == 0)
             Players.AddRange(FindObjectsByType<Player>(FindObjectsInactive.Exclude, FindObjectsSortMode.None));
 
@@ -96,11 +105,6 @@ public class GameManager : MonoBehaviour
         foreach (var player in Players)
             if (player.Name == "")
                 PlayerCreator.Instance.SetUpPlayerFromRandomColor(player);
-
-        _tr.RandomlyAssignTerritories(Players);
-        DistributeTroops();
-        EnqueuePlayers();
-        _turn = 0;
     }
 
     private void EnqueuePlayers()

@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using EmbASP;
 using EmbASP.predicates;
@@ -14,8 +16,7 @@ using UnityEngine;
 
 namespace player
 {
-    [CreateAssetMenu(fileName = "new Bot Brain", menuName = "BotBrain", order = 0)]
-    public class BotBrain : ScriptableObject
+    public class BotBrain : MonoBehaviour
     {
         private GameManager _gm;
 
@@ -25,35 +26,45 @@ namespace player
         [SerializeField] private string _attackBrainPath;
         [SerializeField] private string _fortifyBrainPath;
 
-        public IAIPhase currentPhase { get; private set; }
+        public IAIPhase CurrentPhase { get; private set; }
         private Handler _handler;
 
 
-        public ReinforceAIPhase reinforcePhase { get; private set; }
-        public AttackAIPhase attackPhase { get; private set; }
-        public FortifyAIPhase fortifyPhase { get; private set; }
-        public EmptyAIPhase emptyPhase { get; private set; }
+        public ReinforceAIPhase ReinforcePhase { get; private set; }
+        public AttackAIPhase AttackPhase { get; private set; }
+        public FortifyAIPhase FortifyPhase { get; private set; }
+        public EmptyAIPhase EmptyPhase { get; private set; }
 
 
         private void Awake()
         {
+            Debug.Log("BotBrain Awake");
+            
             _gm = GameManager.Instance;
             SetupPhases();
             _handler = LoadExecutable();
             RegisterClassesToMapper();
         }
 
+        private void OnEnable()
+        {
+            Debug.Log("BotBrain OnEnable");
+        }
+        private void Start()
+        {
+            Debug.Log("BotBrain Start");
+        }
 
         private void SetupPhases()
         {
             var ar = ActionReader.Instance;
             var tr = TerritoryRepository.Instance;
 
-            reinforcePhase = new ReinforceAIPhase(_gm, ar);
-            attackPhase = new AttackAIPhase(_gm, ar, tr);
-            fortifyPhase = new FortifyAIPhase(_gm, ar);
-            emptyPhase = new EmptyAIPhase();
-            currentPhase = emptyPhase;
+            ReinforcePhase = new ReinforceAIPhase(_gm, ar);
+            AttackPhase = new AttackAIPhase(_gm, ar, tr);
+            FortifyPhase = new FortifyAIPhase(_gm, ar);
+            EmptyPhase = new EmptyAIPhase();
+            CurrentPhase = EmptyPhase;
         }
 
         // called from BotPlayer
@@ -67,23 +78,25 @@ namespace player
         {
             return newPhase switch
             {
-                ReinforcePhase => reinforcePhase,
-                AttackPhase => attackPhase,
-                FortifyPhase => fortifyPhase,
-                _ => emptyPhase
+                TurnPhases.ReinforcePhase => ReinforcePhase,
+                TurnPhases.AttackPhase => AttackPhase,
+                TurnPhases.FortifyPhase => FortifyPhase,
+                _ => EmptyPhase
             };
         }
 
         private void SetCurrentPhase(IAIPhase phase)
         {
-            currentPhase = phase;
+            CurrentPhase = phase;
         }
 
 
         public void HandleCommunication(Player player)
         {
+            Debug.Log("BotBrain: HandleCommunication");
+            
             InputProgram inputProgram = CreateProgram();
-            currentPhase.Start(player, inputProgram);
+            CurrentPhase.Start(player, inputProgram);
             _handler.AddProgram(inputProgram);
             _handler.StartAsync(new PhasesCallback(this, inputProgram, _handler));
         }
@@ -103,7 +116,7 @@ namespace player
 
             public void Callback(Output output)
             {
-                _handler.RemoveProgram(_inputProgram);
+                // _handler.RemoveProgram(_inputProgram);
 
                 AnswerSet answerSet;
                 var answerSets = (AnswerSets)output;
@@ -113,13 +126,14 @@ namespace player
                     answerSet = optimalAnswerSet[0];
                 else answerSet = answerSets.Answersets[0];
 
-                _botBrain.currentPhase.OnResponse(answerSet);
+                Debug.Log("BotBrain: Callback\nanswerSet: " + answerSet + "\nphase: " + _botBrain.CurrentPhase);
+                _botBrain.CurrentPhase.OnResponse(answerSet);
             }
         }
 
         public InputProgram CreateProgram()
         {
-            string currentBrain = currentPhase switch
+            string currentBrain = CurrentPhase switch
             {
                 ReinforceAIPhase => _reinforceBrainPath,
                 AttackAIPhase => _attackBrainPath,
@@ -163,36 +177,42 @@ namespace player
             var separator = Path.DirectorySeparatorChar;
             string executablePath;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                executablePath = $".{separator}Executables{separator}dlv2.exe";
-            }
+                executablePath = $"Executables{separator}dlv2.exe";
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                executablePath = $".{separator}Executables{separator}dlv2-linux";
-            }
+                executablePath = $"Executables{separator}dlv2-linux";
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                executablePath = $".{separator}Executables{separator}dlv2-mac";
-            }
+                executablePath = $"Executables{separator}dlv2-mac";
             else throw new Exception("OS not supported");
 
+            
             return new DesktopHandler(new DLV2DesktopService(executablePath));
         }
 
 
         void RegisterClassesToMapper()
         {
-            ASPMapper.Instance.RegisterClass(typeof(EmbASP.predicates.Player));
-            ASPMapper.Instance.RegisterClass(typeof(AfterAttackMove));
-            ASPMapper.Instance.RegisterClass(typeof(Attack));
-            ASPMapper.Instance.RegisterClass(typeof(AttackResult));
-            ASPMapper.Instance.RegisterClass(typeof(Move));
-            ASPMapper.Instance.RegisterClass(typeof(Place));
+            // get all classes in the namespace EmbASP.predicates
+            var predicateClasses = Assembly.GetExecutingAssembly().GetTypes()
+                .Where(t => t.Namespace == "EmbASP.predicates")
+                .ToList();
 
-            ASPMapper.Instance.RegisterClass(typeof(StopAttacking));
-            ASPMapper.Instance.RegisterClass(typeof(TerritoryControl));
-            ASPMapper.Instance.RegisterClass(typeof(Turn));
-            ASPMapper.Instance.RegisterClass(typeof(UnitsToPlace));
+            // register all predicate classes
+            foreach (var predicateClass in predicateClasses)
+            {
+                ASPMapper.Instance.RegisterClass(predicateClass);
+            }
+            
+            // ASPMapper.Instance.RegisterClass(typeof(EmbASP.predicates.Player));
+            // ASPMapper.Instance.RegisterClass(typeof(EmbASP.predicates.AfterAttackMove));
+            // ASPMapper.Instance.RegisterClass(typeof(EmbASP.predicates.Attack));
+            // ASPMapper.Instance.RegisterClass(typeof(EmbASP.predicates.AttackResult));
+            // ASPMapper.Instance.RegisterClass(typeof(EmbASP.predicates.Move));
+            // ASPMapper.Instance.RegisterClass(typeof(EmbASP.predicates.Place));
+            //
+            // ASPMapper.Instance.RegisterClass(typeof(EmbASP.predicates.StopAttacking));
+            // ASPMapper.Instance.RegisterClass(typeof(EmbASP.predicates.TerritoryControl));
+            // ASPMapper.Instance.RegisterClass(typeof(EmbASP.predicates.Turn));
+            // ASPMapper.Instance.RegisterClass(typeof(EmbASP.predicates.UnitsToPlace));
         }
     }
 }

@@ -7,7 +7,7 @@ namespace TurnPhases.AI
 {
     public class EmptyAIPhase : IAIPhase
     {
-        public void Start(Player player, InputProgram inputProgram)
+        public void Start(InputProgram inputProgram)
         {
         }
 

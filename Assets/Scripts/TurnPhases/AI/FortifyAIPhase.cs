@@ -1,3 +1,4 @@
+using System;
 using Actions;
 using EmbASP.predicates;
 using it.unical.mat.embasp.@base;
@@ -26,7 +27,11 @@ namespace TurnPhases.AI
 
         public void Start(InputProgram inputProgram)
         {
-            Debug.Log("FortifyAIPhase Start");
+            inputProgram.AddObjectInput(_pl.Name);
+            foreach (var territory in _tr.Territories.Values)
+            {
+                inputProgram.AddObjectInput(new TerritoryControl(_gm.Turn,territory.Name,territory.Owner.Name,territory.Troops));
+            }
         }
 
         public void OnResponse(AnswerSet answerSet)
@@ -38,7 +43,7 @@ namespace TurnPhases.AI
                     if (obj is Move)
                     {
                         var move = (Move) obj;
-                        var fortifyAction = new FortifyAction(_pl,_tr.Territories[move.From], _tr.Territories[move.To], move.Armies);
+                        var fortifyAction = new FortifyAction(_pl,_gm.Turn,_tr.Territories[move.From], _tr.Territories[move.To], move.Armies);
                         _ar.AddAction(fortifyAction);
                     }
                 }
@@ -51,11 +56,7 @@ namespace TurnPhases.AI
 
         public void End(Player player)
         {
-            inputProgram.AddObjectInput(_pl.Name);
-            foreach (var territory in _tr.Territories.Values)
-            {
-                inputProgram.AddObjectInput(new TerritoryControl(_gm.Turn,territory.Name,territory.Owner.Name,territory.Troops));
-            }
+            throw new NotImplementedException();
         }
     }
 }

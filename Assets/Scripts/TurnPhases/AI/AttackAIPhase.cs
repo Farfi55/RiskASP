@@ -28,7 +28,7 @@ namespace TurnPhases.AI
             _tr = tr;
         }
         
-        public void Start(Player player, InputProgram inputProgram)
+        public void Start(InputProgram inputProgram)
         {
             Debug.Log("AttackAIPhase Start");
         }

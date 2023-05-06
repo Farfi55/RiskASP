@@ -53,7 +53,7 @@ namespace TurnPhases.AI
                     if (obj is ReinforceTerritory)
                     {
                         var reinforceTerritory = (ReinforceTerritory) obj;
-                        var reinforceAction = new ReinforceAction(_pl,_tr.Territories[reinforceTerritory.Territory], reinforceTerritory.Number);
+                        var reinforceAction = new ReinforceAction(_pl,_gm.Turn,_tr.Territories[reinforceTerritory.Territory], reinforceTerritory.Number);
                         
                         _ar.AddAction(reinforceAction);
                     }

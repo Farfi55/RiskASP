@@ -12,38 +12,38 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
-    
+
     private TerritoryRepository _tr;
     private ContinentRepository _cr;
     private BattleSimulator _bs;
 
     public int NPlayers => _nPlayers;
-    [SerializeField] private int _nPlayers = 2;
-    
+    [SerializeField, Range(2, 6)] private int _nPlayers = 2;
+
     public List<Player> Players;
 
     private Queue<Player> _playerQueue = new();
-    
+
     public Player CurrentPlayer => _currentPlayer;
     private Player _currentPlayer;
 
 
     public GamePhase GamePhase => _gamePhase;
     private GamePhase _gamePhase = GamePhase.Setup;
-    
+
     public int Turn => _turn;
     private int _turn;
 
     public IPhase CurrentPhase => _currentPhase;
     private IPhase _currentPhase;
 
-    
+
     public ReinforcePhase ReinforcePhase { get; private set; }
     public AttackPhase AttackPhase { get; private set; }
     public FortifyPhase FortifyPhase { get; private set; }
     public EmptyPhase EmptyPhase { get; private set; }
 
-      
+
     public Action<IPhase> OnPhaseStarted;
     public Action<IPhase> OnPhaseEnded;
     public Action<IPhase, IPhase> OnTurnPhaseChanged;
@@ -59,7 +59,7 @@ public class GameManager : MonoBehaviour
         }
         else
             Instance = this;
-        
+
         SetGamePhase(GamePhase.Setup);
 
         _tr = TerritoryRepository.Instance;
@@ -89,10 +89,16 @@ public class GameManager : MonoBehaviour
     {
         if (Players.Count == 0)
             Players.AddRange(FindObjectsByType<Player>(FindObjectsInactive.Exclude, FindObjectsSortMode.None));
+
+        
+        foreach (var player in Players)
+        {
+            if(player.name == "") PlayerCreator.Instance.SetUpPlayerFromColor(player);
+        }
         
         for (var i = Players.Count; i < NPlayers; i++)
         {
-            Players.Add(PlayerCreator.Instance.NewPlayer());
+            Players.Add(PlayerCreator.Instance.CreateBotPlayer());
         }
 
         _tr.RandomlyAssignTerritories(Players);
@@ -104,26 +110,26 @@ public class GameManager : MonoBehaviour
     private void EnqueuePlayers()
     {
         _playerQueue = new Queue<Player>();
-        
+
         var playerOrder = Enumerable.Range(0, NPlayers).ToList();
         playerOrder.Shuffle();
-        foreach (var i in playerOrder) 
+        foreach (var i in playerOrder)
             _playerQueue.Enqueue(Players[i]);
     }
 
     private void DistributeTroops()
     {
-        int[] troopsPerNumberOfPlayer = { -1, -1, 50, 35, 30, 25, 20 };
+        int[] troopsPerNumberOfPlayer = { -1, -1, 40, 35, 30, 25, 20 };
 
         foreach (var player in Players)
         {
             int troopsPerPlayer = troopsPerNumberOfPlayer[NPlayers];
             player.ClearTroops();
-            troopsPerPlayer = player.DistributeNTroopsPerTerritory(1, troopsPerPlayer);   
+            troopsPerPlayer = player.DistributeNTroopsPerTerritory(1, troopsPerPlayer);
             player.RandomlyDistributeTroops(troopsPerPlayer);
         }
     }
-    
+
     public void NextTurnPhase()
     {
         EndTurnPhase();
@@ -135,17 +141,17 @@ public class GameManager : MonoBehaviour
             global::TurnPhases.EmptyPhase => EmptyPhase,
             _ => throw new ArgumentOutOfRangeException()
         };
-        
+
         SetTurnPhase(nextTurnPhase);
 
-        
+
         if (_currentPhase == EmptyPhase)
-        { 
+        {
             NextTurn();
         }
     }
 
-    
+
     public void HandlePlayerAction(PlayerAction action)
     {
         if (action.Player != _currentPlayer)
@@ -161,9 +167,9 @@ public class GameManager : MonoBehaviour
         {
             _currentPlayer = _playerQueue.Dequeue();
         } while (_currentPlayer.IsDead());
-        
+
         _playerQueue.Enqueue(_currentPlayer);
-        
+
         _turn++;
         SetTurnPhase(ReinforcePhase);
         OnPlayerTurnChanged?.Invoke(oldPlayer, _currentPlayer);
@@ -180,7 +186,7 @@ public class GameManager : MonoBehaviour
         _currentPhase.End(_currentPlayer);
         OnPhaseEnded?.Invoke(_currentPhase);
     }
-    
+
     private void SetTurnPhase(IPhase phase)
     {
         var oldPhase = _currentPhase;
@@ -193,8 +199,8 @@ public class GameManager : MonoBehaviour
     {
         _gamePhase = gamePhase;
     }
-    
-    
+
+
     private void GameOver()
     {
         SetGamePhase(GamePhase.Over);

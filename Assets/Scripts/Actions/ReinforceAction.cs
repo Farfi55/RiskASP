@@ -9,11 +9,11 @@ namespace Actions
         public Territory Territory { get; }
         public int Troops { get; }
 
-        public ReinforceAction(Player player, Territory territory, int troops) : base(player)
+        public ReinforceAction(Player player, int turn, Territory territory, int troops) : base(player, turn)
         {
             Territory = territory;
             Troops = troops;
-            
+
             if (!IsValid())
                 throw new System.ArgumentException("PlaceTroopsAction is not valid");
         }
@@ -29,7 +29,8 @@ namespace Actions
 
             if (Territory.Owner != Player)
             {
-                LogError($"Territory ({Territory.Name} owned by {Territory.Owner.Name}) is not owned by the player ({Player.Name})");
+                LogError(
+                    $"Territory ({Territory.Name} owned by {Territory.Owner.Name}) is not owned by the player ({Player.Name})");
                 return false;
             }
 

@@ -46,7 +46,7 @@ namespace TurnPhases.Selection
             
             // TODO: add a way to select how many troops to place
             // var troopsToPlace = _reinforcePhase.RemainingTroopsToPlace;
-            var action = new ReinforceAction(player, selection.Territory, 1);
+            var action = new ReinforceAction(player, _gm.Turn, selection.Territory, 1);
             _ar.AddAction(action);
             Unselect();
         }

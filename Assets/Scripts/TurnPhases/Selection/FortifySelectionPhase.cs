@@ -65,7 +65,7 @@ namespace TurnPhases.Selection
                 // todo: add a way to chose number of troops 
                 _troopsToMove = _from.Territory.GetAvailableTroops();
                     
-                var action = new FortifyAction(player, _from.Territory, _to.Territory, _troopsToMove);
+                var action = new FortifyAction(player, _gm.Turn, _from.Territory, _to.Territory, _troopsToMove);
                 _ar.AddAction(action);
             }
             else

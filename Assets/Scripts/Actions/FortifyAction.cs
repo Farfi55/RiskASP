@@ -11,7 +11,7 @@ namespace Actions
         public Territory To { get; }
         public int MovedTroops { get; }
 
-        public FortifyAction(Player player, Territory from, Territory to, int movedTroops) : base(player)
+        public FortifyAction(Player player, int turn, Territory from, Territory to, int movedTroops) : base(player, turn)
         {
             From = from;
             To = to;

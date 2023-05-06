@@ -62,7 +62,7 @@ namespace TurnPhases.Selection
         {
             if (State == AttackState.Moving)
                 return;
-            
+
             if (_from == null)
             {
                 _from = selection;
@@ -75,7 +75,7 @@ namespace TurnPhases.Selection
                     throw new Exception("Cannot attack from a territory to itself");
                 _to = selection;
                 _to.Select();
-                
+
                 CreateAttackAction(player);
             }
         }
@@ -83,7 +83,8 @@ namespace TurnPhases.Selection
         private void CreateAttackAction(Player player)
         {
             var troops = Math.Min(_from.Territory.GetAvailableTroops(), 3);
-            var action = new AttackAction(player, _from.Territory, _to.Territory, troops);
+            var attackTurn = _attackPhase.AttackTurn;
+            var action = new AttackAction(player, _gm.Turn, attackTurn, _from.Territory, _to.Territory, troops);
             _ar.AddAction(action);
         }
 
@@ -130,7 +131,8 @@ namespace TurnPhases.Selection
         private void CreateMoveAction(Player player)
         {
             var attackAction = _attackPhase.LastAttackResult.AttackAction;
-            var action = new AttackReinforceAction(player, attackAction, _reinforcementsToMove);
+            var attackTurn = _attackPhase.AttackTurn;
+            var action = new AttackReinforceAction(player, _gm.Turn, attackTurn, attackAction, _reinforcementsToMove);
             _ar.AddAction(action);
         }
 

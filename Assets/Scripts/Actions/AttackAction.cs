@@ -10,7 +10,8 @@ namespace Actions
         public Territory Target { get; }
         public int Troops { get; }
 
-        public AttackAction(Player player, Territory origin, Territory target, int troops) : base(player)
+        public AttackAction(Player player, int turn, int attackTurn, Territory origin, Territory target, int troops) :
+            base(player, turn, attackTurn)
         {
             Origin = origin;
             Target = target;
@@ -27,31 +28,50 @@ namespace Actions
                 LogError($"Player ({Player.Name}) is not the current player ({gm.CurrentPlayer.Name})");
                 return false;
             }
-            if(Troops > 3)
+            
+            if (gm.Turn != Turn)
+            {
+                LogError($"Turn ({Turn}) is not the current turn ({gm.Turn})");
+                return false;
+            }
+            
+            if (AttackTurn != gm.AttackPhase.AttackTurn)
+            {
+                LogError($"Attack turn ({AttackTurn}) is not the current attack turn ({gm.AttackPhase.AttackTurn})");
+                return false;
+            }
+
+            if (Troops > 3)
             {
                 LogError($"Troops ({Troops}) is greater than 3");
                 return false;
             }
-            if(Troops > Origin.GetAvailableTroops())
+
+            if (Troops > Origin.GetAvailableTroops())
             {
                 LogError($"Troops ({Troops}) is greater than available troops ({Origin.GetAvailableTroops()})");
                 return false;
             }
-            if(Troops < 1)
+
+            if (Troops < 1)
             {
                 LogError($"Troops ({Troops}) is less than 1");
                 return false;
             }
-            if(Origin.Owner != Player)
+
+            if (Origin.Owner != Player)
             {
-                LogError($"Origin territory ({Origin.Name} owned by {Origin.Owner.Name}) is not owned by the player ({Player.Name})");
+                LogError(
+                    $"Origin territory ({Origin.Name} owned by {Origin.Owner.Name}) is not owned by the player ({Player.Name})");
                 return false;
             }
+
             if (Target.Owner == Player)
             {
                 LogError($"Target territory ({Target.Name} is a friendly territory)");
                 return false;
             }
+
             if (!Origin.IsNeighbourOf(Target))
             {
                 LogError($"Origin territory ({Origin.Name}) is not a neighbour of Target territory ({Target.Name})");
@@ -60,7 +80,7 @@ namespace Actions
 
             return true;
         }
-        
+
         private static void LogError(string message)
         {
             UnityEngine.Debug.LogError("AttackAction: " + message);

@@ -7,7 +7,8 @@ namespace UI
     {
         public void NextTurnPhase()
         {
-            var endPhaseAction = new EndPhaseAction(GameManager.Instance.CurrentPlayer);
+            var gm = GameManager.Instance;
+            var endPhaseAction = new EndPhaseAction(gm.CurrentPlayer, gm.Turn);
             ActionReader.Instance.AddAction(endPhaseAction);
         }
     }

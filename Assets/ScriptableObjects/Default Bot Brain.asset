@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 829bb14220a742f58dd4ebf9f4e4f8a3, type: 3}
   m_Name: Default Bot Brain
   m_EditorClassIdentifier: 
-  _brainFilePath: ./ai/defaultAI.asp
-  _reinforceBrainPath: 
-  _attackBrainPath: 
-  _fortifyBrainPath: 
-  _constantsBrainPath: 
+  _constantsBrainPath: Assets/Scripts/EmbASP/AIs/constants.dlv
+  _reinforceBrainPath: Assets/Scripts/EmbASP/AIs/test_brain.dlv
+  _attackBrainPath: Assets/Scripts/EmbASP/AIs/test_brain.dlv
+  _fortifyBrainPath: Assets/Scripts/EmbASP/AIs/test_brain.dlv

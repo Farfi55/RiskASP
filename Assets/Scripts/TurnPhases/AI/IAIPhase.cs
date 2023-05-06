@@ -6,7 +6,8 @@ namespace TurnPhases.AI
 {
     public interface IAIPhase
     {
-        void Start(Player player, InputProgram inputProgram);
+        
+        void Start(InputProgram inputProgram); 
 
         void OnResponse(AnswerSet answerSet);
 

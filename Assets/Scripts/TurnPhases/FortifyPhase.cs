@@ -15,8 +15,8 @@ namespace TurnPhases
         private readonly TerritoryRepository _tr;
 
         public Action<FortifyAction> OnFortifyAction;
-
-
+        
+        
         public FortifyPhase(GameManager gameManager, ContinentRepository continentRepository,
             TerritoryRepository territoryRepository)
         {

@@ -14,5 +14,20 @@ namespace EmbASP.predicates
         [Param(2)] private string _to;
 
         [Param(3)] private int _armies;
+
+        public string From
+        {
+            get => _from;
+        }
+
+        public string To
+        {
+            get => _to;
+        }
+
+        public int Armies
+        {
+            get => _armies;
+        }
     }
 }

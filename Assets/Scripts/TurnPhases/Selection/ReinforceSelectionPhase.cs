@@ -32,7 +32,7 @@ namespace TurnPhases.Selection
             _sm.EnablePlayerTerritories(player);
             _selectedTerritory = null;
         }
-
+        
         public void OnClicked(Player player, TerritorySelection selection)
         {
             if (_selectedTerritory != null)

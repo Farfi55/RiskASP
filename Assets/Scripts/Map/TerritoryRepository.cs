@@ -67,7 +67,7 @@ namespace Map
             }
 
         }
-
+        
         private void TerritoryReachabilityBFS(Territory territory, int islandIndex)
         {
             var queue = new Queue<Territory>();

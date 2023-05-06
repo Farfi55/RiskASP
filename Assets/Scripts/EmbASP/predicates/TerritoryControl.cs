@@ -12,5 +12,14 @@ namespace EmbASP.predicates
         [Param(2)] private string _player;
 
         [Param(3)] private int _armies;
+
+        public TerritoryControl(int turn, string territory, string player, int armies)
+        {
+            _turn = turn;
+            _territory = territory;
+            _player = player;
+            _armies = armies;
+        }
     }
+    
 }

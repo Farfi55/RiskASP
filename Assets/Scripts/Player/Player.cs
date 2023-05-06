@@ -11,43 +11,47 @@ namespace player
 {
     public class Player : MonoBehaviour
     {
-        [SerializeField]
-        private string _name;
+        [SerializeField] private string _name;
         public string Name => _name;
-        
+
         private readonly HashSet<Territory> _territories = new();
         public IEnumerable<Territory> Territories => _territories;
         public PlayerColor Color;
 
-        
+
         public bool IsHuman() => GetComponent<HumanPlayer>() != null;
         public bool IsBot() => GetComponent<BotPlayer>() != null;
-        
-        
+
+
         public int GetTroopsCountInTerritories()
         {
             return _territories.Sum(territory => territory.Troops);
         }
-    
+
         public int GetTerritoryCount()
         {
             return _territories.Count;
         }
-    
+
         public bool HasTerritory(Territory territory)
         {
             return _territories.Contains(territory);
         }
-    
+
         private int GetTerritoryCountBonus()
         {
             return GetTerritoryCount() / 3;
         }
-        
+
         public void SetName(string newName)
         {
             _name = newName;
             gameObject.name = $"Player {newName}";
+            if (IsBot())
+            {
+                _name += " (Bot)";
+                gameObject.name += " (Bot)";
+            }
         }
 
 
@@ -61,9 +65,10 @@ namespace player
                 territories[i].AddTroops(troopsToAdd);
                 troops -= troopsToAdd;
             }
+
             return troops;
         }
-        
+
         public void RandomlyDistributeTroops(int troops)
         {
             while (troops > 0)

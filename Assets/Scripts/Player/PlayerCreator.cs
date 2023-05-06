@@ -33,19 +33,19 @@ namespace player
         public Player CreateHumanPlayer()
         {
             var player = Instantiate(_humanPlayerPrefab, _playerParent);
-            SetUpPlayerFromColor(player);
+            SetUpPlayerFromRandomColor(player);
             return player;
         }
         
         public Player CreateBotPlayer()
         {
             var player = Instantiate(_botPlayerPrefab, _playerParent);
-            SetUpPlayerFromColor(player);
+            SetUpPlayerFromRandomColor(player);
             return player;
         }
 
         
-        public void SetUpPlayerFromColor(Player player)
+        public void SetUpPlayerFromRandomColor(Player player)
         {
             PlayerColor color = GetRandomUnusedColor();
             SetUpPlayerFromColor(player, color);

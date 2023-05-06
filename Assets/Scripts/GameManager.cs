@@ -90,16 +90,12 @@ public class GameManager : MonoBehaviour
         if (Players.Count == 0)
             Players.AddRange(FindObjectsByType<Player>(FindObjectsInactive.Exclude, FindObjectsSortMode.None));
 
-        
-        foreach (var player in Players)
-        {
-            if(player.name == "") PlayerCreator.Instance.SetUpPlayerFromColor(player);
-        }
-        
         for (var i = Players.Count; i < NPlayers; i++)
-        {
             Players.Add(PlayerCreator.Instance.CreateBotPlayer());
-        }
+
+        foreach (var player in Players)
+            if (player.Name == "")
+                PlayerCreator.Instance.SetUpPlayerFromRandomColor(player);
 
         _tr.RandomlyAssignTerritories(Players);
         DistributeTroops();

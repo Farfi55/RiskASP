@@ -118,13 +118,19 @@ namespace player
             {
                 // _handler.RemoveProgram(_inputProgram);
 
-                AnswerSet answerSet;
                 var answerSets = (AnswerSets)output;
                 var optimalAnswerSet = answerSets.GetOptimalAnswerSets();
 
+                AnswerSet answerSet;
                 if (optimalAnswerSet.Count > 0)
                     answerSet = optimalAnswerSet[0];
-                else answerSet = answerSets.Answersets[0];
+                else if(answerSets.Answersets.Count > 0)
+                    answerSet = answerSets.Answersets[0];
+                else
+                {
+                    Debug.LogError("BotBrain: No answer set found");
+                    return;
+                }
 
                 Debug.Log("BotBrain: Callback\nanswerSet: " + answerSet + "\nphase: " + _botBrain.CurrentPhase);
                 _botBrain.CurrentPhase.OnResponse(answerSet);

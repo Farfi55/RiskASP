@@ -30,7 +30,7 @@ namespace TurnPhases.AI
         
         public void Start(Player player, InputProgram inputProgram)
         {
-            throw new NotImplementedException();
+            Debug.Log("AttackAIPhase Start");
         }
 
         public void OnResponse(AnswerSet answerSet)

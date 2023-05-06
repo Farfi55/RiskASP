@@ -3,6 +3,7 @@ using it.unical.mat.embasp.@base;
 using it.unical.mat.embasp.languages.asp;
 using Map;
 using player;
+using UnityEngine;
 
 namespace TurnPhases.AI
 {
@@ -22,7 +23,7 @@ namespace TurnPhases.AI
 
         public void Start(Player player, InputProgram inputProgram)
         {
-            throw new System.NotImplementedException();
+            Debug.Log("FortifyAIPhase Start");
         }
 
         public void OnResponse(AnswerSet answerSet)

@@ -3,6 +3,7 @@ using EmbASP.predicates;
 using it.unical.mat.embasp.@base;
 using it.unical.mat.embasp.languages.asp;
 using Map;
+using UnityEngine;
 using Player = player.Player;
 
 namespace TurnPhases.AI
@@ -23,9 +24,7 @@ namespace TurnPhases.AI
 
         public void Start(Player player, InputProgram inputProgram)
         {
-            // inputProgram.AddObjectInput(new Phase("reinforce"));
-            // inputProgram.AddObjectInput(new UnitsToPlace(_reinforcePhase.RemainingTroopsToPlace));
-            
+            Debug.Log("ReinforceAIPhase Start");
         }
 
         public void OnResponse(AnswerSet answerSet)

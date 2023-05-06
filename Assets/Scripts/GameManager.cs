@@ -150,8 +150,11 @@ public class GameManager : MonoBehaviour
 
     public void HandlePlayerAction(PlayerAction action)
     {
-        if (action.Player != _currentPlayer)
-            throw new ArgumentException("PlayerAction is not from current player");
+        if (!action.IsValid())
+        {
+            Debug.LogWarning("Invalid action" + action);
+            return;
+        }
 
         _currentPhase.OnAction(_currentPlayer, action);
     }

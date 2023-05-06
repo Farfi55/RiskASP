@@ -61,9 +61,6 @@ namespace TurnPhases
         // ReSharper disable Unity.PerformanceAnalysis
         public void OnAction(Player player, PlayerAction action)
         {
-            if(!action.IsValid())
-                return;
-            
             if (action is AttackAction attackAction)
                 HandleAttackAction(attackAction);
             else if (action is AttackReinforceAction attackReinforceAction)

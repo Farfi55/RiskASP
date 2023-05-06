@@ -9,7 +9,7 @@ namespace TurnPhases
     public class FortifyPhase : IPhase
     {
         public string Name => "Fortify";
-        
+
         private readonly GameManager _gm;
         private readonly ContinentRepository _cr;
         private readonly TerritoryRepository _tr;
@@ -31,9 +31,6 @@ namespace TurnPhases
 
         public void OnAction(Player player, PlayerAction action)
         {
-            if(!action.IsValid())
-                return;
-            
             if (action is FortifyAction fortifyAction)
             {
                 fortifyAction.From.RemoveTroops(fortifyAction.MovedTroops);
@@ -41,7 +38,7 @@ namespace TurnPhases
                 OnFortifyAction?.Invoke(fortifyAction);
                 _gm.NextTurnPhase();
             }
-            else if(action is EndPhaseAction)
+            else if (action is EndPhaseAction)
             {
                 _gm.NextTurnPhase();
             }
@@ -53,6 +50,5 @@ namespace TurnPhases
         public void End(Player player)
         {
         }
-        
     }
 }

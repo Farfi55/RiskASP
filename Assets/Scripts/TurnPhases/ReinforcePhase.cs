@@ -37,9 +37,6 @@ namespace TurnPhases
 
         public void OnAction(Player player, PlayerAction action)
         {
-            if(!action.IsValid())
-                return;
-            
             if (action is ReinforceAction placeTroopsAction)
             {
                 placeTroopsAction.Territory.AddTroops(placeTroopsAction.Troops);
@@ -50,10 +47,12 @@ namespace TurnPhases
             {
                 if (_remainingTroopsToPlace > 0)
                 {
-                    Debug.Log($"Player {player.Name} ended Reinforce phase with {_remainingTroopsToPlace} troops to place, distributing randomly");
+                    Debug.Log(
+                        $"Player {player.Name} ended Reinforce phase with {_remainingTroopsToPlace} troops to place, distributing randomly");
                     player.RandomlyDistributeTroops(_remainingTroopsToPlace);
                     _remainingTroopsToPlace = 0;
                 }
+
                 _gm.NextTurnPhase();
                 return;
             }

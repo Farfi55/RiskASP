@@ -37,6 +37,9 @@ namespace TurnPhases
 
         public void OnAction(Player player, PlayerAction action)
         {
+            if(!action.IsValid())
+                return;
+            
             if (action is ReinforceAction placeTroopsAction)
             {
                 placeTroopsAction.Territory.AddTroops(placeTroopsAction.Troops);

@@ -13,17 +13,14 @@ namespace Actions
         {
             Territory = territory;
             Troops = troops;
-
-            if (!IsValid())
-                throw new System.ArgumentException("PlaceTroopsAction is not valid");
         }
 
-        private bool IsValid()
+        public override bool IsValid()
         {
             var gm = GameManager.Instance;
-            if (gm.CurrentPlayer != Player)
+            if (gm.CurrentPhase != gm.ReinforcePhase)
             {
-                LogError($"Player ({Player.Name}) is not the current player ({gm.CurrentPlayer.Name})");
+                LogError($"Current phase ({gm.CurrentPhase.Name}) is not ReinforcePhase ({gm.ReinforcePhase.Name})");
                 return false;
             }
 
@@ -34,11 +31,6 @@ namespace Actions
                 return false;
             }
 
-            if (gm.CurrentPhase != gm.ReinforcePhase)
-            {
-                LogError($"Current phase ({gm.CurrentPhase.Name}) is not ReinforcePhase ({gm.ReinforcePhase.Name})");
-            }
-
             var remainingTroopsToPlace = gm.ReinforcePhase.RemainingTroopsToPlace;
             if (Troops > remainingTroopsToPlace)
             {
@@ -47,12 +39,7 @@ namespace Actions
                 return false;
             }
 
-            return true;
-        }
-
-        private static void LogError(string message)
-        {
-            Debug.LogError("PlaceTroopsAction: " + message);
+            return base.IsValid();
         }
     }
 }

@@ -61,6 +61,9 @@ namespace TurnPhases
         // ReSharper disable Unity.PerformanceAnalysis
         public void OnAction(Player player, PlayerAction action)
         {
+            if(!action.IsValid())
+                return;
+            
             if (action is AttackAction attackAction)
                 HandleAttackAction(attackAction);
             else if (action is AttackReinforceAction attackReinforceAction)
@@ -95,7 +98,7 @@ namespace TurnPhases
             if (attackResult.HasAttackerWonTerritory())
             {
                 attackResult.Target.SetOwner(attackAction.Player, 0);
-                SetState(AttackState.Moving);
+                SetState(AttackState.Fortifying);
             }
             
             
@@ -110,7 +113,7 @@ namespace TurnPhases
 
         private void HandleAttackReinforceAction(AttackReinforceAction attackReinforceAction)
         {
-            if (_state != AttackState.Moving)
+            if (_state != AttackState.Fortifying)
                 Debug.LogWarning($"AttackPhase: Cannot reinforce while in state {_state}");
 
             var troops = attackReinforceAction.ReinforcingTroops;
@@ -141,6 +144,6 @@ namespace TurnPhases
     public enum AttackState
     {
         Attacking,
-        Moving,
+        Fortifying,
     }
 }

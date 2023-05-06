@@ -36,7 +36,7 @@ namespace TurnPhases.Selection
                 UnselectAll();
                 EnableTerritoriesToAttackFrom(_gm.CurrentPlayer);
             }
-            else if (State == AttackState.Moving)
+            else if (State == AttackState.Fortifying)
             {
                 EnableTerritoriesToConfirmMove();
             }
@@ -60,7 +60,7 @@ namespace TurnPhases.Selection
 
         private void OnSelected(Player player, TerritorySelection selection)
         {
-            if (State == AttackState.Moving)
+            if (State == AttackState.Fortifying)
                 return;
 
             if (_from == null)
@@ -92,7 +92,7 @@ namespace TurnPhases.Selection
         {
             if (State == AttackState.Attacking)
                 OnUnselectedAttacking(player, selection);
-            else if (State == AttackState.Moving)
+            else if (State == AttackState.Fortifying)
                 OnUnselectedMoving(player, selection);
         }
 
@@ -172,7 +172,7 @@ namespace TurnPhases.Selection
 
         public void SetTroopsToMove(int troops)
         {
-            if (State == AttackState.Moving)
+            if (State == AttackState.Fortifying)
                 _reinforcementsToMove = troops;
             else
                 Debug.LogError("Cannot set troops to move when not in moving state");

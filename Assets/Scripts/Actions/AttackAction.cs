@@ -1,6 +1,7 @@
 using System;
 using Map;
 using player;
+using TurnPhases;
 
 namespace Actions
 {
@@ -16,31 +17,17 @@ namespace Actions
             Origin = origin;
             Target = target;
             Troops = troops;
-            if (!IsValid())
-                throw new ArgumentException("AttackAction is not valid");
         }
 
-        private bool IsValid()
+        public override bool IsValid()
         {
             var gm = GameManager.Instance;
-            if (Player != gm.CurrentPlayer)
+            if(gm.AttackPhase.State != AttackState.Attacking)
             {
-                LogError($"Player ({Player.Name}) is not the current player ({gm.CurrentPlayer.Name})");
+                LogError($"AttackPhase is not in Attacking state");
                 return false;
             }
             
-            if (gm.Turn != Turn)
-            {
-                LogError($"Turn ({Turn}) is not the current turn ({gm.Turn})");
-                return false;
-            }
-            
-            if (AttackTurn != gm.AttackPhase.AttackTurn)
-            {
-                LogError($"Attack turn ({AttackTurn}) is not the current attack turn ({gm.AttackPhase.AttackTurn})");
-                return false;
-            }
-
             if (Troops > 3)
             {
                 LogError($"Troops ({Troops}) is greater than 3");
@@ -78,12 +65,8 @@ namespace Actions
                 return false;
             }
 
-            return true;
+            return base.IsValid();
         }
 
-        private static void LogError(string message)
-        {
-            UnityEngine.Debug.LogError("AttackAction: " + message);
-        }
     }
 }

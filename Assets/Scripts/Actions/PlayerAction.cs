@@ -12,6 +12,31 @@ namespace Actions
             Player = player;
             Turn = turn;
         }
+
+
+        public virtual bool IsValid()
+        {
+            var gm  = GameManager.Instance;
+            if(Player != gm.CurrentPlayer)
+            {
+                LogError($"Player ({Player.Name}) is not the current player ({gm.CurrentPlayer.Name})");
+                return false;
+            }
+            
+            if (gm.Turn != Turn)
+            {
+                LogError($"Turn ({Turn}) is not the current turn ({gm.Turn})");
+                return false;
+            }
+            
+            return true;
+        }
+        
+        protected void LogError(string message)
+        {
+            string name = GetType().Name;
+            UnityEngine.Debug.LogError(name + " ERROR: " + message);
+        }
     }
 }
 

@@ -1,6 +1,7 @@
 using System;
 using Map;
 using player;
+using TurnPhases;
 
 namespace Actions
 {
@@ -17,13 +18,17 @@ namespace Actions
         {
             AttackAction = attackAction;
             ReinforcingTroops = reinforcingTroops;
-
-            if (!IsValid())
-                throw new ArgumentException("AttackReinforceAction is not valid");
         }
 
-        private bool IsValid()
+        public override bool IsValid()
         {
+            var gm = GameManager.Instance;
+            if(gm.AttackPhase.State != AttackState.Fortifying)
+            {
+                LogError("AttackPhase is not in Fortifying state");
+                return false;
+            }
+            
             if (Player != AttackAction.Player)
             {
                 LogError(
@@ -45,12 +50,7 @@ namespace Actions
                 return false;
             }
 
-            return true;
-        }
-
-        private static void LogError(string message)
-        {
-            UnityEngine.Debug.LogError($"AttackReinforceAction: {message}");
+            return base.IsValid();
         }
     }
 }

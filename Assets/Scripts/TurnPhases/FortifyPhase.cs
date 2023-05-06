@@ -31,6 +31,9 @@ namespace TurnPhases
 
         public void OnAction(Player player, PlayerAction action)
         {
+            if(!action.IsValid())
+                return;
+            
             if (action is FortifyAction fortifyAction)
             {
                 fortifyAction.From.RemoveTroops(fortifyAction.MovedTroops);

@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
     public Player CurrentPlayer => _currentPlayer;
     private Player _currentPlayer;
 
+    public TerritoryRepository TerritoryRepository => _tr;
 
     public GamePhase GamePhase => _gamePhase;
     private GamePhase _gamePhase = GamePhase.Setup;

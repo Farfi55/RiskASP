@@ -96,7 +96,7 @@ namespace player
             Debug.Log("BotBrain: HandleCommunication");
             
             InputProgram inputProgram = CreateProgram();
-            CurrentPhase.Start(player, inputProgram);
+            CurrentPhase.Start(inputProgram);
             _handler.AddProgram(inputProgram);
             _handler.StartAsync(new PhasesCallback(this, inputProgram, _handler));
         }

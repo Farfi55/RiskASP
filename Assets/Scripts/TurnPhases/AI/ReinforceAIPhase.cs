@@ -12,31 +12,27 @@ namespace TurnPhases.AI
     {
         private readonly GameManager _gm;
         private readonly ActionReader _ar;
-        private readonly TerritoryRepository _tr;
-        private readonly Player _pl;
         private int _remainingTroopsToPlace;
         
         private ReinforcePhase _reinforcePhase => _gm.ReinforcePhase;
         
         
 
-        public ReinforceAIPhase(GameManager gm, TerritoryRepository tr, ActionReader ar, Player pl)
+        public ReinforceAIPhase(GameManager gm, ActionReader ar)
         {
             _gm = gm;
             _ar = ar;
-            _tr = tr;
-            _pl = pl;
         }
         
         
         public void Start(InputProgram inputProgram)
         {
-            _remainingTroopsToPlace = _pl.GetTotalTroopBonus();
+            _remainingTroopsToPlace = _gm.CurrentPlayer.GetTotalTroopBonus();
             if (_remainingTroopsToPlace == 0) _gm.NextTurnPhase();
             
             //The player name is inside the UnitsToPlace predicate
-            inputProgram.AddObjectInput(new UnitsToPlace(_gm.Turn,_pl.Name,_remainingTroopsToPlace));
-            foreach (var territory in _tr.Territories.Values)
+            inputProgram.AddObjectInput(new UnitsToPlace(_gm.Turn,_gm.CurrentPlayer.Name,_remainingTroopsToPlace));
+            foreach (var territory in _gm.TerritoryRepository.Territories.Values)
             {
                 inputProgram.AddObjectInput(new TerritoryControl(_gm.Turn,territory.Name,territory.Owner.Name,territory.Troops));
             }
@@ -53,7 +49,7 @@ namespace TurnPhases.AI
                     if (obj is ReinforceTerritory)
                     {
                         var reinforceTerritory = (ReinforceTerritory) obj;
-                        var reinforceAction = new ReinforceAction(_pl,_gm.Turn,_tr.Territories[reinforceTerritory.Territory], reinforceTerritory.Number);
+                        var reinforceAction = new ReinforceAction(_gm.CurrentPlayer,_gm.Turn,_gm.TerritoryRepository.Territories[reinforceTerritory.Territory], reinforceTerritory.Number);
                         
                         _ar.AddAction(reinforceAction);
                     }

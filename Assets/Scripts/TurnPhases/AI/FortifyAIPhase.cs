@@ -13,8 +13,6 @@ namespace TurnPhases.AI
     {
         private readonly GameManager _gm;
         private readonly ActionReader _ar;
-        private readonly TerritoryRepository _tr;
-        private readonly Player _pl;
         
         private FortifyPhase _fortifyPhase => _gm.FortifyPhase;
         
@@ -27,8 +25,8 @@ namespace TurnPhases.AI
 
         public void Start(InputProgram inputProgram)
         {
-            inputProgram.AddObjectInput(_pl.Name);
-            foreach (var territory in _tr.Territories.Values)
+            inputProgram.AddObjectInput(new EmbASP.predicates.Player(_gm.CurrentPlayer.Name));
+            foreach (var territory in _gm.TerritoryRepository.Territories.Values)
             {
                 inputProgram.AddObjectInput(new TerritoryControl(_gm.Turn,territory.Name,territory.Owner.Name,territory.Troops));
             }
@@ -43,7 +41,7 @@ namespace TurnPhases.AI
                     if (obj is Move)
                     {
                         var move = (Move) obj;
-                        var fortifyAction = new FortifyAction(_pl,_gm.Turn,_tr.Territories[move.From], _tr.Territories[move.To], move.Armies);
+                        var fortifyAction = new FortifyAction( _gm.CurrentPlayer,_gm.Turn,_gm.TerritoryRepository.Territories[move.From], _gm.TerritoryRepository.Territories[move.To], move.Armies);
                         _ar.AddAction(fortifyAction);
                     }
                 }

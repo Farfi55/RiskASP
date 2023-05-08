@@ -1,11 +1,12 @@
 using System;
 using Actions;
 using EmbASP;
+using EmbASP.predicates;
 using it.unical.mat.embasp.@base;
 using it.unical.mat.embasp.languages.asp;
 using Map;
-using player;
 using UnityEngine;
+using Player = player.Player;
 
 namespace TurnPhases.AI
 {
@@ -14,6 +15,8 @@ namespace TurnPhases.AI
         private readonly GameManager _gm;
         private readonly ActionReader _ar;
         private readonly TerritoryRepository _tr;
+        private readonly Player _pl;
+        private int _attackTurn;
         
         
 
@@ -30,12 +33,42 @@ namespace TurnPhases.AI
         
         public void Start(InputProgram inputProgram)
         {
-            Debug.Log("AttackAIPhase Start");
+            if (_attackPhase.LastAttackResult.HasAttackerWonTerritory())
+            {
+                //
+            }
+            inputProgram.AddObjectInput(new AttackTurn(_gm.Turn,_attackPhase.AttackTurn,_gm.CurrentPlayer.Name));
+            foreach (var territory in _tr.Territories.Values)
+            {
+                inputProgram.AddObjectInput(new TerritoryControl(_gm.Turn,territory.Name,territory.Owner.Name,territory.Troops));
+            }
         }
 
         public void OnResponse(AnswerSet answerSet)
         {
-            throw new NotImplementedException();
+            try
+            {
+                foreach (var obj in answerSet.Atoms)
+                {
+                    if (obj is StopAttacking)
+                    {
+                        _ar.AddAction(new EndPhaseAction(_gm.CurrentPlayer,_gm.Turn));
+                    }
+                    
+                    else if(obj is Attack)
+                    {
+                        var attack = (Attack) obj;
+                        var attackAction = new AttackAction(_gm.CurrentPlayer,_gm.Turn,attack.AttackTurn,_tr.Territories[attack.From], _tr.Territories[attack.To], attack.Armies);
+                        _ar.AddAction(attackAction);
+                    }
+                    
+                    
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
 

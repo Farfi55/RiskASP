@@ -9,7 +9,5 @@ namespace EmbASP.predicates
         [Param(0)] private int _turn;
 
         [Param(1)] private int _attackingTurn;
-
-        //ToAdd in the ai [Param(2)] private bool _stop;
     }
 }

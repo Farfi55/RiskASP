@@ -47,5 +47,7 @@ namespace player
             _botBrain.OnTurnPhaseChanged(oldPhase, newPhase);
             _botBrain.HandleCommunication(_player);
         }
+        
+        
     }
 }

@@ -30,26 +30,25 @@ namespace Map
         
             if(_loadFromChildren)
                 LoadTerritoriesFromChildren();
-            
-            SubscribeToCallbacks();
-            CalculateTerritoryReachability();
+
+            // SubscribeToCallbacks();
         }
 
-        private void SubscribeToCallbacks()
-        {
-            foreach (var territory in Territories)
-            {
-                territory.OnOwnerChanged += (oldOwner, newOwner) =>
-                {
-                    OnTerritoryOwnerChanged(territory, oldOwner, newOwner);
-                };
-            }
-        }
+        // private void SubscribeToCallbacks()
+        // {
+        //     foreach (var territory in Territories)
+        //     {
+        //         territory.OnOwnerChanged += (oldOwner, newOwner) =>
+        //         {
+        //             OnTerritoryOwnerChanged(territory, oldOwner, newOwner);
+        //         };
+        //     }
+        // }
 
-        private void OnTerritoryOwnerChanged(Territory territory, Player oldOwner, Player newOwner)
-        {
-            CalculateTerritoryReachability();            
-        }
+        // private void OnTerritoryOwnerChanged(Territory territory, Player oldOwner, Player newOwner)
+        // {
+        //     CalculateTerritoryReachability();         
+        // }
 
         private void CalculateTerritoryReachability()
         {
@@ -133,9 +132,9 @@ namespace Map
             return TerritoriesMap[territoryName];
         }
 
-        public bool CanReachTerritory(Territory from, Territory to)
+        public bool CanFortifyTerritory(Territory from, Territory to)
         {
-            return _territoryToIslandMap[from] == _territoryToIslandMap[to];
+            return from.NeighbourTerritories.Contains(to) && from.Owner == to.Owner;
         }
     }
 }

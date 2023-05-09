@@ -11,7 +11,8 @@ namespace Map
     {
         public static TerritoryRepository Instance { get; private set; }
     
-        public readonly Dictionary<string, Territory> Territories = new();
+        public readonly Dictionary<string, Territory> TerritoriesMap = new();
+        public readonly List<Territory> Territories = new();
         private readonly Dictionary<Territory, int> _territoryToIslandMap = new(); 
     
         
@@ -36,7 +37,7 @@ namespace Map
 
         private void SubscribeToCallbacks()
         {
-            foreach (var territory in Territories.Values)
+            foreach (var territory in Territories)
             {
                 territory.OnOwnerChanged += (oldOwner, newOwner) =>
                 {
@@ -57,7 +58,7 @@ namespace Map
             
             _territoryToIslandMap.Clear();
             var islandIndex = 0;
-            foreach (var territory in Territories.Values)
+            foreach (var territory in Territories)
             {
                 if (_territoryToIslandMap.ContainsKey(territory))
                     continue;
@@ -102,13 +103,14 @@ namespace Map
 
         public void Add(Territory territory)
         {
-            Territories.Add(territory.Name, territory);
+            Territories.Add(territory);
+            TerritoriesMap.Add(territory.Name, territory);
         }
 
         public void RandomlyAssignTerritories(List<Player> players)
         {
             
-            var territories = Territories.Values.ToList();
+            var territories = Territories.ToList();
             territories.Shuffle();
             
             var playerOrder = Enumerable.Range(0, players.Count).ToList();
@@ -124,6 +126,11 @@ namespace Map
                 playerIndex = (playerIndex + 1) % players.Count;
             }
 
+        }
+
+        public Territory FromName(string territoryName)
+        {
+            return TerritoriesMap[territoryName];
         }
 
         public bool CanReachTerritory(Territory from, Territory to)

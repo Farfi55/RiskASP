@@ -54,7 +54,6 @@ namespace TurnPhases.AI
 
         public void End(Player player)
         {
-            throw new NotImplementedException();
         }
     }
 }

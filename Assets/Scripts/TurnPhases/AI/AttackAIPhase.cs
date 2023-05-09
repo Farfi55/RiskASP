@@ -6,7 +6,7 @@ using it.unical.mat.embasp.@base;
 using it.unical.mat.embasp.languages.asp;
 using Map;
 using UnityEngine;
-using Player = player.Player;
+using AttackResult = EmbASP.predicates.AttackResult;
 
 namespace TurnPhases.AI
 {
@@ -15,59 +15,54 @@ namespace TurnPhases.AI
         private readonly GameManager _gm;
         private readonly ActionReader _ar;
         private readonly TerritoryRepository _tr;
-        private readonly Player _pl;
-        private int _attackTurn;
-        
-        
+
 
         private AttackPhase _attackPhase => _gm.AttackPhase;
         public AttackState State => _attackPhase.State;
 
-        
+
         public AttackAIPhase(GameManager gm, ActionReader ar, TerritoryRepository tr)
         {
             _gm = gm;
             _ar = ar;
             _tr = tr;
         }
-        
-        public void Start(InputProgram inputProgram)
+
+        public void Start(Player player, InputProgram inputProgram)
         {
-            if (_attackPhase.LastAttackResult.HasAttackerWonTerritory())
+            var turn = _gm.Turn;
+            var attackTurn = _attackPhase.AttackTurn;
+            var lastAttackAction = _attackPhase.LastAttackResult.AttackAction;
+            if (lastAttackAction.Turn == turn && lastAttackAction.AttackTurn == attackTurn - 1)
             {
-                //
-            }
-            inputProgram.AddObjectInput(new AttackTurn(_gm.Turn,_attackPhase.AttackTurn,_gm.CurrentPlayer.Name));
-            foreach (var territory in _tr.Territories.Values)
-            {
-                inputProgram.AddObjectInput(new TerritoryControl(_gm.Turn,territory.Name,territory.Owner.Name,territory.Troops));
+                var attackResult = new EmbASP.predicates.AttackResult(_attackPhase.LastAttackResult);
+                inputProgram.AddObjectInput(attackResult);
             }
         }
 
         public void OnResponse(AnswerSet answerSet)
         {
-            try
+            foreach (var atom in answerSet.Atoms)
             {
-                foreach (var obj in answerSet.Atoms)
+                PlayerAction action = null;
+                if (atom is EmbASP.predicates.Attack attack)
                 {
-                    if (obj is StopAttacking)
-                    {
-                        _ar.AddAction(new EndPhaseAction(_gm.CurrentPlayer,_gm.Turn));
-                    }
-                    
-                    else if(obj is Attack)
-                    {
-                        var attack = (Attack) obj;
-                        var attackAction = new AttackAction(_gm.CurrentPlayer,_gm.Turn,attack.AttackTurn,_tr.Territories[attack.From], _tr.Territories[attack.To], attack.Armies);
-                        _ar.AddAction(attackAction);
-                    }
-                    
-                    
+                    action = new AttackAction(_gm.CurrentPlayer, attack.Turn, attack.AttackTurn,
+                        _tr.FromName(attack.From), _tr.FromName(attack.To), attack.Troops);
                 }
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine(e);
+                else if (atom is EmbASP.predicates.AfterAttackMove afterAttackMove)
+                {
+                    var attackAction = _attackPhase.LastAttackResult.AttackAction;
+                    action = new AttackReinforceAction(_gm.CurrentPlayer, afterAttackMove.Turn,
+                        afterAttackMove.AttackTurn, attackAction, afterAttackMove.Troops);
+                }
+                else if (atom is EmbASP.predicates.StopAttacking stopAttacking)
+                {
+                    action = new EndPhaseAction(_gm.CurrentPlayer, stopAttacking.Turn);
+                }
+
+                if (action != null)
+                    _ar.AddAction(action);
             }
         }
 

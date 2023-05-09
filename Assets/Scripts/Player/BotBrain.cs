@@ -39,7 +39,7 @@ namespace player
         private void Awake()
         {
             Debug.Log("BotBrain Awake");
-            
+
             _gm = GameManager.Instance;
             SetupPhases();
             _handler = LoadExecutable();
@@ -50,6 +50,7 @@ namespace player
         {
             Debug.Log("BotBrain OnEnable");
         }
+
         private void Start()
         {
             Debug.Log("BotBrain Start");
@@ -94,7 +95,7 @@ namespace player
         public void HandleCommunication(Player player)
         {
             Debug.Log("BotBrain: HandleCommunication");
-            
+
             InputProgram inputProgram = CreateProgram();
             CurrentPhase.Start(inputProgram);
             _handler.AddProgram(inputProgram);
@@ -124,7 +125,7 @@ namespace player
                 AnswerSet answerSet;
                 if (optimalAnswerSet.Count > 0)
                     answerSet = optimalAnswerSet[0];
-                else if(answerSets.Answersets.Count > 0)
+                else if (answerSets.Answersets.Count > 0)
                     answerSet = answerSets.Answersets[0];
                 else
                 {
@@ -153,14 +154,30 @@ namespace player
             // todo: uncomment when brains are ready
             // LoadBrain(currentBrain, inputProgram);
 
+            LoadPhaseInfo(inputProgram);
+
             return inputProgram;
         }
 
+        private void LoadPhaseInfo(InputProgram inputProgram)
+        {
+            var tr = TerritoryRepository.Instance;
+            
+            // turn info
+            var turnInfo = new TurnInfo(_gm.Turn, _gm.CurrentPlayer.Name);
+            inputProgram.AddObjectInput(turnInfo);
+            
+            // territory control
+            var territoryControls = TerritoryControl.FromTerritoriesAsObjects(_gm.Turn, tr.Territories);
+            inputProgram.AddObjectsInput(territoryControls);
+        }
+
+
         private void LoadConstants(InputProgram inputProgram)
         {
-            if(_constantsBrainPath == "")
+            if (_constantsBrainPath == "")
                 return;
-            
+
             if (!File.Exists(_constantsBrainPath))
                 throw new IOException("Constants file not found");
             string str = File.ReadAllText(_constantsBrainPath);
@@ -169,7 +186,7 @@ namespace player
 
         private void LoadBrain(string brainPath, InputProgram inputProgram)
         {
-            if(brainPath == "")
+            if (brainPath == "")
                 throw new Exception("Brain path not set");
             if (!File.Exists(brainPath))
                 throw new IOException("Brain file not found");
@@ -190,7 +207,7 @@ namespace player
                 executablePath = $"Executables{separator}dlv2-mac";
             else throw new Exception("OS not supported");
 
-            
+
             return new DesktopHandler(new DLV2DesktopService(executablePath));
         }
 
@@ -207,7 +224,7 @@ namespace player
             {
                 ASPMapper.Instance.RegisterClass(predicateClass);
             }
-            
+
             // ASPMapper.Instance.RegisterClass(typeof(EmbASP.predicates.Player));
             // ASPMapper.Instance.RegisterClass(typeof(EmbASP.predicates.AfterAttackMove));
             // ASPMapper.Instance.RegisterClass(typeof(EmbASP.predicates.Attack));

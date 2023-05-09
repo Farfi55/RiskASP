@@ -47,7 +47,7 @@ public class SelectionManager : MonoBehaviour
         _emptySelectionPhase = new EmptySelectionPhase();
         SetPhase(_emptySelectionPhase);
         
-        foreach (var territory in _tr.Territories.Values)
+        foreach (var territory in _tr.Territories)
         {
             var territorySelection = territory.GetComponent<TerritorySelection>();
             if (territorySelection)

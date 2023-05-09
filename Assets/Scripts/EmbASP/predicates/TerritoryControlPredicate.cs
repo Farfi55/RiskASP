@@ -17,6 +17,11 @@ namespace EmbASP.predicates
         [Param(3)] public int Troops;
 
 
+        public TerritoryControlPredicate()
+        {
+            
+        }
+        
         public TerritoryControlPredicate(int turn, string territory, string player, int troops)
         {
             Turn = turn;
@@ -55,6 +60,16 @@ namespace EmbASP.predicates
 
             return territoryControls;
         }
+        
+        public int setTurn(int turn) => Turn = turn;
+        public string setTerritory(string territory) => Territory = territory;
+        public string setPlayer(string player) => Player = player;
+        public int setTroops(int troops) => Troops = troops;
+        
+        public int getTurn() => Turn;
+        public string getTerritory() => Territory;
+        public string getPlayer() => Player;
+        public int getTroops() => Troops;
     }
     
 }

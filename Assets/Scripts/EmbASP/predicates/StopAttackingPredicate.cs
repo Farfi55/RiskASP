@@ -10,10 +10,22 @@ namespace EmbASP.predicates
 
         [Param(1)] public int AttackingTurn;
 
+        public StopAttackingPredicate()
+        {
+            
+        }
+        
         public StopAttackingPredicate(int turn, int attackingTurn)
         {
             Turn = turn;
             AttackingTurn = attackingTurn;
         }
+        
+        public int setTurn(int turn) => Turn = turn;
+        public int setAttackingTurn(int attackingTurn) => AttackingTurn = attackingTurn;
+        
+        public int getTurn() => Turn;
+        public int getAttackingTurn() => AttackingTurn;
+        
     }
 }

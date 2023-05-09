@@ -121,13 +121,17 @@ namespace player
             {
                 // _handler.RemoveProgram(_inputProgram);
 
+                // todo: uncomment when using optimal answer sets
+                
+                
                 var answerSets = (AnswerSets)output;
-                var optimalAnswerSet = answerSets.GetOptimalAnswerSets();
+                // var optimalAnswerSet = answerSets.GetOptimalAnswerSets();
 
                 AnswerSet answerSet;
-                if (optimalAnswerSet.Count > 0)
-                    answerSet = optimalAnswerSet[0];
-                else if (answerSets.Answersets.Count > 0)
+                // if (optimalAnswerSet.Count > 0)
+                //     answerSet = optimalAnswerSet[0];
+                // else 
+                if (answerSets.Answersets.Count > 0)
                     answerSet = answerSets.Answersets[0];
                 else
                 {

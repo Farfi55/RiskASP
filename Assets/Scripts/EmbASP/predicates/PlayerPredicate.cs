@@ -8,11 +8,20 @@ namespace EmbASP.predicates
 	{
 		[Param(0)] public string Name;
 
+		public PlayerPredicate()
+		{
+			
+		}
+		
 		public PlayerPredicate(string name)
 		{
 			Name = name;
 		}
 		
+		public string setName(string name) => Name = name;
+		
+		public string getName() => Name;
+
 	}
 }
 

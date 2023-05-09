@@ -22208,7 +22208,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6030655713958463109, guid: 729e66ac09ea56e7c95d6e785e98c838, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 729e66ac09ea56e7c95d6e785e98c838, type: 3}
@@ -25854,9 +25854,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _constantsBrainPath: Assets/Scripts/EmbASP/AIs/constants.dlv
-  _reinforceBrainPath: Assets/Scripts/EmbASP/AIs/test_brain.dlv
-  _attackBrainPath: Assets/Scripts/EmbASP/AIs/test_brain.dlv
-  _fortifyBrainPath: Assets/Scripts/EmbASP/AIs/test_brain.dlv
+  _reinforceBrainPath: Assets/Scripts/EmbASP/AIs/draft_phase_template.dlv
+  _attackBrainPath: Assets/Scripts/EmbASP/AIs/attack_phase_template.dlv
+  _fortifyBrainPath: Assets/Scripts/EmbASP/AIs/fortify_phase_template.dlv
 --- !u!1 &2026823306
 GameObject:
   m_ObjectHideFlags: 0

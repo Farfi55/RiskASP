@@ -1,6 +1,7 @@
 using System;
 using Actions;
 using EmbASP.predicates;
+using Extensions;
 using it.unical.mat.embasp.@base;
 using it.unical.mat.embasp.languages.asp;
 using Map;
@@ -36,8 +37,8 @@ namespace TurnPhases.AI
                 PlayerAction action = null;
                 if (atom is FortifyPredicate move)
                 {
-                    action = new FortifyAction(player, _gm.Turn, _tr.FromName(move.From),
-                        _tr.FromName(move.From), move.Troops);
+                    action = new FortifyAction(player, _gm.Turn, _tr.FromName(move.From.StripQuotes()),
+                        _tr.FromName(move.From.StripQuotes()), move.Troops);
                 }
 
                 if (action != null)

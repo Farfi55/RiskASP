@@ -6,6 +6,7 @@ using it.unical.mat.embasp.languages.asp;
 using Map;
 using Player = player.Player;
 using EmbASP.predicates;
+using Extensions;
 using UnityEngine;
 
 namespace TurnPhases.AI
@@ -43,7 +44,8 @@ namespace TurnPhases.AI
 
                 if (atom is DraftPredicate draft)
                 {
-                    action = new ReinforceAction(player, _gm.Turn, _tr.FromName(draft.Territory), draft.Troops);
+                    var territory = _tr.FromName(draft.Territory.StripQuotes());
+                    action = new ReinforceAction(player, _gm.Turn, territory, draft.Troops);
                     troopsDrafted += draft.Troops;
                 }
 

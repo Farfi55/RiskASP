@@ -157,8 +157,7 @@ namespace player
             InputProgram inputProgram = new ASPInputProgram();
             LoadConstants(inputProgram);
 
-            // todo: uncomment when brains are ready
-            // LoadBrain(currentBrain, inputProgram);
+            LoadBrain(currentBrain, inputProgram);
 
             LoadPhaseInfo(inputProgram);
 

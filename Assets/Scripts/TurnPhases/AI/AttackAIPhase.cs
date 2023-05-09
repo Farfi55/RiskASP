@@ -1,7 +1,9 @@
 using System;
+using System.Linq;
 using Actions;
 using EmbASP;
 using EmbASP.predicates;
+using Extensions;
 using it.unical.mat.embasp.@base;
 using it.unical.mat.embasp.languages.asp;
 using Map;
@@ -31,11 +33,14 @@ namespace TurnPhases.AI
         {
             var turn = _gm.Turn;
             var attackTurn = _attackPhase.AttackTurn;
-            var lastAttackAction = _attackPhase.LastAttackResult.AttackAction;
-            if (lastAttackAction.Turn == turn && lastAttackAction.AttackTurn == attackTurn - 1)
+            if (_attackPhase.AttackResults.Any())
             {
-                var attackResult = new EmbASP.predicates.AttackResultPredicate(_attackPhase.LastAttackResult);
-                inputProgram.AddObjectInput(attackResult);
+                var lastAttackAction = _attackPhase.LastAttackResult.AttackAction;
+                if (lastAttackAction != null && lastAttackAction.Turn == turn && lastAttackAction.AttackTurn == attackTurn - 1)
+                {
+                    var attackResult = new EmbASP.predicates.AttackResultPredicate(_attackPhase.LastAttackResult);
+                    inputProgram.AddObjectInput(attackResult);
+                }
             }
 
             var attackTurnPredicate = new AttackTurnPredicate(turn, attackTurn, player.Name);
@@ -50,7 +55,7 @@ namespace TurnPhases.AI
                 if (atom is EmbASP.predicates.AttackPredicate attack)
                 {
                     action = new AttackAction(player, attack.Turn, attack.AttackTurn,
-                        _tr.FromName(attack.From), _tr.FromName(attack.To), attack.Troops);
+                        _tr.FromName(attack.From.StripQuotes()), _tr.FromName(attack.To.StripQuotes()), attack.Troops);
                 }
                 else if (atom is EmbASP.predicates.AttackReinforcePredicate afterAttackMove)
                 {

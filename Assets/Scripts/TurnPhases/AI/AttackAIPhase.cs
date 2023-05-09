@@ -58,7 +58,7 @@ namespace TurnPhases.AI
                     action = new AttackReinforceAction(player, afterAttackMove.Turn,
                         afterAttackMove.AttackTurn, attackAction, afterAttackMove.Troops);
                 }
-                else if (atom is EmbASP.predicates.StopAttackingPredicate stopAttacking)
+                else if (atom is EmbASP.predicates.EndAttackPredicate stopAttacking)
                 {
                     action = new EndPhaseAction(player, stopAttacking.Turn);
                 }

@@ -2,33 +2,33 @@
 
 namespace EmbASP.predicates
 {
-    [Id("units_to_place")]
-    public class UnitsToPlacePredicate
+    [Id("troops_to_place")]
+    public class TroopsToPlacePredicate
     {
         [Param(0)] public int Turn;
         
         [Param(1)] public string Player;
 
-        [Param(2)] public int Number;
+        [Param(2)] public int Troops;
 
-        public UnitsToPlacePredicate()
+        public TroopsToPlacePredicate()
         {
             
         }
         
-        public UnitsToPlacePredicate(int turn, string player, int number)
+        public TroopsToPlacePredicate(int turn, string player, int troops)
         {
             Turn = turn;
             Player = player;
-            Number = number;
+            Troops = troops;
         }
         
         public int setTurn(int turn) => Turn = turn;
         public string setPlayer(string player) => Player = player;
-        public int setNumber(int number) => Number = number;
+        public int setTroops(int number) => Troops = number;
         
         public int getTurn() => Turn;
         public string getPlayer() => Player;
-        public int getNumber() => Number;
+        public int getTroops() => Troops;
     }
 }

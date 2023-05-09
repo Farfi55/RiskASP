@@ -3,19 +3,19 @@ using UnityEngine.UI;
 
 namespace EmbASP.predicates
 {
-    [Id("stop_attacking")]
-    public class StopAttackingPredicate
+    [Id("end_attack")]
+    public class EndAttackPredicate
     {
         [Param(0)] public int Turn;
 
         [Param(1)] public int AttackingTurn;
 
-        public StopAttackingPredicate()
+        public EndAttackPredicate()
         {
             
         }
         
-        public StopAttackingPredicate(int turn, int attackingTurn)
+        public EndAttackPredicate(int turn, int attackingTurn)
         {
             Turn = turn;
             AttackingTurn = attackingTurn;

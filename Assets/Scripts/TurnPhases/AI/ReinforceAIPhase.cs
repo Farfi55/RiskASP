@@ -30,7 +30,7 @@ namespace TurnPhases.AI
         public void OnRequest(Player player, InputProgram inputProgram)
         {
             var troopsToPlace = _reinforcePhase.RemainingTroopsToPlace;
-            inputProgram.AddObjectInput(new UnitsToPlacePredicate(_gm.Turn, player.Name, troopsToPlace));
+            inputProgram.AddObjectInput(new TroopsToPlacePredicate(_gm.Turn, player.Name, troopsToPlace));
         }
 
         public void OnResponse(Player player, AnswerSet answerSet)

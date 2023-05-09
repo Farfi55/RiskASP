@@ -162,7 +162,7 @@ public class SelectionManager : MonoBehaviour
             if(territory == from.Territory)
                 continue;
             
-            if (_tr.CanReachTerritory(from.Territory, territory))
+            if (_tr.CanFortifyTerritory(from.Territory, territory))
                 TerritoryToSelectionMap[territory].Enable();
         }
     }

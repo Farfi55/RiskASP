@@ -49,7 +49,7 @@ namespace Actions
                 return false;
             }
 
-            if (!TerritoryRepository.Instance.CanReachTerritory(From, To))
+            if (!TerritoryRepository.Instance.CanFortifyTerritory(From, To))
             {
                 LogError($"From territory ({From.Name}) cannot reach to territory ({To.Name})");
                 return false;

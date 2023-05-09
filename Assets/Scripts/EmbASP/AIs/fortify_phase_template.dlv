@@ -1,3 +1,5 @@
+curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
+
 move_try(A,Z):- &int(1,N;Z),territory_control(_,A,_,N).
 
 territory_conquered(Territory,Troops) :- 
@@ -5,12 +7,17 @@ territory_conquered(Territory,Troops) :-
 
 
 fortify(T, From, To, Troops) | not_fortify(T,From,To,Troops) :- 
-    turn(T,_),territory_conquered(From,_), territory_conquered(To,_), move_try(From,Troops), From != To.
+    turn(T,_),
+    move_try(From,Troops), 
+    connection(From,To),
+    territory_control(T, From, Player, _),
+    territory_control(T, To, Player, _),
+    curr_turn(T, Player),
+    From != To.
 
 
-:- fortify(From,To), not connection(From,To).
-:- fortify(_,From,To,Troops), fortify(_,From2,To2,Troops2), From != From2, To != To2, Troops != Troops2.
 :- fortify(_,From,To,Troops), fortify(_,From2,To2,Troops2), From != From2.
 :- fortify(_,From,To,Troops), fortify(_,From2,To2,Troops2), To != To2.
 :- fortify(_,From,To,Troops), fortify(_,From,To,Troops2), Troops != Troops2.
+
 :- fortify(_, From, _, Troops), territory_control(_,From,_,Troops).

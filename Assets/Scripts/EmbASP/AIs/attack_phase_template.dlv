@@ -43,7 +43,7 @@ attack(T, AT, TerritoryFrom, TerritoryTo, Troops) | no_attack(T, AT, TerritoryFr
     territory_control(T, TerritoryFrom, PFrom, TroopsFrom),
     territory_control(T, TerritoryTo, PTo, TroopsTo),
     connection(TerritoryFrom, TerritoryTo),
-    Troops = #max{Troops1 : troops_for_attack(T, From, PFrom, Troops1)},
+    Troops = #max{Troops1 : troops_for_attack(T, TerritoryFrom, PFrom, Troops1)},
     PFrom != PTo,
     Troops >= 1.
 

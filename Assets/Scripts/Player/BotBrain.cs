@@ -94,12 +94,18 @@ namespace player
 
         public void HandleCommunication(Player player)
         {
-            Debug.Log("BotBrain: HandleCommunication");
             InputProgram inputProgram = CreateProgram();
             CurrentPhase.OnRequest(player, inputProgram);
+            
             _handler.RemoveAll();
             _handler.AddProgram(inputProgram);
-            _handler.StartAsync(new PhasesCallback(this, player, inputProgram, _handler));
+            
+            // var callback = new PhasesCallback(this, player, inputProgram, _handler);
+            // _handler.StartAsync(callback);
+            
+            var output = _handler.StartSync();
+            OnResponse(player, output);
+            
         }
 
         private class PhasesCallback : ICallback
@@ -119,29 +125,33 @@ namespace player
 
             public void Callback(Output output)
             {
-                // _handler.RemoveProgram(_inputProgram);
-
-                // todo: uncomment when using optimal answer sets
-                
-                
-                var answerSets = (AnswerSets)output;
-                // var optimalAnswerSet = answerSets.GetOptimalAnswerSets();
-
-                AnswerSet answerSet;
-                // if (optimalAnswerSet.Count > 0)
-                //     answerSet = optimalAnswerSet[0];
-                // else 
-                if (answerSets.Answersets.Count > 0)
-                    answerSet = answerSets.Answersets[0];
-                else
-                {
-                    Debug.LogError("BotBrain: No answer set found");
-                    return;
-                }
-
-                Debug.Log("BotBrain: Callback\nanswerSet: " + answerSet + "\nphase: " + _botBrain.CurrentPhase);
-                _botBrain.CurrentPhase.OnResponse(_player, answerSet);
+                _botBrain.OnResponse(_player, output);
             }
+        }
+
+        private void OnResponse(Player player, Output output)
+        {
+            // _handler.RemoveProgram(_inputProgram);
+
+            // todo: uncomment when using optimal answer sets
+                
+                
+            var answerSets = (AnswerSets)output;
+            // var optimalAnswerSet = answerSets.GetOptimalAnswerSets();
+
+            AnswerSet answerSet;
+            // if (optimalAnswerSet.Count > 0)
+            //     answerSet = optimalAnswerSet[0];
+            // else 
+            if (answerSets.Answersets.Count > 0)
+                answerSet = answerSets.Answersets[0];
+            else
+            {
+                Debug.LogError("BotBrain: No answer set found");
+                return;
+            }
+
+            CurrentPhase.OnResponse(player, answerSet);
         }
 
         public InputProgram CreateProgram()

@@ -1,3 +1,82 @@
+curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
+
+curr_attack_turn(T, AT, P) :- curr_turn(T,P), AT = #max{AT1 : attack_turn(T, AT1, P) }.
 
 
 
+player_action(T, AT, attack(T, AT, From, To, Troops)) :- attack(T, AT, From, To, Troops).
+player_action(T, AT, attack_reinforce(T, AT, From, To, Troops)) :- attack_reinforce(T, AT, From, To, Troops).
+player_action(T, AT, end_attack(T, AT)) :- end_attack(T, AT).
+
+
+:- player_action(T,AT,ACTION1), player_action(T,AT,ACTION2), ACTION1 != ACTION2.
+
+
+has_reinforced_attack(T, AT, From, To) :- attack_reinforce(T, AT, From, To, _).
+
+won_territory(T, AT, From, To) :- attack_result(T, AT, From, To, _, 0).
+
+% if the attack ended with 0 defending troops remaining we captured a territory and should
+:- won_territory(T, AT, From, To), not has_reinforced_attack(T,AT+1,From,To).
+
+% TODO: IMPROVE IMPLEMENTATION
+%attack_reinforce(T,AT,From,To, Troops) :- has_reinforced_attack(T,AT,From,To), 
+%    attack_result(T,AT_prec,From,To,TAtt,TDef), AT_prec=AT-1, Troops=TAtt-1.
+
+attack_reinforce(T,AT,From,To, Troops) :- attack_result(T,AT_prec,From,To,RTAtt,0), AT_prec=AT-1, Troops=RTAtt-1.
+
+
+troops_for_attack(T, Territory, Player, 1) :- 
+    territory_control(T, Territory, Player, Troops), 
+    curr_turn(T,Player), Troops > 1.
+
+    
+troops_for_attack(T, Territory, Player, Troops) :- troops_for_attack(T, Territory, Player, Troops1),
+    territory_control(T, Territory, Player, MaxTroops), 
+    Troops = Troops1 +1, 
+    Troops < MaxTroops, 
+    Troops <= 3.
+
+
+attack(T, AT, TerritoryFrom, TerritoryTo, Troops) | no_attack(T, AT, TerritoryFrom, TerritoryTo, Troops) :- 
+    curr_attack_turn(T,AT,P), 
+    territory_control(T, TerritoryFrom, PFrom, TroopsFrom),
+    territory_control(T, TerritoryTo, PTo, TroopsTo),
+    connection(TerritoryFrom, TerritoryTo),
+    Troops = #max{Troops1 : troops_for_attack(T, From, PFrom, Troops1)},
+    PFrom != PTo,
+    Troops >= 1.
+
+
+has_done_something(T, AT) :- attack(T, AT, _,_,_).
+has_done_something(T, AT) :- attack_reinforce(T,AT,_,_,_).
+
+end_attack(T, AT) :- not has_done_something(T,AT), attack_turn(T,AT,_).
+
+
+
+%{ attack(T,AT,From1,To1,Troops1), end_attack(T,AT), attack_reinforce(T,AT,From2,To2,Troops2) } = 1 :- 
+
+
+
+
+% TESTING ONLY
+% turn(1, "p1").
+% turn(2, "p2").
+% turn(3, "p1").
+% attack_turn(3,1,"p1").
+% attack_turn(3,1,"p2").
+
+% %attack(3,1,"t1","t2",3).
+% %attack_result(3,1,"t1","t2",3,0).
+
+% connection("t1","t2").
+% connection("t1","t3").
+% connection("t2","t1").
+% connection("t2","t3").
+% connection("t3","t1").
+% connection("t3","t2").
+
+% territory_control(3,"t1","p1",2).
+% territory_control(3,"t2","p2",3).
+% territory_control(3,"t3","p1",3).

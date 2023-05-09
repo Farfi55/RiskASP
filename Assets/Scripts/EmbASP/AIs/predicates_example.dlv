@@ -1,7 +1,14 @@
+% ================== CONSTANTS ==================
+
+territory(Territory, Continent).
+continent(Continent, Bonus).
+connection(Territory1, Territory2).
+
+
 % ================== EVERY PHASE ==================
 
 %Player: Player's name
-player(Player)
+player(Player).
 
 turn(T, Player).
 
@@ -33,7 +40,7 @@ end_attack(T, AT).
 
 % ================== FORTIFY PHASE ==================
 
-fortify(T, From, To, Troops)
+fortify(T, From, To, Troops).
 
 end_fortify(T).
 

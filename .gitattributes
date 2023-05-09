@@ -115,5 +115,4 @@
 *.gz lfs
 *.rar lfs
 *.tar lfs
-Assets/Executables/dlv2-mac filter=lfs diff=lfs merge=lfs -text
-Assets/Executables/dlv2-linux filter=lfs diff=lfs merge=lfs -text
+Executables/** filter=lfs diff=lfs merge=lfs -text

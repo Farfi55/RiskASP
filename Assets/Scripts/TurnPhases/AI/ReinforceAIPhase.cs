@@ -6,64 +6,59 @@ using it.unical.mat.embasp.languages.asp;
 using Map;
 using Player = player.Player;
 using EmbASP.predicates;
+using UnityEngine;
+
 namespace TurnPhases.AI
 {
     public class ReinforceAIPhase : IAIPhase
     {
         private readonly GameManager _gm;
         private readonly ActionReader _ar;
-        private int _remainingTroopsToPlace;
-        
-        private ReinforcePhase _reinforcePhase => _gm.ReinforcePhase;
-        
-        
+        private readonly TerritoryRepository _tr;
 
-        public ReinforceAIPhase(GameManager gm, ActionReader ar)
+        private ReinforcePhase _reinforcePhase => _gm.ReinforcePhase;
+
+
+        public ReinforceAIPhase(GameManager gm, ActionReader ar, TerritoryRepository tr)
         {
             _gm = gm;
             _ar = ar;
-        }
-        
-        
-        public void Start(InputProgram inputProgram)
-        {
-            _remainingTroopsToPlace = _gm.CurrentPlayer.GetTotalTroopBonus();
-            if (_remainingTroopsToPlace == 0) _gm.NextTurnPhase();
-            
-            //The player name is inside the UnitsToPlace predicate
-            inputProgram.AddObjectInput(new UnitsToPlace(_gm.Turn,_gm.CurrentPlayer.Name,_remainingTroopsToPlace));
-            foreach (var territory in _gm.TerritoryRepository.Territories.Values)
-            {
-                inputProgram.AddObjectInput(new TerritoryControl(_gm.Turn,territory.Name,territory.Owner.Name,territory.Troops));
-            }
+            _tr = tr;
         }
 
-        public void OnResponse(AnswerSet answerSet)
-        {
-            //TODO: add the ReinforceTerritory class in the ASPMapper along with the others
 
-            try
+        public void OnRequest(Player player, InputProgram inputProgram)
+        {
+            var troopsToPlace = _reinforcePhase.RemainingTroopsToPlace;
+            inputProgram.AddObjectInput(new UnitsToPlacePredicate(_gm.Turn, player.Name, troopsToPlace));
+        }
+
+        public void OnResponse(Player player, AnswerSet answerSet)
+        {
+            int troopsDrafted = 0;
+
+            foreach (var atom in answerSet.Atoms)
             {
-                foreach (var obj in answerSet.Atoms)
+                PlayerAction action = null;
+
+                if (atom is DraftPredicate draft)
                 {
-                    if (obj is ReinforceTerritory)
-                    {
-                        var reinforceTerritory = (ReinforceTerritory) obj;
-                        var reinforceAction = new ReinforceAction(_gm.CurrentPlayer,_gm.Turn,_gm.TerritoryRepository.Territories[reinforceTerritory.Territory], reinforceTerritory.Number);
-                        
-                        _ar.AddAction(reinforceAction);
-                    }
+                    action = new ReinforceAction(player, _gm.Turn, _tr.FromName(draft.Territory), draft.Troops);
+                    troopsDrafted += draft.Troops;
                 }
+
+                if (action != null)
+                    _ar.AddAction(action);
             }
-            catch(Exception e)
-            {
-                Console.WriteLine(e);
-            }
+
+            int remainingTroopsToPlace = _reinforcePhase.RemainingTroopsToPlace;
+            if (troopsDrafted != remainingTroopsToPlace)
+                Debug.LogError(
+                    $"The AI drafted {troopsDrafted} troops, but it should have drafted {remainingTroopsToPlace} troops");
         }
 
         public void End(Player player)
         {
-            throw new System.NotImplementedException();
         }
     }
 }

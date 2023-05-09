@@ -6,7 +6,6 @@ using it.unical.mat.embasp.@base;
 using it.unical.mat.embasp.languages.asp;
 using Map;
 using UnityEngine;
-using AttackResult = EmbASP.predicates.AttackResult;
 
 namespace TurnPhases.AI
 {
@@ -28,37 +27,40 @@ namespace TurnPhases.AI
             _tr = tr;
         }
 
-        public void Start(Player player, InputProgram inputProgram)
+        public void OnRequest(player.Player player, InputProgram inputProgram)
         {
             var turn = _gm.Turn;
             var attackTurn = _attackPhase.AttackTurn;
             var lastAttackAction = _attackPhase.LastAttackResult.AttackAction;
             if (lastAttackAction.Turn == turn && lastAttackAction.AttackTurn == attackTurn - 1)
             {
-                var attackResult = new EmbASP.predicates.AttackResult(_attackPhase.LastAttackResult);
+                var attackResult = new EmbASP.predicates.AttackResultPredicate(_attackPhase.LastAttackResult);
                 inputProgram.AddObjectInput(attackResult);
             }
+
+            var attackTurnPredicate = new AttackTurnPredicate(turn, attackTurn, player.Name);
+            inputProgram.AddObjectInput(attackTurnPredicate);
         }
 
-        public void OnResponse(AnswerSet answerSet)
+        public void OnResponse(player.Player player, AnswerSet answerSet)
         {
             foreach (var atom in answerSet.Atoms)
             {
                 PlayerAction action = null;
-                if (atom is EmbASP.predicates.Attack attack)
+                if (atom is EmbASP.predicates.AttackPredicate attack)
                 {
-                    action = new AttackAction(_gm.CurrentPlayer, attack.Turn, attack.AttackTurn,
+                    action = new AttackAction(player, attack.Turn, attack.AttackTurn,
                         _tr.FromName(attack.From), _tr.FromName(attack.To), attack.Troops);
                 }
-                else if (atom is EmbASP.predicates.AfterAttackMove afterAttackMove)
+                else if (atom is EmbASP.predicates.AttackReinforcePredicate afterAttackMove)
                 {
                     var attackAction = _attackPhase.LastAttackResult.AttackAction;
-                    action = new AttackReinforceAction(_gm.CurrentPlayer, afterAttackMove.Turn,
+                    action = new AttackReinforceAction(player, afterAttackMove.Turn,
                         afterAttackMove.AttackTurn, attackAction, afterAttackMove.Troops);
                 }
-                else if (atom is EmbASP.predicates.StopAttacking stopAttacking)
+                else if (atom is EmbASP.predicates.StopAttackingPredicate stopAttacking)
                 {
-                    action = new EndPhaseAction(_gm.CurrentPlayer, stopAttacking.Turn);
+                    action = new EndPhaseAction(player, stopAttacking.Turn);
                 }
 
                 if (action != null)
@@ -66,8 +68,7 @@ namespace TurnPhases.AI
             }
         }
 
-
-        public void End(Player player)
+        public void End(player.Player player)
         {
             throw new NotImplementedException();
         }

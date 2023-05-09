@@ -13,42 +13,35 @@ namespace TurnPhases.AI
     {
         private readonly GameManager _gm;
         private readonly ActionReader _ar;
-        
-        private FortifyPhase _fortifyPhase => _gm.FortifyPhase;
-        
+        private readonly TerritoryRepository _tr;
 
-        public FortifyAIPhase(GameManager gm, ActionReader ar)
+        private FortifyPhase _fortifyPhase => _gm.FortifyPhase;
+
+
+        public FortifyAIPhase(GameManager gm, ActionReader ar, TerritoryRepository tr)
         {
             _gm = gm;
             _ar = ar;
+            _tr = tr;
         }
 
-        public void Start(InputProgram inputProgram)
+        public void OnRequest(Player player, InputProgram inputProgram)
         {
-            inputProgram.AddObjectInput(new EmbASP.predicates.Player(_gm.CurrentPlayer.Name));
-            foreach (var territory in _gm.TerritoryRepository.Territories.Values)
-            {
-                inputProgram.AddObjectInput(new TerritoryControl(_gm.Turn,territory.Name,territory.Owner.Name,territory.Troops));
-            }
         }
 
-        public void OnResponse(AnswerSet answerSet)
+        public void OnResponse(Player player, AnswerSet answerSet)
         {
-            try
+            foreach (var atom in answerSet.Atoms)
             {
-                foreach (var obj in answerSet.Atoms)
+                PlayerAction action = null;
+                if (atom is FortifyPredicate move)
                 {
-                    if (obj is Move)
-                    {
-                        var move = (Move) obj;
-                        var fortifyAction = new FortifyAction( _gm.CurrentPlayer,_gm.Turn,_gm.TerritoryRepository.Territories[move.From], _gm.TerritoryRepository.Territories[move.To], move.Armies);
-                        _ar.AddAction(fortifyAction);
-                    }
+                    action = new FortifyAction(player, _gm.Turn, _tr.FromName(move.From),
+                        _tr.FromName(move.From), move.Troops);
                 }
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine(e);
+
+                if (action != null)
+                    _ar.AddAction(action);
             }
         }
 

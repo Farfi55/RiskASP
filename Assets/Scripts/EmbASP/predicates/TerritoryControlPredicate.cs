@@ -6,7 +6,7 @@ using Map;
 namespace EmbASP.predicates
 {
     [Id("territory_control")]
-    public class TerritoryControl
+    public class TerritoryControlPredicate
     {
         [Param(0)] public int Turn;
 
@@ -17,7 +17,7 @@ namespace EmbASP.predicates
         [Param(3)] public int Troops;
 
 
-        public TerritoryControl(int turn, string territory, string player, int troops)
+        public TerritoryControlPredicate(int turn, string territory, string player, int troops)
         {
             Turn = turn;
             Territory = territory;
@@ -25,7 +25,7 @@ namespace EmbASP.predicates
             Troops = troops;
         }
 
-        public TerritoryControl(int turn, Territory territory)
+        public TerritoryControlPredicate(int turn, Territory territory)
         {
             Turn = turn;
             Territory = territory.name;
@@ -33,13 +33,13 @@ namespace EmbASP.predicates
             Troops = territory.Troops;
         }
 
-        public static ISet<TerritoryControl> FromTerritories(int turn, IList<Territory> territories)
+        public static ISet<TerritoryControlPredicate> FromTerritories(int turn, IList<Territory> territories)
         {
-            ISet<TerritoryControl> territoryControls = new HashSet<TerritoryControl>(territories.Count());
+            ISet<TerritoryControlPredicate> territoryControls = new HashSet<TerritoryControlPredicate>(territories.Count());
 
             foreach (var territory in territories)
             {
-                territoryControls.Add(new TerritoryControl(turn, territory));
+                territoryControls.Add(new TerritoryControlPredicate(turn, territory));
             }
 
             return territoryControls;
@@ -50,7 +50,7 @@ namespace EmbASP.predicates
 
             foreach (var territory in territories)
             {
-                territoryControls.Add(new TerritoryControl(turn, territory));
+                territoryControls.Add(new TerritoryControlPredicate(turn, territory));
             }
 
             return territoryControls;

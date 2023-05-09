@@ -7,17 +7,16 @@ namespace TurnPhases.AI
 {
     public class EmptyAIPhase : IAIPhase
     {
-        public void Start(InputProgram inputProgram)
+        public void OnRequest(Player player, InputProgram inputProgram)
         {
         }
 
-        public void OnResponse(AnswerSet answerSet)
+        public void OnResponse(Player player, AnswerSet answerSet)
         {
         }
 
         public void End(Player player)
         {
-            
         }
     }
 }

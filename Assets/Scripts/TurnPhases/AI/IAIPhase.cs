@@ -7,9 +7,9 @@ namespace TurnPhases.AI
     public interface IAIPhase
     {
         
-        void Start(InputProgram inputProgram); 
+        void OnRequest(player.Player player, InputProgram inputProgram); 
 
-        void OnResponse(AnswerSet answerSet);
+        void OnResponse(player.Player player, AnswerSet answerSet);
 
         void End(Player player);
     }

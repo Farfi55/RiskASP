@@ -4,11 +4,11 @@ using Unity.VisualScripting;
 namespace EmbASP.predicates
 {
 	[Id("player")]
-	public class Player
+	public class PlayerPredicate
 	{
 		[Param(0)] public string Name;
 
-		public Player(string name)
+		public PlayerPredicate(string name)
 		{
 			Name = name;
 		}

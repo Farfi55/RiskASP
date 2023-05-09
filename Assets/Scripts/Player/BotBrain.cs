@@ -61,9 +61,9 @@ namespace player
             var ar = ActionReader.Instance;
             var tr = TerritoryRepository.Instance;
 
-            ReinforcePhase = new ReinforceAIPhase(_gm, ar);
+            ReinforcePhase = new ReinforceAIPhase(_gm, ar, tr);
             AttackPhase = new AttackAIPhase(_gm, ar, tr);
-            FortifyPhase = new FortifyAIPhase(_gm, ar);
+            FortifyPhase = new FortifyAIPhase(_gm, ar, tr);
             EmptyPhase = new EmptyAIPhase();
             CurrentPhase = EmptyPhase;
         }
@@ -97,20 +97,22 @@ namespace player
             Debug.Log("BotBrain: HandleCommunication");
 
             InputProgram inputProgram = CreateProgram();
-            CurrentPhase.Start(inputProgram);
+            CurrentPhase.OnRequest(player, inputProgram);
             _handler.AddProgram(inputProgram);
-            _handler.StartAsync(new PhasesCallback(this, inputProgram, _handler));
+            _handler.StartAsync(new PhasesCallback(this, player, inputProgram, _handler));
         }
 
         private class PhasesCallback : ICallback
         {
-            private BotBrain _botBrain;
-            private InputProgram _inputProgram;
-            private Handler _handler;
+            private readonly BotBrain _botBrain;
+            private readonly Player _player;
+            private readonly InputProgram _inputProgram;
+            private readonly Handler _handler;
 
-            public PhasesCallback(BotBrain botBrain, InputProgram inputProgram, Handler handler)
+            public PhasesCallback(BotBrain botBrain, Player player, InputProgram inputProgram, Handler handler)
             {
                 _botBrain = botBrain;
+                _player = player;
                 _inputProgram = inputProgram;
                 _handler = handler;
             }
@@ -134,7 +136,7 @@ namespace player
                 }
 
                 Debug.Log("BotBrain: Callback\nanswerSet: " + answerSet + "\nphase: " + _botBrain.CurrentPhase);
-                _botBrain.CurrentPhase.OnResponse(answerSet);
+                _botBrain.CurrentPhase.OnResponse(_player, answerSet);
             }
         }
 
@@ -164,12 +166,17 @@ namespace player
             var tr = TerritoryRepository.Instance;
             
             // turn info
-            var turnInfo = new TurnInfo(_gm.Turn, _gm.CurrentPlayer.Name);
-            inputProgram.AddObjectInput(turnInfo);
+            var turn = new TurnPredicate(_gm.Turn, _gm.CurrentPlayer.Name);
+            inputProgram.AddObjectInput(turn);
             
             // territory control
-            var territoryControls = TerritoryControl.FromTerritoriesAsObjects(_gm.Turn, tr.Territories);
+            var territoryControls = TerritoryControlPredicate.FromTerritoriesAsObjects(_gm.Turn, tr.Territories);
             inputProgram.AddObjectsInput(territoryControls);
+            
+            // players
+            foreach (var player in _gm.Players) 
+                inputProgram.AddObjectInput(new PlayerPredicate(player.Name));
+            
         }
 
 

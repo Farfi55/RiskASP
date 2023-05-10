@@ -90,6 +90,7 @@ namespace TurnPhases
             attackResult.Origin.RemoveTroops(attackResult.AttackerLosses);
             attackResult.Target.RemoveTroops(attackResult.DefenderLosses);
             _attackResults.Add(attackResult);
+            _attackTurn++;
 
             
             if (attackResult.HasAttackerWonTerritory())
@@ -104,7 +105,6 @@ namespace TurnPhases
                       $"{attackResult.DefenderLosses} losses for defender");
             
             OnAttacked?.Invoke(attackResult);
-            _attackTurn++;
             OnAttackTurn?.Invoke();
         }
 
@@ -118,11 +118,12 @@ namespace TurnPhases
             attackReinforceAction.To.AddTroops(troops);
             
             SetState(AttackState.Attacking);
+            _attackTurn++;
 
             Debug.Log(
                 $"AttackPhase: Reinforced {troops} troops from {attackReinforceAction.From.Name} to {attackReinforceAction.To.Name}");
+            
             OnReinforced?.Invoke(attackReinforceAction);
-            _attackTurn++;
             OnAttackTurn?.Invoke();
         }
 

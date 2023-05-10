@@ -8,7 +8,12 @@ public class ActionReader : MonoBehaviour
 {
     public static ActionReader Instance { get; private set; }
 
+    [SerializeField][Range(0f,5f)] private float _actionDelay = 0.5f;
+    private float _remainingActionDelay = 0f;
+    
     private Queue<PlayerAction> _actions = new();
+    
+    
 
     private void Awake()
     {
@@ -29,10 +34,13 @@ public class ActionReader : MonoBehaviour
 
     private void Update()
     {
-        while (_actions.Count > 0)
+        _remainingActionDelay -= Time.deltaTime;
+        
+        while (_actions.Count > 0 && _remainingActionDelay <= 0f)
         {
             var action = _actions.Dequeue();
             GameManager.Instance.HandlePlayerAction(action);
+            _remainingActionDelay = _actionDelay;
         }
     }
 }

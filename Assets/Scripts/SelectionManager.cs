@@ -101,6 +101,7 @@ public class SelectionManager : MonoBehaviour
     public void EnableTerritory(Territory territory) => EnableTerritory(TerritoryToSelectionMap[territory]);
     public void EnableTerritory(TerritorySelection territory)
     {
+        
         territory.Enable();
     }
     public void EnableTerritories(params TerritorySelection[] territories)

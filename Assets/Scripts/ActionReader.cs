@@ -36,7 +36,7 @@ public class ActionReader : MonoBehaviour
     {
         _remainingActionDelay -= Time.deltaTime;
         
-        while (_actions.Count > 0 && _remainingActionDelay <= 0f)
+        while (_actions.Count > 0 && _remainingActionDelay < 0f)
         {
             var action = _actions.Dequeue();
             GameManager.Instance.HandlePlayerAction(action);

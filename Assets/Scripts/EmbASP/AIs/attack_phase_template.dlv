@@ -63,6 +63,17 @@ has_done_something(T, AT) :- attack_reinforce(T,AT,_,_,_).
 end_attack(T, AT) :- not has_done_something(T,AT), attack_turn(T,AT,_).
 
 
+end_attack(T, NextAT) :- attack_reinforce(T,AT,_,_,_), NextAT=AT+1.
+
+% has_attacked_on_turn(T, AT) :- attack(T, AT, _, _, _).
+
+% has_attacked_or_ended_on_turn(T, AT) :- has_attacked_on_turn(T, AT).
+% has_attacked_or_ended_on_turn(T, AT) :- end_attack(T, AT).
+
+% :- attack_reinforce(T, AT, _, _, _), 
+%     not has_attacked_or_ended_on_turn(T, NextAT),
+%     NextAT=AT+1.
+
 
 %{ attack(T,AT,From1,To1,Troops1), end_attack(T,AT), attack_reinforce(T,AT,From2,To2,Troops2) } = 1 :- 
 

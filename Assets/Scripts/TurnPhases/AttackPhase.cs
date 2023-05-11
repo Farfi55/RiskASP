@@ -116,9 +116,9 @@ namespace TurnPhases
             var troops = attackReinforceAction.ReinforcingTroops;
             attackReinforceAction.From.RemoveTroops(troops);
             attackReinforceAction.To.AddTroops(troops);
+            _attackTurn++;
             
             SetState(AttackState.Attacking);
-            _attackTurn++;
 
             Debug.Log(
                 $"AttackPhase: Reinforced {troops} troops from {attackReinforceAction.From.Name} to {attackReinforceAction.To.Name}");

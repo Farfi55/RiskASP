@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Actions;
 using EmbASP;
@@ -36,7 +37,8 @@ namespace TurnPhases.AI
             if (_attackPhase.AttackResults.Any())
             {
                 var lastAttackAction = _attackPhase.LastAttackResult.AttackAction;
-                if (lastAttackAction != null && lastAttackAction.Turn == turn && lastAttackAction.AttackTurn == attackTurn - 1)
+                if (lastAttackAction != null && lastAttackAction.Turn == turn &&
+                    lastAttackAction.AttackTurn == attackTurn - 1)
                 {
                     var attackResult = new EmbASP.predicates.AttackResultPredicate(_attackPhase.LastAttackResult);
                     inputProgram.AddObjectInput(attackResult);
@@ -49,27 +51,44 @@ namespace TurnPhases.AI
 
         public void OnResponse(player.Player player, AnswerSet answerSet)
         {
+            List<AttackPhaseAction> attackPhaseActions = new List<AttackPhaseAction>();
+            EndPhaseAction endPhaseAction = null;
+
             foreach (var atom in answerSet.Atoms)
             {
-                PlayerAction action = null;
                 if (atom is EmbASP.predicates.AttackPredicate attack)
                 {
-                    action = new AttackAction(player, attack.Turn, attack.AttackTurn,
+                    var action = new AttackAction(player, attack.Turn, attack.AttackTurn,
                         _tr.FromName(attack.From.StripQuotes()), _tr.FromName(attack.To.StripQuotes()), attack.Troops);
+                    attackPhaseActions.Add(action);
                 }
                 else if (atom is EmbASP.predicates.AttackReinforcePredicate afterAttackMove)
                 {
                     var attackAction = _attackPhase.LastAttackResult.AttackAction;
-                    action = new AttackReinforceAction(player, afterAttackMove.Turn,
+                    var action = new AttackReinforceAction(player, afterAttackMove.Turn,
                         afterAttackMove.AttackTurn, attackAction, afterAttackMove.Troops);
+                    attackPhaseActions.Add(action);
                 }
                 else if (atom is EmbASP.predicates.EndAttackPredicate stopAttacking)
                 {
-                    action = new EndPhaseAction(player, stopAttacking.Turn);
+                    endPhaseAction = new EndPhaseAction(player, stopAttacking.Turn);
                 }
+            }
 
-                if (action != null)
-                    _ar.AddAction(action);
+            SortActions(attackPhaseActions);
+
+            foreach (var action in attackPhaseActions) 
+                _ar.AddAction(action);
+            
+            if(endPhaseAction != null)
+                _ar.AddAction(endPhaseAction);
+        }
+
+        private void SortActions(List<AttackPhaseAction> actions)
+        {
+            if (actions.Count > 1)
+            {
+                actions.Sort((action1, action2) => action1.AttackTurn.CompareTo(action2.AttackTurn));
             }
         }
 

@@ -5,7 +5,6 @@ using it.unical.mat.embasp.@base;
 using it.unical.mat.embasp.languages.asp;
 using Map;
 using Player = player.Player;
-using EmbASP.predicates;
 using Extensions;
 using UnityEngine;
 

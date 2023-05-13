@@ -170,6 +170,13 @@ namespace player
             var territoryControls = TerritoryControlPredicate.FromTerritoriesAsObjects(_gm.Turn, tr.Territories);
             inputProgram.AddObjectsInput(territoryControls);
 
+            // territory island
+            foreach (var (territory, islandId) in tr.TerritoryToIslandMap)
+            {
+                var territoryPredicate = new TerritoryIslandPredicate(_gm.Turn, islandId, territory.Name, territory.Owner.Name);
+                inputProgram.AddObjectInput(territoryPredicate);
+            }
+
             // players
             foreach (var player in _gm.Players)
                 inputProgram.AddObjectInput(new PlayerPredicate(player.Name));

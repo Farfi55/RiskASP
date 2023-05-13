@@ -10,64 +10,65 @@ namespace Map
     public class TerritoryRepository : MonoBehaviour
     {
         public static TerritoryRepository Instance { get; private set; }
-    
+
         public readonly Dictionary<string, Territory> TerritoriesMap = new();
         public readonly List<Territory> Territories = new();
-        private readonly Dictionary<Territory, int> _territoryToIslandMap = new(); 
-    
-        
+        public readonly Dictionary<Territory, int> TerritoryToIslandMap = new();
+
+
         [SerializeField] private bool _loadFromChildren = true;
-    
+
 
         private void Awake()
         {
             if (Instance != null && Instance != this)
             {
                 Destroy(gameObject);
-            } else {
+            }
+            else
+            {
                 Instance = this;
             }
-        
-            if(_loadFromChildren)
+
+            if (_loadFromChildren)
                 LoadTerritoriesFromChildren();
 
-            // SubscribeToCallbacks();
+            SubscribeToCallbacks();
         }
 
-        // private void SubscribeToCallbacks()
-        // {
-        //     foreach (var territory in Territories)
-        //     {
-        //         territory.OnOwnerChanged += (oldOwner, newOwner) =>
-        //         {
-        //             OnTerritoryOwnerChanged(territory, oldOwner, newOwner);
-        //         };
-        //     }
-        // }
+        private void SubscribeToCallbacks()
+        {
+            foreach (var territory in Territories)
+            {
+                territory.OnOwnerChanged += (oldOwner, newOwner) =>
+                {
+                    OnTerritoryOwnerChanged(territory, oldOwner, newOwner);
+                };
+            }
+        }
 
-        // private void OnTerritoryOwnerChanged(Territory territory, Player oldOwner, Player newOwner)
-        // {
-        //     CalculateTerritoryReachability();         
-        // }
+        private void OnTerritoryOwnerChanged(Territory territory, Player oldOwner, Player newOwner)
+        {
+            CalculateTerritoryReachability();
+        }
 
         private void CalculateTerritoryReachability()
         {
             // find territories islands (connected territories)
             // using BFS
-            
-            _territoryToIslandMap.Clear();
+
+            TerritoryToIslandMap.Clear();
             var islandIndex = 0;
             foreach (var territory in Territories)
             {
-                if (_territoryToIslandMap.ContainsKey(territory))
+                if (TerritoryToIslandMap.ContainsKey(territory))
                     continue;
-                
+
                 TerritoryReachabilityBFS(territory, islandIndex);
                 islandIndex++;
             }
-
         }
-        
+
         private void TerritoryReachabilityBFS(Territory territory, int islandIndex)
         {
             var queue = new Queue<Territory>();
@@ -75,23 +76,21 @@ namespace Map
             while (queue.Any())
             {
                 var currentTerritory = queue.Dequeue();
-                if (_territoryToIslandMap.ContainsKey(currentTerritory))
+                if (TerritoryToIslandMap.ContainsKey(currentTerritory))
                     continue;
 
-                _territoryToIslandMap.Add(currentTerritory, islandIndex);
+                TerritoryToIslandMap.Add(currentTerritory, islandIndex);
                 foreach (var neighbor in currentTerritory.NeighbourTerritories)
                 {
-                    if (neighbor.Owner != currentTerritory.Owner)
-                        continue;
-
-                    queue.Enqueue(neighbor);
+                    if (neighbor.Owner == currentTerritory.Owner)
+                        queue.Enqueue(neighbor);
                 }
             }
         }
 
         private void LoadTerritoriesFromChildren()
         {
-            if(Territories.Any())
+            if (Territories.Any())
                 throw new Exception("Territories already loaded");
 
             foreach (var territory in GetComponentsInChildren<Territory>())
@@ -108,23 +107,21 @@ namespace Map
 
         public void RandomlyAssignTerritories(List<Player> players)
         {
-            
             var territories = Territories.ToList();
             territories.Shuffle();
-            
+
             var playerOrder = Enumerable.Range(0, players.Count).ToList();
             playerOrder.Shuffle();
-            
+
             var playerIndex = 0;
             foreach (var territory in territories)
             {
                 var player = players[playerOrder[playerIndex]];
                 territory.SetOwner(player);
                 player.AddTerritory(territory);
-                
+
                 playerIndex = (playerIndex + 1) % players.Count;
             }
-
         }
 
         public Territory FromName(string territoryName)

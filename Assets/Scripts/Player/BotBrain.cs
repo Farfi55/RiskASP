@@ -1,9 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using EmbASP;
 using EmbASP.predicates;
 using it.unical.mat.embasp.@base;
 using it.unical.mat.embasp.languages.asp;
@@ -13,18 +13,13 @@ using Map;
 using TurnPhases;
 using TurnPhases.AI;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace player
 {
     public class BotBrain : MonoBehaviour
     {
         private GameManager _gm;
-
-
-        [SerializeField] private string _constantsBrainPath;
-        [Space(10)] [SerializeField] private string _reinforceBrainPath;
-        [SerializeField] private string _attackBrainPath;
-        [SerializeField] private string _fortifyBrainPath;
 
         public IAIPhase CurrentPhase { get; private set; }
         private Handler _handler;
@@ -45,16 +40,7 @@ namespace player
             _handler = LoadExecutable();
             RegisterClassesToMapper();
         }
-
-        private void OnEnable()
-        {
-            Debug.Log("BotBrain OnEnable");
-        }
-
-        private void Start()
-        {
-            Debug.Log("BotBrain Start");
-        }
+        
 
         private void SetupPhases()
         {
@@ -92,83 +78,81 @@ namespace player
         }
 
 
-        public void HandleCommunication(Player player)
+        public void HandleCommunication(BotPlayer botPlayer) => HandleCommunication(botPlayer, botPlayer.Player);
+        public void HandleCommunication(BotPlayer botPlayer, Player player)
         {
-            InputProgram inputProgram = CreateProgram();
+            InputProgram inputProgram = CreateProgram(botPlayer);
             CurrentPhase.OnRequest(player, inputProgram);
-            
+
             _handler.RemoveAll();
             _handler.AddProgram(inputProgram);
-            
-            // var callback = new PhasesCallback(this, player, inputProgram, _handler);
+
+            // var callback = new PhasesCallback(this, botPlayer, player);
             // _handler.StartAsync(callback);
-            
+
             var output = _handler.StartSync();
-            OnResponse(player, output);
-            
+            OnResponse(botPlayer, player, output);
         }
 
         private class PhasesCallback : ICallback
         {
             private readonly BotBrain _botBrain;
+            private readonly BotPlayer _botPlayer;
             private readonly Player _player;
-            private readonly InputProgram _inputProgram;
-            private readonly Handler _handler;
 
-            public PhasesCallback(BotBrain botBrain, Player player, InputProgram inputProgram, Handler handler)
+            public PhasesCallback(BotBrain botBrain, BotPlayer botPlayer,  Player player)
             {
                 _botBrain = botBrain;
+                _botPlayer = botPlayer;
                 _player = player;
-                _inputProgram = inputProgram;
-                _handler = handler;
             }
 
             public void Callback(Output output)
             {
-                _botBrain.OnResponse(_player, output);
+                _botBrain.OnResponse(_botPlayer, _player, output);
             }
         }
 
-        private void OnResponse(Player player, Output output)
+        private void OnResponse(BotPlayer botPlayer, Player player, Output output)
         {
-            // _handler.RemoveProgram(_inputProgram);
-
-            // todo: uncomment when using optimal answer sets
-                
-                
-            var answerSets = (AnswerSets)output;
-            // var optimalAnswerSet = answerSets.GetOptimalAnswerSets();
-
-            AnswerSet answerSet;
-            // if (optimalAnswerSet.Count > 0)
-            //     answerSet = optimalAnswerSet[0];
-            // else 
-            if (answerSets.Answersets.Count > 0)
-                answerSet = answerSets.Answersets[0];
+            if (output is not AnswerSets outputAnswerSets)
+            {
+                Debug.LogError("Output is not AnswerSets");
+                return;
+            }
+            
+            IList<AnswerSet> answerSets;
+            if (botPlayer.BotConfiguration.UseOptimalAnswerSet)
+                answerSets = outputAnswerSets.GetOptimalAnswerSets();
             else
+                answerSets = outputAnswerSets.Answersets;
+
+            
+            if (answerSets.Count == 0)
             {
                 Debug.LogError("BotBrain: No answer set found");
                 return;
             }
 
+            var answerSet = answerSets[0];
             CurrentPhase.OnResponse(player, answerSet);
         }
 
-        public InputProgram CreateProgram()
+        public InputProgram CreateProgram(BotPlayer botPlayer)
         {
-            string currentBrain = CurrentPhase switch
+            string currentPhaseBrain = CurrentPhase switch
             {
-                ReinforceAIPhase => _reinforceBrainPath,
-                AttackAIPhase => _attackBrainPath,
-                FortifyAIPhase => _fortifyBrainPath,
+                ReinforceAIPhase => botPlayer.BotConfiguration.ReinforceBrainPath,
+                AttackAIPhase => botPlayer.BotConfiguration.AttackBrainPath,
+                FortifyAIPhase => botPlayer.BotConfiguration.FortifyBrainPath,
                 _ => ""
             };
 
             InputProgram inputProgram = new ASPInputProgram();
-            LoadConstants(inputProgram);
-
-            LoadBrain(currentBrain, inputProgram);
-
+            
+            LoadCommonBrains(botPlayer, inputProgram);
+            LoadBrain(currentPhaseBrain, inputProgram);
+            
             LoadPhaseInfo(inputProgram);
 
             return inputProgram;
@@ -177,31 +161,25 @@ namespace player
         private void LoadPhaseInfo(InputProgram inputProgram)
         {
             var tr = TerritoryRepository.Instance;
-            
+
             // turn info
             var turn = new TurnPredicate(_gm.Turn, _gm.CurrentPlayer.Name);
             inputProgram.AddObjectInput(turn);
-            
+
             // territory control
             var territoryControls = TerritoryControlPredicate.FromTerritoriesAsObjects(_gm.Turn, tr.Territories);
             inputProgram.AddObjectsInput(territoryControls);
-            
+
             // players
-            foreach (var player in _gm.Players) 
+            foreach (var player in _gm.Players)
                 inputProgram.AddObjectInput(new PlayerPredicate(player.Name));
-            
         }
 
 
-        private void LoadConstants(InputProgram inputProgram)
+        private void LoadCommonBrains(BotPlayer botPlayer, InputProgram inputProgram)
         {
-            if (_constantsBrainPath == "")
-                return;
-
-            if (!File.Exists(_constantsBrainPath))
-                throw new IOException("Constants file not found");
-            string str = File.ReadAllText(_constantsBrainPath);
-            inputProgram.AddProgram(str);
+            foreach (var commonBrainPath in botPlayer.BotConfiguration.CommonBrainsPaths) 
+                LoadBrain(commonBrainPath, inputProgram);
         }
 
         private void LoadBrain(string brainPath, InputProgram inputProgram)
@@ -209,9 +187,9 @@ namespace player
             if (brainPath == "")
                 throw new Exception("Brain path not set");
             if (!File.Exists(brainPath))
-                throw new IOException("Brain file not found");
-            string str = File.ReadAllText(brainPath);
-            inputProgram.AddProgram(str);
+                throw new IOException($"Brain file not found at {brainPath}");
+            string text = File.ReadAllText(brainPath);
+            inputProgram.AddProgram(text);
         }
 
 
@@ -244,18 +222,6 @@ namespace player
             {
                 ASPMapper.Instance.RegisterClass(predicateClass);
             }
-
-            // ASPMapper.Instance.RegisterClass(typeof(EmbASP.predicates.Player));
-            // ASPMapper.Instance.RegisterClass(typeof(EmbASP.predicates.AfterAttackMove));
-            // ASPMapper.Instance.RegisterClass(typeof(EmbASP.predicates.Attack));
-            // ASPMapper.Instance.RegisterClass(typeof(EmbASP.predicates.AttackResult));
-            // ASPMapper.Instance.RegisterClass(typeof(EmbASP.predicates.Move));
-            // ASPMapper.Instance.RegisterClass(typeof(EmbASP.predicates.Place));
-            //
-            // ASPMapper.Instance.RegisterClass(typeof(EmbASP.predicates.StopAttacking));
-            // ASPMapper.Instance.RegisterClass(typeof(EmbASP.predicates.TerritoryControl));
-            // ASPMapper.Instance.RegisterClass(typeof(EmbASP.predicates.Turn));
-            // ASPMapper.Instance.RegisterClass(typeof(EmbASP.predicates.UnitsToPlace));
         }
     }
 }

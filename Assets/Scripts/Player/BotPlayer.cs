@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using TurnPhases;
 using UnityEngine;
 
@@ -7,8 +7,13 @@ namespace player
     [RequireComponent(typeof(Player))]
     public class BotPlayer : MonoBehaviour
     {
-        public BotBrain botBrain => _botBrain;
+        public BotConfiguration BotConfiguration => _botConfiguration;
+        [SerializeField] private BotConfiguration _botConfiguration;
+        
+        public BotBrain BotBrain => _botBrain;
         [SerializeField] private BotBrain _botBrain;
+        
+        public Player Player => _player;
         private Player _player;
         private GameManager _gm;
 
@@ -35,7 +40,7 @@ namespace player
             if (!_gm.IsCurrentPlayer(_player))
                 return;
             
-            _botBrain.HandleCommunication(_player);
+            _botBrain.HandleCommunication(this, _player);
 
         }
 
@@ -47,7 +52,7 @@ namespace player
                 return;
             
             _botBrain.OnTurnPhaseChanged(oldPhase, newPhase);
-            _botBrain.HandleCommunication(_player);
+            _botBrain.HandleCommunication(this, _player);
         }
         
         

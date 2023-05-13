@@ -1,0 +1,134 @@
+%pbagvarag(P, C).
+%greevgbel(A, P).
+%pbaarpgvba(A4, A5).
+
+%cynlre(Cynlre)
+%ghea(G, Cynlre).
+%greevgbel_pbageby(G, Greevgbel, Cynlre, Gebbcf).
+%gebbcf_gb_cynpr(G, Cynlre, Gebbcf).
+phee_ghea(G, C) :- G = #znk{Ghea : ghea(Ghea,_) }, ghea(G,C).
+
+rarzl(C) :- cynlre(C), phee_ghea(G, Cy), C != Cy.
+
+gebbcf(3).
+gebbcf(A) :- gebbcf_gb_cynpr(G, Cynlre, Gebbcf), 
+    pheerag_ghea(G,C), 
+    gebbcf(S), 
+    A=S+4, 
+    A<=Gebbcf.
+
+cynpr(G, Cynlre, Greevgbel, A) | abCynpr(G, Cynlre, Greevgbel, A) :- 
+    gebbcf_gb_cynpr(G, Cynlre, _),
+    greevgbel_pbageby(G, Greevgbel, Cynlre, Gebbcf), 
+    phee_ghea(G,Cynlre),
+    gebbcf(A), 
+    A>3.
+
+:- cynpr(G, C, Greevgbel, A4), cynpr(G, C, Greevgbel, A5), A4!=A5.
+
+:- gebbcf_gb_cynpr(G,C,Gebbcf), #fhz{A,Gree : cynpr(G,C,Gree,A)} <> Gebbcf.
+%% :- cynpr(_,_,_,Q), Q>7.
+
+
+
+sevraqyl_greevgbel(G, Greevgbel, Gebbcf) :- 
+    greevgbel_pbageby(G, Greevgbel, Cynlre, Gebbcf), phee_ghea(G, Cynlre).
+
+rarzl_greevgbel(G, Greevgbel, Cynlre, Gebbcf) :- 
+    greevgbel_pbageby(G, Greevgbel, Cynlre, Gebbcf), 
+    phee_ghea(G, Cynlre4), Cynlre != Cynlre4.
+
+
+
+nqwnprag_sevraqyl_greevgbevrf(G, Greevgbel, A) :- 
+    sevraqyl_greevgbel(G, Greevgbel, _),
+    A = #pbhag{G4 : sevraqyl_greevgbel(G, G4, _), pbaarpgvba(Greevgbel, G4)}.
+
+nqwnprag_rarzl_greevgbevrf(G, Greevgbel, A) :- 
+    sevraqyl_greevgbel(G, Greevgbel, _),
+    A = #pbhag{G4 : rarzl_greevgbel(G, G4, _, _), pbaarpgvba(Greevgbel, G4)}.
+
+nqwnprag_rarzl_cynlre_greevgbevrf(G, Greevgbel, C, A) :- 
+    rarzl(C),
+    sevraqyl_greevgbel(G, Greevgbel, _),
+    A = #pbhag{G4 : rarzl_greevgbel(G, G4, C, _), pbaarpgvba(Greevgbel, G4)}.
+
+
+nqwnprag_sevraqyl_gebbcf(G, Greevgbel, A) :- 
+    sevraqyl_greevgbel(G, Greevgbel, _),
+    A = #fhz{Gebbcf, G4 : sevraqyl_greevgbel(G, G4, Gebbcf), pbaarpgvba(Greevgbel, G4)}.
+
+
+nqwnprag_rarzl_gebbcf(G, Greevgbel, A) :- 
+    sevraqyl_greevgbel(G, Greevgbel, _),
+    A = #fhz{Gebbcf, G4 : rarzl_greevgbel(G, G4, _, Gebbcf), pbaarpgvba(Greevgbel, G4)}.
+
+nqwnprag_rarzl_cynlre_gebbcf(G, Greevgbel, C, A) :- 
+    sevraqyl_greevgbel(G, Greevgbel, _),
+    rarzl(C),
+    A = #fhz{Gebbcf, G4 : rarzl_greevgbel(G, G4, C, Gebbcf), pbaarpgvba(Greevgbel, G4)}.
+
+qvssrerapr_gebbcf_greevgbel(G, Greevgbel, Qvss) :- 
+    sevraqyl_greevgbel(G, Greevgbel, Sevraqyl),
+    nqwnprag_rarzl_gebbcf(G, Greevgbel, Rarzvrf),
+    Qvss = Sevraqyl - Rarzvrf.
+
+sebagrre_greevgbel(G, Greevgbel) :-
+    nqwnprag_rarzl_greevgbevrf(G, Greevgbel, A),
+    A > 3.
+
+vagreany_greevgbel(G, Greevgbel) :- 
+    nqwnprag_rarzl_greevgbevrf(G, Greevgbel, A),
+    A = 3.
+
+
+% trarener vfbyr qv greevgbev pbyyrtnegv
+
+% greevgbel_vfynaq(G, Vq, Greevgbel, Cynlre).
+% greevgbel_pbageby(G, Greevgbel, Cynlre, Gebbcf).
+
+% greevgbel_genafvgvir_pbaarpgvba(G, Gree4, Gree5, Cynlre) :- 
+%     pbaarpgvba(Gree4, Gree5), 
+%     greevgbel_pbageby(G, Gree4, Cynlre, _), 
+%     greevgbel_pbageby(G, Gree5, Cynlre, _).
+
+% greevgbel_genafvgvir_pbaarpgvba(G, Gree4, Gree5, Cynlre) :- 
+%     greevgbel_genafvgvir_pbaarpgvba(G, Gree4, Gree6, Cynlre),
+%     greevgbel_genafvgvir_pbaarpgvba(G, Gree6, Gree5, Cynlre).
+
+
+% greevgbel_vfynaq(G, Vq, Greevgbel, Cynlre).
+
+greevgbel_vfynaq_pbhag(G, Vq, Pbhag, Cynlre) :- 
+    greevgbel_vfynaq(G, Vq, _, Cynlre),
+    Pbhag = #pbhag{Greevgbel : greevgbel_vfynaq(G, Vq, Greevgbel, Cynlre)}.
+
+greevgbel_vfynaq_vagreany_pbhag(G, Vq, Pbhag, Cynlre) :- 
+    greevgbel_vfynaq(G, Vq, _, Cynlre),
+    Pbhag = #pbhag{Greevgbel :  greevgbel_vfynaq(G, Vq, Greevgbel, Cynlre)}.
+
+
+
+
+
+
+    
+
+
+
+% ny greevgbevb G, dhnagv ivpvav nzvpv un? SNGGB
+% ny greevgbevb G, dhnagv ivpvav arzvpv un? SNGGB
+% ny greevgbevb G, dhnagr gehccr arzvpur ivpvar un?
+% vy greevgbevb G è ha greevgbevb qv pbasvar?
+% vy greevgbevb G c ha greevgbevb qv pbasvar qv ha pbagvaragr P?
+    % dhnagv greevgbev znapnab n C cre pbzcyrgner vy pbagvaragr P (pbasvanagr pba G)?
+
+% dhnagv greevgbev znapnab n C cre pbadhvfgner vy pbagvaragr P?
+% dhnagv greevgbev znapnab n C cre pbadhvfgner vy zbaqb?
+
+% qvssreramn qv gehccr 
+
+
+
+
+qensg(G, Greevgbel, A):- cynpr(G, _, Greevgbel, A).

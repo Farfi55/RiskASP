@@ -77,7 +77,7 @@ adjacent_enemy_player_troops(T, Territory, PlayerOwner, Player, N) :-
 
 
 difference_troops_territory(T, Territory, PlayerOwner, Diff) :- 
-    territory_control(T, Territory PlayerOwner, Friendly),
+    territory_control(T, Territory, PlayerOwner, Friendly),
     adjacent_enemy_troops(T, Territory, PlayerOwner, Enemies),
     Diff = Friendly - Enemies.
 
@@ -152,8 +152,8 @@ continent_in_island(T, Id, Player, Continent, Bonus) :-
 % bigger is better
 island_value(T, Id, Player, Value) :- 
     island_id(T, Id, Player),
-    TIIC = territory_island_internal_count(T, Id, Player, Count),
-    TIFC = territory_island_fronteer_count(T, Id, Player, Count),
+    territory_island_internal_count(T, Id, Player, TIIC),
+    territory_island_fronteer_count(T, Id, Player, TIFC),
     max_continent_bonus(MaxContinentBonus), 
     % constants
     territory_island_internal_weight(TIIW), 
@@ -172,7 +172,7 @@ island_value_index(T, Id, Player, ValueIndex) :-
 
 
 
-:- place(T, Player, Territory, _), territory_island_internal(T, _, Player, Territory) 
+:- place(T, Player, Territory, _), territory_island_internal(T, _, Player, Territory).
 
 
 
@@ -191,4 +191,4 @@ island_value_index(T, Id, Player, ValueIndex) :-
 
 
 
-draft(T, Territory, N):- place(T, _, Territory, N).
+draft(T, Territory, N) :- place(T, _, Territory, N).

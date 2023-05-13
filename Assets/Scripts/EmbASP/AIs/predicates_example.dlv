@@ -14,6 +14,7 @@ turn(T, Player).
 
 territory_control(T, Territory, Player, Troops).
 
+territory_island(T, Id, Territory, Player).
 
 % ================== DRAFT PHASE ==================
 

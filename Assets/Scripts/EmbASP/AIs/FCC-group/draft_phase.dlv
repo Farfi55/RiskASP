@@ -1,134 +1,194 @@
-%pbagvarag(P, C).
-%greevgbel(A, P).
-%pbaarpgvba(A1, A2).
+%continent(C, P).
+%territory(N, C).
+%connection(N1, N2).
 
-%cynlre(Cynlre)
-%ghea(G, Cynlre).
-%greevgbel_pbageby(G, Greevgbel, Cynlre, Gebbcf).
-%gebbcf_gb_cynpr(G, Cynlre, Gebbcf).
-phee_ghea(G, C) :- G = #znk{Ghea : ghea(Ghea,_) }, ghea(G,C).
+%player(Player)
+%turn(T, Player).
+%territory_control(T, Territory, Player, Troops).
+%troops_to_place(T, Player, Troops).
+curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
 
-rarzl(C) :- cynlre(C), phee_ghea(G, Cy), C != Cy.
+enemy(P) :- player(P), curr_turn(T, Pl), P != Pl.
 
-gebbcf(0).
-gebbcf(A) :- gebbcf_gb_cynpr(G, Cynlre, Gebbcf), 
-    pheerag_ghea(G,C), 
-    gebbcf(S), 
-    A=S+1, 
-    A<=Gebbcf.
+troops(0).
+troops(N) :- troops_to_place(T, Player, Troops), 
+    current_turn(T,P), 
+    troops(F), 
+    N=F+1, 
+    N<=Troops.
 
-cynpr(G, Cynlre, Greevgbel, A) | abCynpr(G, Cynlre, Greevgbel, A) :- 
-    gebbcf_gb_cynpr(G, Cynlre, _),
-    greevgbel_pbageby(G, Greevgbel, Cynlre, Gebbcf), 
-    phee_ghea(G,Cynlre),
-    gebbcf(A), 
-    A>0.
+place(T, Player, Territory, N) | noPlace(T, Player, Territory, N) :- 
+    troops_to_place(T, Player, _),
+    territory_control(T, Territory, Player, Troops), 
+    curr_turn(T,Player),
+    troops(N), 
+    N>0.
 
-:- cynpr(G, C, Greevgbel, A1), cynpr(G, C, Greevgbel, A2), A1!=A2.
+:- place(T, P, Territory, N1), place(T, P, Territory, N2), N1!=N2.
 
-:- gebbcf_gb_cynpr(G,C,Gebbcf), #fhz{A,Gree : cynpr(G,C,Gree,A)} <> Gebbcf.
-%% :- cynpr(_,_,_,Q), Q>4.
-
-
-
-sevraqyl_greevgbel(G, Greevgbel, Gebbcf) :- 
-    greevgbel_pbageby(G, Greevgbel, Cynlre, Gebbcf), phee_ghea(G, Cynlre).
-
-rarzl_greevgbel(G, Greevgbel, Cynlre, Gebbcf) :- 
-    greevgbel_pbageby(G, Greevgbel, Cynlre, Gebbcf), 
-    phee_ghea(G, Cynlre1), Cynlre != Cynlre1.
+:- troops_to_place(T,P,Troops), #sum{N,Terr : place(T,P,Terr,N)} <> Troops.
+%% :- place(_,_,_,D), D>4.
 
 
 
-nqwnprag_sevraqyl_greevgbevrf(G, Greevgbel, A) :- 
-    sevraqyl_greevgbel(G, Greevgbel, _),
-    A = #pbhag{G1 : sevraqyl_greevgbel(G, G1, _), pbaarpgvba(Greevgbel, G1)}.
+friendly_territory(T, Territory, Troops) :- 
+    territory_control(T, Territory, Player, Troops), curr_turn(T, Player).
 
-nqwnprag_rarzl_greevgbevrf(G, Greevgbel, A) :- 
-    sevraqyl_greevgbel(G, Greevgbel, _),
-    A = #pbhag{G1 : rarzl_greevgbel(G, G1, _, _), pbaarpgvba(Greevgbel, G1)}.
-
-nqwnprag_rarzl_cynlre_greevgbevrf(G, Greevgbel, C, A) :- 
-    sevraqyl_greevgbel(G, Greevgbel, _),
-    rarzl(C),
-    A = #pbhag{G1 : rarzl_greevgbel(G, G1, C, _), pbaarpgvba(Greevgbel, G1)}.
-
-
-nqwnprag_sevraqyl_gebbcf(G, Greevgbel, A) :- 
-    sevraqyl_greevgbel(G, Greevgbel, _),
-    A = #fhz{Gebbcf, G1 : sevraqyl_greevgbel(G, G1, Gebbcf), pbaarpgvba(Greevgbel, G1)}.
-
-
-nqwnprag_rarzl_gebbcf(G, Greevgbel, A) :- 
-    sevraqyl_greevgbel(G, Greevgbel, _),
-    A = #fhz{Gebbcf, G1 : rarzl_greevgbel(G, G1, _, Gebbcf), pbaarpgvba(Greevgbel, G1)}.
-
-nqwnprag_rarzl_cynlre_gebbcf(G, Greevgbel, C, A) :- 
-    sevraqyl_greevgbel(G, Greevgbel, _),
-    rarzl(C),
-    A = #fhz{Gebbcf, G1 : rarzl_greevgbel(G, G1, C, Gebbcf), pbaarpgvba(Greevgbel, G1)}.
-
-qvssrerapr_gebbcf_greevgbel(G, Greevgbel, Qvss) :- 
-    sevraqyl_greevgbel(G, Greevgbel, Sevraqyl),
-    nqwnprag_rarzl_gebbcf(G, Greevgbel, Rarzvrf),
-    Qvss = Sevraqyl - Rarzvrf.
-
-sebagrre_greevgbel(G, Greevgbel) :-
-    nqwnprag_rarzl_greevgbevrf(G, Greevgbel, A),
-    A > 0.
-
-vagreany_greevgbel(G, Greevgbel) :- 
-    nqwnprag_rarzl_greevgbevrf(G, Greevgbel, A),
-    A = 0.
-
-
-% trarener vfbyr qv greevgbev pbyyrtnegv
-
-% greevgbel_vfynaq(G, Vq, Greevgbel, Cynlre).
-% greevgbel_pbageby(G, Greevgbel, Cynlre, Gebbcf).
-
-% greevgbel_genafvgvir_pbaarpgvba(G, Gree1, Gree2, Cynlre) :- 
-%     pbaarpgvba(Gree1, Gree2), 
-%     greevgbel_pbageby(G, Gree1, Cynlre, _), 
-%     greevgbel_pbageby(G, Gree2, Cynlre, _).
-
-% greevgbel_genafvgvir_pbaarpgvba(G, Gree1, Gree2, Cynlre) :- 
-%     greevgbel_genafvgvir_pbaarpgvba(G, Gree1, Gree3, Cynlre),
-%     greevgbel_genafvgvir_pbaarpgvba(G, Gree3, Gree2, Cynlre).
-
-
-% greevgbel_vfynaq(G, Vq, Greevgbel, Cynlre).
-
-greevgbel_vfynaq_pbhag(G, Vq, Pbhag, Cynlre) :- 
-    greevgbel_vfynaq(G, Vq, _, Cynlre),
-    Pbhag = #pbhag{Greevgbel : greevgbel_vfynaq(G, Vq, Greevgbel, Cynlre)}.
-
-greevgbel_vfynaq_vagreany_pbhag(G, Vq, Pbhag, Cynlre) :- 
-    greevgbel_vfynaq(G, Vq, _, Cynlre),
-    Pbhag = #pbhag{Greevgbel :  greevgbel_vfynaq(G, Vq, Greevgbel, Cynlre)}.
+enemy_territory(T, Territory, Player, Troops) :- 
+    territory_control(T, Territory, Player, Troops), 
+    curr_turn(T, Player1), Player != Player1.
 
 
 
+adjacent_friendly_territories(T, Territory, Player, N) :- 
+    territory_control(T, Territory, Player, _),
+    N = #count{T1 : territory_control(T, T1, Player, _), connection(Territory, T1)}.
+
+adjacent_enemy_territories(T, Territory, PlayerOwner, N) :- 
+    territory_control(T, Territory, PlayerOwner, _),
+    player(Player),
+    N = #count{T1 : territory_control(T, T1, Player, _), connection(Territory, T1)},
+    PlayerOwner != Player.
+
+adjacent_enemy_player_territories(T, Territory, PlayerOwner, Player, N) :- 
+    territory_control(T, Territory, PlayerOwner, _),
+    player(Player),
+    N = #count{T1 : territory_control(T, T1, Player, _), connection(Territory, T1)},
+    PlayerOwner != Player.
+
+
+adjacent_friendly_troops(T, Territory, Player, N) :- 
+    territory_control(T, Territory, Player, _),
+    N = #sum{Troops, T1 : territory_control(T, T1, Player, Troops), connection(Territory, T1)}.
+
+
+adjacent_enemy_troops(T, Territory, PlayerOwner, N) :- 
+    territory_control(T, Territory, PlayerOwner, _),
+    player(Player),
+    N = #sum{Troops, T1 : territory_control(T, T1, Player, Troops), connection(Territory, T1)},
+    PlayerOwner != Player.
+
+
+adjacent_enemy_player_troops(T, Territory, PlayerOwner, Player, N) :- 
+    territory_control(T, Territory, PlayerOwner, _),
+    player(Player),
+    N = #sum{Troops, T1 : territory_control(T, T1, Player, Troops), connection(Territory, T1)},
+    PlayerOwner != Player.
+
+
+difference_troops_territory(T, Territory, PlayerOwner, Diff) :- 
+    territory_control(T, Territory PlayerOwner, Friendly),
+    adjacent_enemy_troops(T, Territory, PlayerOwner, Enemies),
+    Diff = Friendly - Enemies.
+
+fronteer_territory(T, Territory, Player) :-
+    adjacent_enemy_territories(T, Territory, Player, N),
+    N > 0.
+
+internal_territory(T, Territory, Player) :- 
+    adjacent_enemy_territories(T, Territory, Player, N),
+    N = 0.
+
+
+% generare isole di territori collegarti
+
+% territory_island(T, Id, Territory, Player).
+% territory_control(T, Territory, Player, Troops).
+
+% territory_transitive_connection(T, Terr1, Terr2, Player) :- 
+%     connection(Terr1, Terr2), 
+%     territory_control(T, Terr1, Player, _), 
+%     territory_control(T, Terr2, Player, _).
+
+% territory_transitive_connection(T, Terr1, Terr2, Player) :- 
+%     territory_transitive_connection(T, Terr1, Terr3, Player),
+%     territory_transitive_connection(T, Terr3, Terr2, Player).
+
+
+% territory_island(T, Id, Territory, Player).
+
+island_id(T, Id, Player) :- territory_island(T, Id, _, Player).
+
+territory_island_count(T, Id, Player, Count) :- 
+    territory_island(T, Id, _, Player),
+    Count = #count{Territory : territory_island(T, Id, Territory, Player)}.
+
+territory_island_internal(T, Id, Player, Territory) :- 
+    territory_island(T, Id, Territory, Player), 
+    internal_territory(T, Territory, Player).
+
+territory_island_fronteer(T, Id, Player, Territory) :- 
+    territory_island(T, Id, Territory, Player), 
+    fronteer_territory(T, Territory, Player).
 
 
 
+territory_island_internal_count(T, Id, Player, Count) :- 
+    territory_island(T, Id, Player, _),
+    Count = #count{Territory : territory_island_internal(T, Id, Player, Territory) }.
+
+territory_island_fronteer_count(T, Id, Player, Count) :- 
+    territory_island(T, Id, Player, _),
+    Count = #count{Territory : territory_island_fronteer(T, Id, Player, Territory) }.
+
+
+
+% non ci sono territori di un continente che sono fuori dall'isola'
+
+continent_not_in_island(T, Id, Player, Continent, Bonus) :-
+    continent(Continent, Bonus),
+    territory(Territory, Continent),
+    island_id(T, Id, Player),
+    not territory_island(T, Id, Territory, Player).
     
 
-
-
-% ny greevgbevb G, dhnagv ivpvav nzvpv un? SNGGB
-% ny greevgbevb G, dhnagv ivpvav arzvpv un? SNGGB
-% ny greevgbevb G, dhnagr gehccr arzvpur ivpvar un?
-% vy greevgbevb G è ha greevgbevb qv pbasvar?
-% vy greevgbevb G c ha greevgbevb qv pbasvar qv ha pbagvaragr P?
-    % dhnagv greevgbev znapnab n C cre pbzcyrgner vy pbagvaragr P (pbasvanagr pba G)?
-
-% dhnagv greevgbev znapnab n C cre pbadhvfgner vy pbagvaragr P?
-% dhnagv greevgbev znapnab n C cre p	badhvfgner vy zbaqb?
-
-% qvssreramn qv gehccr 
+continent_in_island(T, Id, Player, Continent, Bonus) :- 
+    continent(Continent, Bonus),
+    island_id(T, Id, Player),
+    not continent_not_in_island(T, Id, Player, Continent, Bonus).
 
 
 
+% bigger is better
+island_value(T, Id, Player, Value) :- 
+    island_id(T, Id, Player),
+    TIIC = territory_island_internal_count(T, Id, Player, Count),
+    TIFC = territory_island_fronteer_count(T, Id, Player, Count),
+    max_continent_bonus(MaxContinentBonus), 
+    % constants
+    territory_island_internal_weight(TIIW), 
+    territory_island_fronteer_weight(TIFW),
+    territory_island_continent_bonus_weight(TICBW),
+    ContinentBonus = #sum{Bonus, Continent : continent_in_island(T, Id, Player, Continent, Bonus) },
+    % formula
+    Value = (TIIC * TIIW) +
+        (TIFC * TIFW) +
+        (ContinentBonus * TICBW).
 
-qensg(G, Greevgbel, A):- cynpr(G, _, Greevgbel, A).
+% smaller is better
+island_value_index(T, Id, Player, ValueIndex) :- 
+    island_value(T, Id, Player, Value),
+    ValueIndex = 1000 - Value.
+
+
+
+:- place(T, Player, Territory, _), territory_island_internal(T, _, Player, Territory) 
+
+
+
+% al territorio T, quanti vicini amici ha? FATTO
+% al territorio T, quanti vicini nemici ha? FATTO
+% al territorio T, quante truppe nemiche vicine ha?
+% il territorio T è un territorio di confine?
+% il territorio T p un territorio di confine di un continente C?
+    % quanti territori mancano a P per completare il continente C (confinante con T)?
+
+% quanti territori mancano a P per conquistare il continente C?
+% quanti territori mancano a P per c	onquistare il mondo?
+
+% differenza di truppe 
+
+
+
+
+draft(T, Territory, N):- place(T, _, Territory, N).

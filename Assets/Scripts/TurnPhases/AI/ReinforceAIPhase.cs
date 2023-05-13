@@ -27,6 +27,10 @@ namespace TurnPhases.AI
         }
 
 
+        public void OnPhaseStart()
+        {
+        }
+
         public void OnRequest(Player player, InputProgram inputProgram)
         {
             var troopsToPlace = _reinforcePhase.RemainingTroopsToPlace;
@@ -58,7 +62,12 @@ namespace TurnPhases.AI
                     $"The AI drafted {troopsDrafted} troops, but it should have drafted {remainingTroopsToPlace} troops");
         }
 
-        public void End(Player player)
+        public void OnFailure(Player player)
+        {
+            _ar.AddAction(new EndPhaseAction(player, _gm.Turn));
+        }
+
+        public void OnPhaseEnd()
         {
         }
     }

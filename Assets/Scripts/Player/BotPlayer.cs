@@ -47,8 +47,7 @@ namespace player
         private void OnTurnPhaseChanged(IPhase oldPhase, IPhase newPhase)
         {
             if (!_gm.IsCurrentPlayer(_player) 
-                || _gm.GamePhase != GamePhase.Playing 
-                || newPhase is EmptyPhase)
+                || _gm.GamePhase != GamePhase.Playing)
                 return;
             
             _botBrain.OnTurnPhaseChanged(oldPhase, newPhase);

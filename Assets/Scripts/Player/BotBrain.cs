@@ -74,7 +74,11 @@ namespace player
 
         private void SetCurrentPhase(IAIPhase phase)
         {
+            CurrentPhase?.OnPhaseEnd();
+            
             CurrentPhase = phase;
+            
+            CurrentPhase.OnPhaseStart();
         }
 
 
@@ -131,6 +135,7 @@ namespace player
             if (answerSets.Count == 0)
             {
                 Debug.LogError("BotBrain: No answer set found");
+                CurrentPhase.OnFailure(player);
                 return;
             }
 
@@ -140,18 +145,20 @@ namespace player
 
         public InputProgram CreateProgram(BotPlayer botPlayer)
         {
+            InputProgram inputProgram = new ASPInputProgram();
+            
             string currentPhaseBrain = CurrentPhase switch
             {
                 ReinforceAIPhase => botPlayer.BotConfiguration.ReinforceBrainPath,
                 AttackAIPhase => botPlayer.BotConfiguration.AttackBrainPath,
                 FortifyAIPhase => botPlayer.BotConfiguration.FortifyBrainPath,
-                _ => ""
+                _ => "",
             };
 
-            InputProgram inputProgram = new ASPInputProgram();
-            
             LoadCommonBrains(botPlayer, inputProgram);
-            LoadBrain(currentPhaseBrain, inputProgram);
+
+            if(CurrentPhase != EmptyPhase)
+                LoadBrain(currentPhaseBrain, inputProgram);
             
             LoadPhaseInfo(inputProgram);
 

@@ -8,6 +8,7 @@ using Extensions;
 using it.unical.mat.embasp.@base;
 using it.unical.mat.embasp.languages.asp;
 using Map;
+using player;
 using UnityEngine;
 
 namespace TurnPhases.AI
@@ -28,6 +29,10 @@ namespace TurnPhases.AI
             _gm = gm;
             _ar = ar;
             _tr = tr;
+        }
+        
+        public void OnPhaseStart()
+        {
         }
 
         public void OnRequest(player.Player player, InputProgram inputProgram)
@@ -84,6 +89,18 @@ namespace TurnPhases.AI
                 _ar.AddAction(endPhaseAction);
         }
 
+        public void OnFailure(Player player)
+        {
+            if (_attackPhase.State == AttackState.Fortifying)
+            {
+                var attackAction = _attackPhase.LastAttackResult.AttackAction;
+                var troops = _attackPhase.LastAttackResult.GetMinTroopsToMoveAfterWin();
+                var action = new AttackReinforceAction(player, _gm.Turn, _attackPhase.AttackTurn, attackAction, troops);
+                _ar.AddAction(action);   
+            }
+            _ar.AddAction(new EndPhaseAction(player, _gm.Turn));
+        }
+
         private void SortActions(List<AttackPhaseAction> actions)
         {
             if (actions.Count > 1)
@@ -92,9 +109,8 @@ namespace TurnPhases.AI
             }
         }
 
-        public void End(player.Player player)
+        public void OnPhaseEnd()
         {
-            throw new NotImplementedException();
         }
     }
 }

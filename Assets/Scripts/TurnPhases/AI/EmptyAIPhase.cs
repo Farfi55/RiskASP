@@ -7,6 +7,10 @@ namespace TurnPhases.AI
 {
     public class EmptyAIPhase : IAIPhase
     {
+        public void OnPhaseStart()
+        {
+        }
+
         public void OnRequest(Player player, InputProgram inputProgram)
         {
         }
@@ -15,7 +19,11 @@ namespace TurnPhases.AI
         {
         }
 
-        public void End(Player player)
+        public void OnFailure(Player player)
+        {
+        }
+
+        public void OnPhaseEnd()
         {
         }
     }

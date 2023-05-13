@@ -26,6 +26,10 @@ namespace TurnPhases.AI
             _tr = tr;
         }
 
+        public void OnPhaseStart()
+        {
+        }
+
         public void OnRequest(Player player, InputProgram inputProgram)
         {
         }
@@ -46,7 +50,12 @@ namespace TurnPhases.AI
             }
         }
 
-        public void End(Player player)
+        public void OnFailure(Player player)
+        {
+            _ar.AddAction(new EndPhaseAction(player, _gm.Turn));
+        }
+
+        public void OnPhaseEnd()
         {
         }
     }

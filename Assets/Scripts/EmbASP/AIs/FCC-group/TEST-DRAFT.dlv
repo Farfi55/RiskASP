@@ -1,0 +1,534 @@
+% _________________ ADDED CONSTANTS ____________________
+
+% max_continent_bonus(24).
+
+% % continent(ID, Bonus, Size, Ratio100) 
+% continent_size("n_america", 5, 9,  180).
+% continent_size("s_america", 2, 4,  200).
+% continent_size("africa",    3, 7,  233).
+% continent_size("europe",    5, 6,  120).
+% continent_size("asia",      7, 12, 171).
+% continent_size("australia", 2, 4,  200).
+
+
+% territory_island_internal_weight(3).
+% territory_island_fronteer_weight(-1).
+% territory_island_continent_bonus_weight(1).
+
+
+
+% ________________ BASE CONSTANTS ____________________
+
+% continent(ID, Bonus) 
+
+continent("n_america", 5).
+continent("s_america", 2).
+continent("africa",    3).
+continent("europe",    5).
+continent("asia",      7).
+continent("australia", 2).
+
+% territory(ID, Continent).
+territory("alaska",                   "n_america").
+territory("alberta",                  "n_america").
+territory("central_america",          "n_america").
+territory("eastern_us",               "n_america").
+territory("greenland",                "n_america").
+territory("northwest_territory",      "n_america").
+territory("ontario",                  "n_america").
+territory("quebec",                   "n_america").
+territory("western_us",               "n_america").
+
+territory("argentina",                "s_america").
+territory("brazil",                   "s_america").
+territory("peru",                     "s_america").
+territory("venezuela",                "s_america").
+
+territory("congo",                    "africa").
+territory("east_africa",              "africa").
+territory("egypt",                    "africa").
+territory("madagascar",               "africa").
+territory("north_africa",             "africa").
+territory("south_africa",             "africa").
+
+territory("great_britain",            "europe").
+territory("iceland",                  "europe").
+territory("northern_europe",          "europe").
+territory("scandinavia",              "europe").
+territory("southern_europe",          "europe").
+territory("ukraine",                  "europe").
+territory("western_europe",           "europe").
+
+territory("afghanistan",              "asia").
+territory("china",                    "asia").
+territory("india",                    "asia").
+territory("irkutsk",                  "asia").
+territory("japan",                    "asia").
+territory("kamchatka",                "asia").
+territory("middle_east",              "asia").
+territory("mongolia",                 "asia").
+territory("siam",                     "asia").
+territory("siberia",                  "asia").
+territory("ural",                     "asia").
+territory("yakutsk",                  "asia").
+
+territory("eastern_australia",        "australia").
+territory("indonesia",                "australia").
+territory("new_guinea",               "australia").
+territory("western_australia",        "australia").
+
+
+
+connection(ID1, ID2) :- connection(ID2, ID1).
+
+
+% n_america
+
+connection("alaska",                   "northwest_territory").
+connection("alaska",                   "alberta").
+connection("alaska",                   "kamchatka").
+
+connection("alberta",                  "northwest_territory").
+connection("alberta",                  "ontario").
+connection("alberta",                  "western_us").
+
+connection("central_america",          "western_us").
+connection("central_america",          "eastern_us").
+connection("central_america",          "venezuela").
+
+connection("eastern_us",               "ontario").
+connection("eastern_us",               "quebec").
+connection("eastern_us",               "western_us").
+
+connection("greenland",                "quebec").
+connection("greenland",                "ontario").
+connection("greenland",                "northwest_territory").
+connection("greenland",                "iceland").
+
+connection("northwest_territory",      "ontario").
+connection("northwest_territory",      "alberta").
+
+connection("ontario",                  "quebec").
+connection("ontario",                  "western_us").
+connection("ontario",                  "eastern_us").
+
+% s_america
+
+connection("argentina",                "brazil").
+connection("argentina",                "peru").
+
+connection("brazil",                   "venezuela").
+connection("brazil",                   "peru").
+connection("brazil",                   "north_africa").
+
+connection("peru",                     "venezuela").
+
+% africa
+
+connection("congo",                    "north_africa").
+connection("congo",                    "east_africa").
+connection("congo",                    "south_africa").
+
+connection("east_africa",              "north_africa").
+connection("east_africa",              "egypt").
+connection("east_africa",              "middle_east").
+connection("east_africa",              "madagascar").
+connection("east_africa",              "south_africa").
+
+connection("egypt",                    "north_africa").
+connection("egypt",                    "middle_east").
+connection("egypt",                    "southern_europe").
+
+connection("madagascar",               "south_africa").
+
+connection("north_africa",             "southern_europe").
+connection("north_africa",             "western_europe").
+
+% europe
+
+connection("great_britain",           "iceland").
+connection("great_britain",           "scandinavia").
+connection("great_britain",           "northern_europe").
+connection("great_britain",           "western_europe").
+
+connection("iceland",                 "scandinavia").
+
+connection("northern_europe",         "scandinavia").
+connection("northern_europe",         "ukraine").
+connection("northern_europe",         "southern_europe").
+connection("northern_europe",         "western_europe").
+
+connection("scandinavia",             "ukraine").
+
+connection("southern_europe",         "ukraine").
+connection("southern_europe",         "western_europe").
+connection("southern_europe",         "middle_east").
+
+connection("ukraine",                 "afghanistan").
+connection("ukraine",                 "ural").
+connection("ukraine",                 "middle_east").
+
+% asia
+
+connection("afghanistan",             "ural").
+connection("afghanistan",             "china").
+connection("afghanistan",             "india").
+connection("afghanistan",             "middle_east").
+
+connection("china",                   "ural").
+connection("china",                   "siberia").
+connection("china",                   "mongolia").
+connection("china",                   "india").
+connection("china",                   "siam").
+
+connection("india",                   "middle_east").
+connection("india",                   "siam").
+
+connection("irkutsk",                 "siberia").
+connection("irkutsk",                 "yakutsk").
+connection("irkutsk",                 "kamchatka").
+connection("irkutsk",                 "mongolia").
+
+connection("japan",                   "kamchatka").
+connection("japan",                   "mongolia").
+
+connection("kamchatka",               "yakutsk").
+connection("kamchatka",               "mongolia").
+
+connection("monogolia",               "siberia").
+
+connection("siam",                    "indonesia").
+
+connection("siberia",                 "ural").
+connection("siberia",                 "yakutsk").
+
+% australia
+
+connection("eastern_australia",       "new_guinea").
+connection("eastern_australia",       "western_australia").
+
+connection("indonesia",               "new_guinea").
+connection("indonesia",               "western_australia").
+
+connection("new_guinea",              "western_australia").
+
+
+
+% curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
+
+% enemy(P) :- player(P), curr_turn(T, Pl), P != Pl.
+
+
+
+% friendly_territory(T, Territory, Troops) :- 
+%     territory_control(T, Territory, Player, Troops), curr_turn(T, Player).
+
+% enemy_territory(T, Territory, Player, Troops) :- 
+%     territory_control(T, Territory, Player, Troops), 
+%     curr_turn(T, Player1), Player != Player1.
+
+
+
+% adjacent_friendly_territories(T, Territory, Player, N) :- 
+%     territory_control(T, Territory, Player, _),
+%     N = #count{T1 : territory_control(T, T1, Player, _), connection(Territory, T1)}.
+
+% adjacent_enemy_territories(T, Territory, PlayerOwner, N) :- 
+%     territory_control(T, Territory, PlayerOwner, _),
+%     player(Player),
+%     N = #count{T1 : territory_control(T, T1, Player, _), connection(Territory, T1)},
+%     PlayerOwner != Player.
+
+% adjacent_enemy_player_territories(T, Territory, PlayerOwner, Player, N) :- 
+%     territory_control(T, Territory, PlayerOwner, _),
+%     player(Player),
+%     N = #count{T1 : territory_control(T, T1, Player, _), connection(Territory, T1)},
+%     PlayerOwner != Player.
+
+
+% adjacent_friendly_troops(T, Territory, Player, N) :- 
+%     territory_control(T, Territory, Player, _),
+%     N = #sum{Troops, T1 : territory_control(T, T1, Player, Troops), connection(Territory, T1)}.
+
+
+% adjacent_enemy_troops(T, Territory, PlayerOwner, N) :- 
+%     territory_control(T, Territory, PlayerOwner, _),
+%     player(Player),
+%     N = #sum{Troops, T1 : territory_control(T, T1, Player, Troops), connection(Territory, T1)},
+%     PlayerOwner != Player.
+
+
+% adjacent_enemy_player_troops(T, Territory, PlayerOwner, Player, N) :- 
+%     territory_control(T, Territory, PlayerOwner, _),
+%     player(Player),
+%     N = #sum{Troops, T1 : territory_control(T, T1, Player, Troops), connection(Territory, T1)},
+%     PlayerOwner != Player.
+
+
+% difference_troops_territory(T, Territory, PlayerOwner, Diff) :- 
+%     territory_control(T, Territory, PlayerOwner, Friendly),
+%     adjacent_enemy_troops(T, Territory, PlayerOwner, Enemies),
+%     Diff = Friendly - Enemies.
+
+    
+
+% fronteer_territory(T, Territory, Player) :-
+%     adjacent_enemy_territories(T, Territory, Player, N),
+%     N > 0.
+
+% internal_territory(T, Territory, Player) :- 
+%     adjacent_enemy_territories(T, Territory, Player, N),
+%     N = 0.
+
+
+% generare isole di territori collegarti
+
+% territory_island(T, Id, Territory, Player).
+% territory_control(T, Territory, Player, Troops).
+
+% territory_transitive_connection(T, Terr1, Terr2, Player) :- 
+%     connection(Terr1, Terr2), 
+%     territory_control(T, Terr1, Player, _), 
+%     territory_control(T, Terr2, Player, _).
+
+% territory_transitive_connection(T, Terr1, Terr2, Player) :- 
+%     territory_transitive_connection(T, Terr1, Terr3, Player),
+%     territory_transitive_connection(T, Terr3, Terr2, Player).
+
+
+% territory_island(T, Id, Territory, Player).
+
+% island_id(T, Id, Player) :- territory_island(T, Id, _, Player).
+
+% territory_island_count(T, Id, Player, Count) :- 
+%     territory_island(T, Id, _, Player),
+%     Count = #count{Territory : territory_island(T, Id, Territory, Player)}.
+
+% territory_island_internal(T, Id, Player, Territory) :- 
+%     territory_island(T, Id, Territory, Player), 
+%     internal_territory(T, Territory, Player).
+
+% territory_island_fronteer(T, Id, Player, Territory) :- 
+%     territory_island(T, Id, Territory, Player), 
+%     fronteer_territory(T, Territory, Player).
+
+
+
+% territory_island_internal_count(T, Id, Player, Count) :- 
+%     territory_island(T, Id, Player, _),
+%     Count = #count{Territory : territory_island_internal(T, Id, Player, Territory) }.
+
+% territory_island_fronteer_count(T, Id, Player, Count) :- 
+%     territory_island(T, Id, Player, _),
+%     Count = #count{Territory : territory_island_fronteer(T, Id, Player, Territory) }.
+
+
+
+% non ci sono territori di un continente che sono fuori dall'isola'
+
+% continent_not_in_island(T, Id, Player, Continent, Bonus) :-
+%     continent(Continent, Bonus),
+%     territory(Territory, Continent),
+%     island_id(T, Id, Player),
+%     not territory_island(T, Id, Territory, Player).
+    
+
+% continent_in_island(T, Id, Player, Continent, Bonus) :- 
+%     continent(Continent, Bonus),
+%     island_id(T, Id, Player),
+%     not continent_not_in_island(T, Id, Player, Continent, Bonus).
+
+
+
+% bigger is better
+% island_value(T, Id, Player, Value) :- 
+%     island_id(T, Id, Player),
+%     territory_island_internal_count(T, Id, Player, TIIC),
+%     territory_island_fronteer_count(T, Id, Player, TIFC),
+%     max_continent_bonus(MaxContinentBonus), 
+%     ContinentBonus = #sum{Bonus, Continent : continent_in_island(T, Id, Player, Continent, Bonus) },
+%     % constants
+%     territory_island_internal_weight(TIIW), 
+%     territory_island_fronteer_weight(TIFW),
+%     territory_island_continent_bonus_weight(TICBW),
+%     % formula
+%     Value = (TIIC * TIIW) +
+%         (TIFC * TIFW) +
+%         (ContinentBonus * TICBW).
+
+% % smaller is better
+% island_value_index(T, Id, Player, ValueIndex) :- 
+%     island_value(T, Id, Player, Value),
+%     ValueIndex = 1000 - Value.
+
+%continent(C, P).
+%territory(N, C).
+%connection(N1, N2).
+
+%player(Player)
+%turn(T, Player).
+%territory_control(T, Territory, Player, Troops).
+%troops_to_place(T, Player, Troops).
+
+
+troops(0).
+troops(N) :- troops_to_place(T, Player, Troops), 
+    current_turn(T,P), 
+    troops(F), 
+    N=F+1, 
+    N<=Troops.
+
+place(T, Player, Territory, N) | noPlace(T, Player, Territory, N) :- 
+    troops_to_place(T, Player, _),
+    territory_control(T, Territory, Player, Troops), 
+    curr_turn(T,Player),
+    troops(N), 
+    N>0.
+
+:- place(T, P, Territory, N1), place(T, P, Territory, N2), N1!=N2.
+
+:- troops_to_place(T,P,Troops), #sum{N,Terr : place(T,P,Terr,N)} != Troops.
+%% :- place(_,_,_,D), D>4.
+#show place/4
+
+
+
+% al territorio T, quanti vicini amici ha? FATTO
+% al territorio T, quanti vicini nemici ha? FATTO
+% al territorio T, quante truppe nemiche vicine ha?
+% il territorio T è un territorio di confine?
+% il territorio T p un territorio di confine di un continente C?
+    % quanti territori mancano a P per completare il continente C (confinante con T)?
+
+% quanti territori mancano a P per conquistare il continente C?
+% quanti territori mancano a P per c	onquistare il mondo?
+
+% differenza di truppe 
+
+
+% ==================== AI DESIGN CONSTRAINTS ====================
+
+% place troops only in fronteer territories (can't place in internal ones)
+% :- place(T, Player, Territory, _), territory_island_internal(T, _, Player, Territory).
+
+
+
+% ----------- MAX PRIORITY -----------
+
+% place troops preferring most valutable island
+% :~ place(T, Player, Territory, Troops), 
+%     territory_island(T, Id, Territory, Player),
+%     island_value_index(T, Id, Player, ValueIndex).
+%     [ValueIndex@3, ValueIndex, Id]
+
+
+% ----------- MID PRIORITY -----------
+% braz(2)
+% afr(5)
+
+% diff(-3)
+
+
+% prioritize territories where the difference between friendly and enemy troops is greater
+% :~ place(T, Player, Territory, Troops), 
+%     difference_troops_territory(T, Territory, PlayerOwner, Diff),
+%     Cost = Troops + Diff.
+%     [Cost@2, Territory]
+
+
+
+draft(T, Territory, N) :- place(T, _, Territory, N).
+
+% 1. isola
+% 2. n_truppe + frontiera
+
+
+
+turn(2,"Yellow (Bot)").
+territory_control(2,"alaska","Yellow (Bot)",1).
+territory_control(2,"northwest_territory","Yellow (Bot)",3).
+territory_control(2,"greenland","Blue (Bot)",2).
+territory_control(2,"alberta","Blue (Bot)",1).
+territory_control(2,"ontario","Blue (Bot)",2).
+territory_control(2,"quebec","Yellow (Bot)",2).
+territory_control(2,"western_us","Yellow (Bot)",2).
+territory_control(2,"eastern_us","Blue (Bot)",4).
+territory_control(2,"central_america","Blue (Bot)",1).
+territory_control(2,"argentina","Yellow (Bot)",2).
+territory_control(2,"brazil","Yellow (Bot)",4).
+territory_control(2,"peru","Blue (Bot)",2).
+territory_control(2,"venezuela","Blue (Bot)",3).
+territory_control(2,"congo","Blue (Bot)",2).
+territory_control(2,"east_africa","Blue (Bot)",2).
+territory_control(2,"egypt","Blue (Bot)",2).
+territory_control(2,"madagascar","Blue (Bot)",1).
+territory_control(2,"north_africa","Blue (Bot)",3).
+territory_control(2,"south_africa","Yellow (Bot)",2).
+territory_control(2,"great_britain","Yellow (Bot)",2).
+territory_control(2,"iceland","Yellow (Bot)",1).
+territory_control(2,"northern_europe","Blue (Bot)",7).
+territory_control(2,"scandinavia","Blue (Bot)",2).
+territory_control(2,"southern_europe","Yellow (Bot)",3).
+territory_control(2,"ukraine","Yellow (Bot)",2).
+territory_control(2,"western_europe","Yellow (Bot)",1).
+territory_control(2,"yakutsk","Blue (Bot)",1).
+territory_control(2,"ural","Yellow (Bot)",2).
+territory_control(2,"siberia","Blue (Bot)",1).
+territory_control(2,"irkutsk","Blue (Bot)",2).
+territory_control(2,"kamchatka","Blue (Bot)",1).
+territory_control(2,"afghanistan","Yellow (Bot)",1).
+territory_control(2,"china","Blue (Bot)",4).
+territory_control(2,"mongolia","Blue (Bot)",1).
+territory_control(2,"japan","Blue (Bot)",2).
+territory_control(2,"middle_east","Yellow (Bot)",1).
+territory_control(2,"india","Yellow (Bot)",3).
+territory_control(2,"siam","Yellow (Bot)",2).
+territory_control(2,"eastern_australia","Yellow (Bot)",2).
+territory_control(2,"indonesia","Yellow (Bot)",1).
+territory_control(2,"western_australia","Blue (Bot)",1).
+territory_control(2,"new_guinea","Yellow (Bot)",2).
+territory_island(2,0,"alaska","Yellow (Bot)").
+territory_island(2,0,"northwest_territory","Yellow (Bot)").
+territory_island(2,1,"greenland","Blue (Bot)").
+territory_island(2,1,"ontario","Blue (Bot)").
+territory_island(2,1,"alberta","Blue (Bot)").
+territory_island(2,1,"eastern_us","Blue (Bot)").
+territory_island(2,1,"central_america","Blue (Bot)").
+territory_island(2,1,"venezuela","Blue (Bot)").
+territory_island(2,1,"peru","Blue (Bot)").
+territory_island(2,2,"quebec","Yellow (Bot)").
+territory_island(2,3,"western_us","Yellow (Bot)").
+territory_island(2,4,"argentina","Yellow (Bot)").
+territory_island(2,4,"brazil","Yellow (Bot)").
+territory_island(2,5,"congo","Blue (Bot)").
+territory_island(2,5,"east_africa","Blue (Bot)").
+territory_island(2,5,"north_africa","Blue (Bot)").
+territory_island(2,5,"egypt","Blue (Bot)").
+territory_island(2,5,"madagascar","Blue (Bot)").
+territory_island(2,6,"south_africa","Yellow (Bot)").
+territory_island(2,7,"great_britain","Yellow (Bot)").
+territory_island(2,7,"iceland","Yellow (Bot)").
+territory_island(2,7,"western_europe","Yellow (Bot)").
+territory_island(2,7,"southern_europe","Yellow (Bot)").
+territory_island(2,7,"ukraine","Yellow (Bot)").
+territory_island(2,7,"middle_east","Yellow (Bot)").
+territory_island(2,7,"ural","Yellow (Bot)").
+territory_island(2,7,"afghanistan","Yellow (Bot)").
+territory_island(2,7,"india","Yellow (Bot)").
+territory_island(2,7,"siam","Yellow (Bot)").
+territory_island(2,7,"indonesia","Yellow (Bot)").
+territory_island(2,7,"new_guinea","Yellow (Bot)").
+territory_island(2,7,"eastern_australia","Yellow (Bot)").
+territory_island(2,8,"northern_europe","Blue (Bot)").
+territory_island(2,8,"scandinavia","Blue (Bot)").
+territory_island(2,9,"yakutsk","Blue (Bot)").
+territory_island(2,9,"siberia","Blue (Bot)").
+territory_island(2,9,"irkutsk","Blue (Bot)").
+territory_island(2,9,"kamchatka","Blue (Bot)").
+territory_island(2,9,"china","Blue (Bot)").
+territory_island(2,9,"mongolia","Blue (Bot)").
+territory_island(2,9,"japan","Blue (Bot)").
+territory_island(2,10,"western_australia","Blue (Bot)").
+player("Blue (Bot)").
+player("Yellow (Bot)").
+troops_to_place(2,"Yellow (Bot)",6).

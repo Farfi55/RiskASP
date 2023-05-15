@@ -51,7 +51,8 @@ namespace player
                 return;
             
             _botBrain.OnTurnPhaseChanged(oldPhase, newPhase);
-            _botBrain.HandleCommunication(this, _player);
+            if(newPhase is not EmptyPhase)
+                _botBrain.HandleCommunication(this, _player);
         }
         
         

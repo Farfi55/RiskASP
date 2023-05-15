@@ -54,6 +54,11 @@ difference_troops_territory(T, Territory, PlayerOwner, Diff) :-
     adjacent_enemy_troops(T, Territory, PlayerOwner, Enemies),
     Diff = Friendly - Enemies.
 
+difference_troops_territory_inverted(T, Territory, PlayerOwner, Diff) :- 
+    territory_control(T, Territory, PlayerOwner, Friendly),
+    adjacent_enemy_troops(T, Territory, PlayerOwner, Enemies),
+    Diff = Enemies - Friendly.
+
     
 
 fronteer_territory(T, Territory, Player) :-

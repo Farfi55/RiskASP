@@ -102,3 +102,7 @@ end_attack(T, NextAT) :- attack_reinforce(T,AT,_,_,_), NextAT=AT+1.
 %territory_control(3,"t1","p1",2).
 %territory_control(3,"t3","p1",3).
 %territory_control(3,"t2","p2",3).
+
+
+a(1).
+:~ a(X). [1@1, X]

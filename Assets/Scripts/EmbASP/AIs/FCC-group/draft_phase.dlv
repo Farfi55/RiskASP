@@ -9,26 +9,26 @@
 
 
 troops(0).
-troops(N) :- troops_to_place(T, Player, Troops), 
-    current_turn(T,P), 
-    troops(F), 
-    N=F+1, 
-    N<=Troops.
+troops(Troops) :- 
+    troops_to_place(T, Player, MaxTroops), 
+    curr_turn(T,P), 
+    troops(Troops1), 
+    Troops=Troops1+1, 
+    Troops<=MaxTroops.
 
-place(T, Player, Territory, N) | noPlace(T, Player, Territory, N) :- 
-    troops_to_place(T, Player, _),
-    territory_control(T, Territory, Player, Troops), 
+place(T, Player, Territory, Troops) | noPlace(T, Player, Territory, Troops) :- 
+    territory_control(T, Territory, Player, _), 
     curr_turn(T,Player),
-    troops(N), 
-    N>0.
+    troops(Troops), 
+    Troops > 0.
 
 :- place(T, P, Territory, N1), place(T, P, Territory, N2), N1!=N2.
 
-:- troops_to_place(T,P,Troops), #sum{N,Terr : place(T,P,Terr,N)} <> Troops.
-%% :- place(_,_,_,D), D>4.
+placed_troops(T, Player, Troops) :- 
+    curr_turn(T, Player), 
+    Troops = #sum{N,Terr : place(T,Player,Terr,N)}.
 
-
-
+:- troops_to_place(T,P,Troops), not placed_troops(T, P, Troops).
 
 % al territorio T, quanti vicini amici ha? FATTO
 % al territorio T, quanti vicini nemici ha? FATTO
@@ -69,7 +69,7 @@ place(T, Player, Territory, N) | noPlace(T, Player, Territory, N) :-
 % prioritize territories where the difference between friendly and enemy troops is greater
 :~ place(T, Player, Territory, Troops), 
     difference_troops_territory(T, Territory, PlayerOwner, Diff),
-    Cost = Troops + Diff.
+    Cost = Diff.
     [Cost@2, Territory]
 
 
@@ -80,3 +80,5 @@ draft(T, Territory, N) :- place(T, _, Territory, N).
 % 2. n_truppe + frontiera
 
 
+a(1).
+:~ a(X). [1@6, X]

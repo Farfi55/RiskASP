@@ -19,4 +19,4 @@ MonoBehaviour:
   _reinforceBrainPath: Assets/Scripts/EmbASP/AIs/FCC-group/draft_phase.dlv
   _attackBrainPath: Assets/Scripts/EmbASP/AIs/FCC-group/attack_phase.dlv
   _fortifyBrainPath: Assets/Scripts/EmbASP/AIs/FCC-group/fortify_phase.dlv
-  _useOptimalAnswerSet: 0
+  _useOptimalAnswerSet: 1

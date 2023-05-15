@@ -2,13 +2,13 @@
 
 max_continent_bonus(24).
 
-% continent(ID, Bonus, Size) 
-continent_size("n_america", 5, 9).
-continent_size("s_america", 2, 4).
-continent_size("africa",    3, 7).
-continent_size("europe",    5, 6).
-continent_size("asia",      7, 12).
-continent_size("australia", 2, 4).
+% continent(ID, Bonus, Size, Ratio100) 
+continent_size("n_america", 5, 9,  180).
+continent_size("s_america", 2, 4,  200).
+continent_size("africa",    3, 7,  233).
+continent_size("europe",    5, 6,  120).
+continent_size("asia",      7, 12, 171).
+continent_size("australia", 2, 4,  200).
 
 
 territory_island_internal_weight(3).

@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2f7fb0d47ef4a5f9eebec06b51c1a9a, type: 3}
   m_Name: FCC_bot_conf
   m_EditorClassIdentifier: 
-  _name: default (stupid ai)
+  _name: FCC
   _commonBrainsPaths:
-  - Assets/Scripts/EmbASP/AIs/constants.dlv
-  _reinforceBrainPath: Assets/Scripts/EmbASP/AIs/draft_phase_template.dlv
-  _attackBrainPath: Assets/Scripts/EmbASP/AIs/attack_phase_template.dlv
-  _fortifyBrainPath: Assets/Scripts/EmbASP/AIs/fortify_phase_template.dlv
+  - Assets/Scripts/EmbASP/AIs/FCC-group/constants.dlv
+  - Assets/Scripts/EmbASP/AIs/FCC-group/common_logic.dlv
+  _reinforceBrainPath: Assets/Scripts/EmbASP/AIs/FCC-group/draft_phase.dlv
+  _attackBrainPath: Assets/Scripts/EmbASP/AIs/FCC-group/attack_phase.dlv
+  _fortifyBrainPath: Assets/Scripts/EmbASP/AIs/FCC-group/fortify_phase.dlv
   _useOptimalAnswerSet: 0

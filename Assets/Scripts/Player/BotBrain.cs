@@ -134,7 +134,7 @@ namespace player
             
             if (answerSets.Count == 0)
             {
-                Debug.LogError("BotBrain: No answer set found");
+                Debug.LogError($"BotBrain: No answer set found {player.Name}, phase: {CurrentPhase.GetType().Name}\noutput-error: {output.ErrorsString}\noutput: {output.OutputString}" );
                 CurrentPhase.OnFailure(player);
                 return;
             }

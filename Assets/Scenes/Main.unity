@@ -1638,6 +1638,10 @@ PrefabInstance:
       value: Assets/Scripts/EmbASP/AIs/FCC-group/attack_phase.dlv
       objectReference: {fileID: 0}
     - target: {fileID: 4487455324051920567, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: _botConfiguration
+      value: 
+      objectReference: {fileID: 11400000, guid: 52db439aef6df01fab8268ebd802ed16, type: 2}
+    - target: {fileID: 4487455324051920567, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
       propertyPath: _fortifyBrainPath
       value: Assets/Scripts/EmbASP/AIs/FCC-group/fortify_phase.dlv
       objectReference: {fileID: 0}
@@ -2181,7 +2185,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 286686166d245e64bbe3ad872878ba11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _nPlayers: 4
+  _nPlayers: 2
   Players: []
 --- !u!4 &280334211
 Transform:
@@ -2242,7 +2246,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55ff44a7efcf4746b62b6bc681301590, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _actionDelay: 1.5
+  _actionDelay: 0.63
 --- !u!114 &280334215
 MonoBehaviour:
   m_ObjectHideFlags: 0

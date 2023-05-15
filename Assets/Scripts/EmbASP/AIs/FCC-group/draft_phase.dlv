@@ -48,7 +48,10 @@ placed_troops(T, Player, Troops) :-
 % place troops only in fronteer territories (can't place in internal ones)
 :- place(T, Player, Territory, _), territory_island_internal(T, _, Player, Territory).
 
-
+#show island_value_index/4.
+#show difference_troops_territory/4.
+#show place/4.
+#show draft/3.
 
 % ----------- MAX PRIORITY -----------
 
@@ -69,9 +72,8 @@ placed_troops(T, Player, Troops) :-
 % prioritize territories where the difference between friendly and enemy troops is greater
 :~ place(T, Player, Territory, Troops), 
     difference_troops_territory(T, Territory, PlayerOwner, Diff),
-    Cost = Diff.
+    Cost = Diff + 100.
     [Cost@2, Territory]
-
 
 
 draft(T, Territory, N) :- place(T, _, Territory, N).

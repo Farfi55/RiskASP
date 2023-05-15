@@ -18,7 +18,7 @@ namespace Map
         [SerializeField] private TMP_Text _troopsCountText;
         [SerializeField] private TroopCountChangedEffect _troopsChangedEffectPrefab;
         [SerializeField] private Transform _troopsChangedEffectParent;
-        [SerializeField] private TMP_Text _territoryNameText;
+        [SerializeField] public TMP_Text _territoryNameText;
         
         private PlayerColor _playerColor;
 
@@ -35,7 +35,8 @@ namespace Map
                 Debug.LogWarning("TerritorySelection is null");
 
             _territoryNameText.text = _territory.Name;
-            
+
+
             _territory.OnTroopsChanged += OnTroopsChanged;
         }
 

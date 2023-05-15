@@ -12,8 +12,8 @@ continent_size("australia", 2, 4,  200).
 
 
 territory_island_internal_weight(3).
-territory_island_fronteer_weight(-1).
-territory_island_continent_bonus_weight(1).
+territory_island_fronteer_weight(1).
+territory_island_continent_bonus_weight(10).
 
 
 

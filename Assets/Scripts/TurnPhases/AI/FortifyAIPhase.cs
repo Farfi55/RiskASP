@@ -32,6 +32,7 @@ namespace TurnPhases.AI
 
         public void OnRequest(Player player, InputProgram inputProgram)
         {
+            
         }
 
         public void OnResponse(Player player, AnswerSet answerSet)

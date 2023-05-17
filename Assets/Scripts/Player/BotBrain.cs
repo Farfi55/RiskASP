@@ -25,6 +25,9 @@ namespace player
         private Handler _handler;
 
 
+        public Action<InputProgram> OnProgramLoaded;
+        public Action<InputProgram> OnPhaseInfoLoaded;
+        
         public ReinforceAIPhase ReinforcePhase { get; private set; }
         public AttackAIPhase AttackPhase { get; private set; }
         public FortifyAIPhase FortifyPhase { get; private set; }
@@ -85,15 +88,17 @@ namespace player
         public void HandleCommunication(BotPlayer botPlayer) => HandleCommunication(botPlayer, botPlayer.Player);
         public void HandleCommunication(BotPlayer botPlayer, Player player)
         {
-            InputProgram inputProgram = CreateProgram(botPlayer);
-            CurrentPhase.OnRequest(player, inputProgram);
+            InputProgram inputProgram = CreateProgram(botPlayer, player);
 
             _handler.RemoveAll();
             _handler.AddProgram(inputProgram);
+            OnProgramLoaded?.Invoke(inputProgram);
 
             // var callback = new PhasesCallback(this, botPlayer, player);
             // _handler.StartAsync(callback);
 
+            
+            
             var output = _handler.StartSync();
             OnResponse(botPlayer, player, output);
         }
@@ -143,7 +148,7 @@ namespace player
             CurrentPhase.OnResponse(player, answerSet);
         }
 
-        public InputProgram CreateProgram(BotPlayer botPlayer)
+        public InputProgram CreateProgram(BotPlayer botPlayer, Player player)
         {
             InputProgram inputProgram = new ASPInputProgram();
             
@@ -155,17 +160,18 @@ namespace player
                 _ => "",
             };
 
+            LoadPhaseInfo(inputProgram, player);
+            OnPhaseInfoLoaded?.Invoke(inputProgram);
+            
             LoadCommonBrains(botPlayer, inputProgram);
 
-            if(CurrentPhase != EmptyPhase)
-                LoadBrain(currentPhaseBrain, inputProgram);
+            LoadBrain(currentPhaseBrain, inputProgram);
             
-            LoadPhaseInfo(inputProgram);
 
             return inputProgram;
         }
 
-        private void LoadPhaseInfo(InputProgram inputProgram)
+        private void LoadPhaseInfo(InputProgram inputProgram, Player currentPlayer)
         {
             var tr = TerritoryRepository.Instance;
 
@@ -187,6 +193,8 @@ namespace player
             // players
             foreach (var player in _gm.Players)
                 inputProgram.AddObjectInput(new PlayerPredicate(player.Name));
+            
+            CurrentPhase.OnRequest(currentPlayer, inputProgram);
         }
 
 

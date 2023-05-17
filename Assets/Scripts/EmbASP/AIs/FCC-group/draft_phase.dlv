@@ -76,6 +76,20 @@ placed_troops(T, Player, Troops) :-
     [Cost@2, Territory]
 
 
+drafts_count(T, Player, Count) :-
+    curr_turn(T, Player),
+    Count = #count{Territory : place(T, Player, Territory, _)}.
+
+
+% massimizzare il numero di territori diversi in cui si fa draft
+
+% :~ troops_to_place(T, Player, MaxPlacesCount), 
+%     drafts_count(T, Player, PlacesCount),
+%     Cost = (MaxPlacesCount - PlacesCount) * 200.
+%     [Cost@2, Cost]
+
+
+
 draft(T, Territory, N) :- place(T, _, Territory, N).
 
 % 1. isola

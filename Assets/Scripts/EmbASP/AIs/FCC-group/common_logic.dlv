@@ -8,14 +8,64 @@ curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
 enemy(P) :- player(P), curr_turn(T, Pl), P != Pl.
 
 
+curr_player_territory(T, Territory, Troops) :- 
+    territory_control(T, Territory, Player, Troops), 
+    curr_turn(T, Player).
 
-friendly_territory(T, Territory, Troops) :- 
-    territory_control(T, Territory, Player, Troops), curr_turn(T, Player).
-
-enemy_territory(T, Territory, Player, Troops) :- 
+other_player_territory(T, Territory, Player, Troops) :- 
     territory_control(T, Territory, Player, Troops), 
     curr_turn(T, Player1), Player != Player1.
 
+
+player_territories_count(T, Player, Count) :-
+    curr_turn(T, _),
+    player(Player),
+    Count = #count{Territory : territory_control(T, Territory, Player, _)}.
+
+player_territories_in_continent(T, Player, Continent, Count) :-
+    curr_turn(T, _),
+    player(Player),
+    continent(Continent),
+    Count = #count{Territory : territory_control(T, Territory, Player, _), territory(Territory, Continent) }.
+
+player_missing_territories_in_continent(T, Player, Continent, Missing) :- 
+    curr_turn(T, _),
+    player(Player),
+    continent_size(Continent, _, Size, _),
+    player_territories_in_continent(T, Player, Continent, Count),
+    Missing = Size - Count.
+
+player_continent_control(T, Player, Continent, Bonus) :- 
+    curr_turn(T, _),
+    player(Player),
+    continent_size(Continent, Bonus, Size, _),
+    player_missing_territories_in_continent(T, Player, Continent, Count),
+    Count = Size.
+
+
+% ______________________________ BONUS ______________________________
+
+player_continent_bonus(T, Player, ContinentBonus) :- 
+    curr_turn(T, _),
+    player(Player),
+    ContinentBonus = #sum{Bonus : player_continent_control(T, Player, Continent, Bonus) }.
+
+player_territories_bonus(T, Player, TerritoriesBonus) :- 
+    curr_turn(T, _),
+    player(Player),
+    player_territories_count(T, Player, TerritoriesCount),
+    TerritoriesBonus = TerritoriesCount / 3.
+    
+
+player_bonus(T, Player, Bonus) :- 
+    curr_turn(T, _),
+    player(Player),
+    player_continent_bonus(T, Player, ContinentBonus),
+    player_territories_bonus(T, Player, TerritoriesBonus),
+    Bonus = ContinentBonus + TerritoriesBonus.
+
+
+% _____________________________________________________________________
 
 
 adjacent_friendly_territories(T, Territory, Player, N) :- 
@@ -80,19 +130,7 @@ internal_territory(T, Territory, Player) :-
 
 
 
-% generare isole di territori collegarti
-
-% territory_island(T, Id, Territory, Player).
-% territory_control(T, Territory, Player, Troops).
-
-% territory_transitive_connection(T, Terr1, Terr2, Player) :- 
-%     connection(Terr1, Terr2), 
-%     territory_control(T, Terr1, Player, _), 
-%     territory_control(T, Terr2, Player, _).
-
-% territory_transitive_connection(T, Terr1, Terr2, Player) :- 
-%     territory_transitive_connection(T, Terr1, Terr3, Player),
-%     territory_transitive_connection(T, Terr3, Terr2, Player).
+% ______________________________ ISLANDS ______________________________
 
 
 % territory_island(T, Id, Territory, Player).

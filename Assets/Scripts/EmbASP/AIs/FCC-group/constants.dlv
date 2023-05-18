@@ -2,8 +2,14 @@
 %                           CONSTANTS 
 % ====================================================================
 
+% ____________________ WEIGHTS ____________________
 
-% _________________ ADDED CONSTANTS ____________________
+territory_island_internal_weight(3).
+territory_island_fronteer_weight(1).
+territory_island_continent_bonus_weight(10).
+
+
+% _________________ CONSTANTS ____________________
 
 max_continent_bonus(24).
 
@@ -16,10 +22,11 @@ continent_size("asia",      7, 12, 171).
 continent_size("australia", 2, 4,  200).
 
 
-territory_island_internal_weight(3).
-territory_island_fronteer_weight(1).
-territory_island_continent_bonus_weight(10).
-
+continent_connection(Terr1, Terr2) :- 
+    connection(Terr1, Terr2), 
+    territory(Terr1, Cont1),
+    territory(Terr2, Cont2),
+    Cont1 != Cont2.
 
 
 % ________________ BASE CONSTANTS ____________________
@@ -83,8 +90,7 @@ territory("new_guinea",               "australia").
 territory("western_australia",        "australia").
 
 
-
-connection(ID1, ID2) :- connection(ID2, ID1).
+connection(Terr1, Terr2) :- connection(Terr2, Terr1).
 
 
 % n_america

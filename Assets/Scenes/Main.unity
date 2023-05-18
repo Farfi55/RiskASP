@@ -1000,7 +1000,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &163282865
 GameObject:
@@ -1151,7 +1151,7 @@ Transform:
   m_Children:
   - {fileID: 1549080811}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &228228005
 PrefabInstance:
@@ -1661,6 +1661,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BOT Player FFC
       objectReference: {fileID: 0}
+    - target: {fileID: 6030655713958463109, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
 --- !u!1001 &267842324
@@ -2167,7 +2171,6 @@ GameObject:
   - component: {fileID: 280334216}
   - component: {fileID: 280334214}
   - component: {fileID: 280334215}
-  - component: {fileID: 280334217}
   m_Layer: 0
   m_Name: GAME_MANAGER
   m_TagString: Untagged
@@ -2273,25 +2276,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 829bb14220a742f58dd4ebf9f4e4f8a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &280334217
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 280334209}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b150d7c448194bcbbd6443f7a7474f29, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _botBrain: {fileID: 280334216}
-  _dumpsPath: Assets/Scripts/EmbASP/AIs/FCC-group/dumps
-  _logPhaseInfo: 1
-  _logProgramLoadedInfo: 0
-  _dumpPhaseInfo: 1
-  _dumpProgramLoaded: 1
-  _clearAllDumpsOnStart: 1
 --- !u!1001 &299899218
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2800,7 +2784,7 @@ Transform:
   - {fileID: 1153333694}
   - {fileID: 1300541608}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &327201809
 GameObject:
@@ -13598,7 +13582,7 @@ Transform:
   - {fileID: 478454607}
   - {fileID: 1776771779}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1219795451
 GameObject:
@@ -13629,7 +13613,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1247394678
 PrefabInstance:
@@ -14245,7 +14229,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1325181096
 GameObject:
@@ -14301,7 +14285,7 @@ Transform:
   - {fileID: 888371571}
   - {fileID: 1634240661}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1326121652
 GameObject:
@@ -14385,7 +14369,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1335831527
 GameObject:
@@ -26264,7 +26248,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2026823306
 GameObject:
@@ -27457,6 +27441,62 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8117319427863881805, guid: b3676f0096f2cc0dd81ad3757ec3a866, type: 3}
   m_PrefabInstance: {fileID: 2105260044}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2109612599
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2109612601}
+  - component: {fileID: 2109612600}
+  m_Layer: 0
+  m_Name: ASP_DEBUGGER
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2109612600
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2109612599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b150d7c448194bcbbd6443f7a7474f29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _botBrain: {fileID: 280334216}
+  _dumpFilesPath: Assets/Scripts/EmbASP/AIs/FCC-group/dumps
+  _logPhaseToConsole: 0
+  _logFullToConsole: 0
+  _logResponseToConsole: 0
+  _logPhaseToFile: 0
+  _logFullToFile: 0
+  _logResponseToFile: 0
+  _deleteOldDumpsOnStart: 1
+  _programPhaseText: 
+  _programFullText: 
+  _programResponseText: 
+--- !u!4 &2109612601
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2109612599}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2121705357
 GameObject:
   m_ObjectHideFlags: 0

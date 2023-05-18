@@ -145,9 +145,17 @@ territory_island_internal(T, Id, Player, Territory) :-
     territory_island(T, Id, Territory, Player), 
     internal_territory(T, Territory, Player).
 
+island_internal_troops(T, Id, Player, Territory, Troops) :- 
+    territory_island_internal(T, Id, Player, Territory),
+    territory_control(T, Territory, Player, Troops).
+
 territory_island_fronteer(T, Id, Player, Territory) :- 
     territory_island(T, Id, Territory, Player), 
     fronteer_territory(T, Territory, Player).
+
+island_fronteer_troops(T, Id, Player, Territory, Troops) :- 
+    territory_island_fronteer(T, Id, Player, Territory),
+    territory_control(T, Territory, Player, Troops).
 
 
 
@@ -189,6 +197,7 @@ continent_in_island(T, Id, Player, Continent, Bonus) :-
 
 
 % bigger is better
+% indicates how much the island is worth to the player
 island_value(T, Id, Player, Value) :- 
     island_id(T, Id, Player),
     territory_island_internal_count(T, Id, Player, TIIC),
@@ -208,3 +217,29 @@ island_value(T, Id, Player, Value) :-
 island_value_index(T, Id, Player, ValueIndex) :- 
     island_value(T, Id, Player, Value),
     ValueIndex = 1000 - Value.
+
+
+
+
+
+island_weakest_fronteer_troops(T, Id, Player, MinTroops) :-
+    island_id(T, Id, Player),
+    MinTroops = #min{Troops, Territory : island_fronteer_troops(T, Id, Player, Territory, Troops)}.
+
+% WARNING: there could be more than one if they have the same number of troops
+% territory with the smallest number of troops that is a fronteer of the island
+island_weakest_fronteer(T, Id, Player, Territory, Troops) :-
+    island_weakest_fronteer_troops(T, Id, Player, Troops),
+    island_fronteer_troops(T, Id, Player, Territory, Troops).
+    
+
+island_strongest_internal_troops(T, Id, Player, MaxTroops) :-
+    island_id(T, Id, Player),
+    MaxTroops = #max{Troops, Territory : island_internal_troops(T, Id, Player, Territory, Troops)}.
+
+% WARNING: there could be more than one if they have the same number of troops
+% territory with the biggest number of troops that is a interal territory of the island
+island_strongest_internal(T, Id, Player, Territory, Troops) :-
+    island_strongest_internal_troops(T, Id, Player, Troops),
+    island_internal_troops(T, Id, Player, Territory, Troops).
+

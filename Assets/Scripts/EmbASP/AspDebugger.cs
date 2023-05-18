@@ -1,5 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using it.unical.mat.embasp.@base;
+using it.unical.mat.embasp.languages.asp;
 using player;
 using TurnPhases;
 using UnityEngine;
@@ -12,36 +16,59 @@ namespace EmbASP
         private GameManager _gm;
         [SerializeField] private BotBrain _botBrain;
 
-        [SerializeField] private string _dumpsPath;
+        [FormerlySerializedAs("_dumpsPath")] [SerializeField] private string _dumpFilesPath;
         
         [Space(10)]
-        [SerializeField] private bool _logPhaseInfo;
-        [SerializeField] private bool _logProgramLoadedInfo;
+        [SerializeField] private bool _logPhaseToConsole;
+        [SerializeField] private bool _logFullToConsole;
+        [SerializeField] private bool _logResponseToConsole;
         
         [Space(10)]
-        [SerializeField] private bool _dumpPhaseInfo;
-        [SerializeField] private bool _dumpProgramLoaded;
+        [SerializeField] private bool _logPhaseToFile;
+        [SerializeField] private bool _logFullToFile;
+        [SerializeField] private bool _logResponseToFile;
         
         
+        [FormerlySerializedAs("_clearAllDumpsOnStart")]
         [Space(10)]
-        [SerializeField] private bool _clearAllDumpsOnStart;
+        [SerializeField] private bool _deleteOldDumpsOnStart;
+
+        
+        [Space(10), TextArea(4, 10), SerializeField] 
+        private string _programPhaseText;
+        
+        [Space(10), TextArea(4, 10), SerializeField]
+        private string _programFullText;
+        
+        [Space(10), TextArea(4, 10), SerializeField]
+        private string _programResponseText;
         
         
-        private void Start()
+        
+        private void Awake()
         {
             _gm = GameManager.Instance;
-            if (_clearAllDumpsOnStart)
+            if (_deleteOldDumpsOnStart)
                 ClearAllDumpsOnStart();
-            
-            _botBrain.OnProgramLoaded += ProgramLoaded;
-            
-            _botBrain.OnPhaseInfoLoaded += PhaseInfo;
-        }
 
+            if (_botBrain == null)
+            {
+                Debug.LogWarning("BotBrain not set, trying to find it in scene");   
+                _botBrain = FindObjectOfType<BotBrain>();
+            }
+            
+            _botBrain.OnPhaseInfoLoaded += PhaseLoaded;
+            
+            _botBrain.OnProgramLoaded += FullProgramLoaded;
+            
+            
+            _botBrain.OnResponseLoaded += ResponseLoaded;
+        }
+        
         private void ClearAllDumpsOnStart()
         {
             // delete all files starting with 'dump' inside dump-folder
-            var dumpFiles = System.IO.Directory.GetFiles(_dumpsPath, "dump*");
+            var dumpFiles = System.IO.Directory.GetFiles(_dumpFilesPath, "dump*");
             foreach (var dumpFile in dumpFiles)
             {
                 System.IO.File.Delete(dumpFile);
@@ -49,52 +76,88 @@ namespace EmbASP
         }
 
 
-        private void ProgramLoaded(InputProgram program)
+        private void FullProgramLoaded(InputProgram program)
         {
-            var programStr = program.Programs;
+            _programFullText = program.Programs;
             var phaseName = _botBrain.CurrentPhase.GetType().Name;
             var turn = _gm.Turn;
-            if (_dumpProgramLoaded)
+            if (_logFullToFile)
             {
                 
                 
                 string dumpPath;
                 if(_gm.CurrentPhase is AttackPhase attackPhase)
-                    dumpPath = $"{_dumpsPath}/dump_full_t{turn}_{phaseName}_at{attackPhase.AttackTurn}.dlv";
+                    dumpPath = $"{_dumpFilesPath}/dump_full_t{turn}_{phaseName}_at{attackPhase.AttackTurn}.dlv";
                 else 
-                    dumpPath = $"{_dumpsPath}/dump_full_t{turn}_{phaseName}.dlv";
+                    dumpPath = $"{_dumpFilesPath}/dump_full_t{turn}_{phaseName}.dlv";
                 
-                System.IO.File.WriteAllText(dumpPath, programStr);
+                System.IO.File.WriteAllText(dumpPath, _programFullText);
             }
 
-            if (_logProgramLoadedInfo)
+            if (_logFullToConsole)
             {
-                Debug.Log($"turn {turn}, full info for {phaseName}:\n______________________\n{programStr}\n______________________");
+                Debug.Log($"turn {turn}, full info for {phaseName}:\n______________________\n{_programFullText}\n______________________");
             }
         }
         
-        private void PhaseInfo(InputProgram program)
+        private void PhaseLoaded(InputProgram program)
         {
-            var programStr = program.Programs;
+            _programPhaseText = program.Programs;
+            
             var phaseName = _botBrain.CurrentPhase.GetType().Name;
             var turn = _gm.Turn;
             
-            if (_dumpProgramLoaded)
+            if (_logPhaseToFile)
             {
                 string dumpPath;
                 if(_gm.CurrentPhase is AttackPhase attackPhase)
-                    dumpPath = $"{_dumpsPath}/dump_phase_t{turn}_{phaseName}_at{attackPhase.AttackTurn}.dlv";
+                    dumpPath = $"{_dumpFilesPath}/dump_phase_t{turn}_{phaseName}_at{attackPhase.AttackTurn}.dlv";
                 else 
-                    dumpPath = $"{_dumpsPath}/dump_phase_t{turn}_{phaseName}.dlv";
+                    dumpPath = $"{_dumpFilesPath}/dump_phase_t{turn}_{phaseName}.dlv";
                 
-                System.IO.File.WriteAllText(dumpPath, programStr);
+                System.IO.File.WriteAllText(dumpPath, _programPhaseText);
             }
 
-            if (_logProgramLoadedInfo)
+            if (_logPhaseToConsole)
             {
-                Debug.Log($"turn {turn}, phase info for {phaseName}:\n______________________\n{programStr}\n______________________");
+                Debug.Log($"turn {turn}, phase info for {phaseName}:\n______________________\n{_programPhaseText}\n______________________");
             }
             
         }
+        
+        
+        private void ResponseLoaded(AnswerSet answerSet)
+        {
+            var sb = new StringBuilder();
+            
+            foreach (var (level, cost) in answerSet.Weights) 
+                sb.AppendLine($"% COST {cost} @ {level}");
+
+            foreach (var atomString in answerSet.Value)
+                sb.AppendLine(atomString);
+
+            _programResponseText = sb.ToString();
+            
+            var phaseName = _botBrain.CurrentPhase.GetType().Name;
+            var turn = _gm.Turn;
+            
+            if (_logResponseToFile)
+            {
+                string dumpPath;
+                if(_gm.CurrentPhase is AttackPhase attackPhase)
+                    dumpPath = $"{_dumpFilesPath}/dump_response_t{turn}_{phaseName}_at{attackPhase.AttackTurn}.dlv";
+                else 
+                    dumpPath = $"{_dumpFilesPath}/dump_response_t{turn}_{phaseName}.dlv";
+                
+                System.IO.File.WriteAllText(dumpPath, _programResponseText);
+            }
+            
+            if (_logResponseToConsole)
+            {
+                Debug.Log($"turn {turn}, response for {phaseName}:\n______________________\n{_programResponseText}\n______________________");
+            }
+        }
+        
+        
     }
 }

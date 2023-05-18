@@ -27,7 +27,8 @@ namespace player
 
         public Action<InputProgram> OnProgramLoaded;
         public Action<InputProgram> OnPhaseInfoLoaded;
-        
+        public Action<AnswerSet> OnResponseLoaded;
+
         public ReinforceAIPhase ReinforcePhase { get; private set; }
         public AttackAIPhase AttackPhase { get; private set; }
         public FortifyAIPhase FortifyPhase { get; private set; }
@@ -145,6 +146,8 @@ namespace player
             }
 
             var answerSet = answerSets[0];
+            OnResponseLoaded?.Invoke(answerSet);
+            
             CurrentPhase.OnResponse(player, answerSet);
         }
 

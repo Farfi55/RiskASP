@@ -2288,10 +2288,10 @@ MonoBehaviour:
   _botBrain: {fileID: 280334216}
   _dumpsPath: Assets/Scripts/EmbASP/AIs/FCC-group/dumps
   _logPhaseInfo: 1
-  _logProgramLoadedInfo: 1
+  _logProgramLoadedInfo: 0
   _dumpPhaseInfo: 1
   _dumpProgramLoaded: 1
-  _clearAllDumpsOnStart: 0
+  _clearAllDumpsOnStart: 1
 --- !u!1001 &299899218
 PrefabInstance:
   m_ObjectHideFlags: 0

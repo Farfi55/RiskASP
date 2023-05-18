@@ -1,3 +1,8 @@
+% ====================================================================
+%                           ATTACK PHASE
+% ====================================================================
+
+
 curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
 
 curr_attack_turn(T, AT, P) :- curr_turn(T,P), AT = #max{AT1 : attack_turn(T, AT1, P) }.

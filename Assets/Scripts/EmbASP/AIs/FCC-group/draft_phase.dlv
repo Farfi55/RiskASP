@@ -1,12 +1,6 @@
-%continent(C, P).
-%territory(N, C).
-%connection(N1, N2).
-
-%player(Player)
-%turn(T, Player).
-%territory_control(T, Territory, Player, Troops).
-%troops_to_place(T, Player, Troops).
-
+% ====================================================================
+%                           DRAFT PHASE
+% ====================================================================
 
 troops(0).
 troops(Troops) :- 

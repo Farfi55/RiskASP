@@ -6,17 +6,13 @@ curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
 
 move_try(A,Z):- &int(1,N;Z),territory_control(_,A,_,N).
 
-territory_conquered(Territory,Troops) :- 
-    territory_control(_,Territory,Player,Troops), player(Player).
-
 
 fortify(T, From, To, Troops) | not_fortify(T,From,To,Troops) :- 
-    turn(T,_),
-    move_try(From,Troops), 
-    connection(From,To),
+    curr_turn(T, Player),
     territory_control(T, From, Player, _),
     territory_control(T, To, Player, _),
-    curr_turn(T, Player),
+    move_try(From,Troops), 
+    connection(From,To),
     From != To.
 
 

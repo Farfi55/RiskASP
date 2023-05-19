@@ -19,8 +19,7 @@ The AI is implemented using [Answer Set Programming](https://en.wikipedia.org/wi
 1. Clone the repository
 2. Open the project in Unity
 3. Open the scene `Assets/Scenes/Main.unity`
-4. *(optional)* Add the scene `Assets/Scenes/UI.unity` to display the UI
-5. Start the Game
+4. Start the Game
 
 <!-- ## Game Setup
 

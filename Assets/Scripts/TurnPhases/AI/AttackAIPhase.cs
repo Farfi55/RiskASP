@@ -1,15 +1,12 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Actions;
-using EmbASP;
 using EmbASP.predicates;
 using Extensions;
 using it.unical.mat.embasp.@base;
 using it.unical.mat.embasp.languages.asp;
 using Map;
 using player;
-using UnityEngine;
 
 namespace TurnPhases.AI
 {

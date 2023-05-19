@@ -74,3 +74,5 @@ crashlytics-build.properties
 # dump-files
 **/dump*.dlv
 **/dump*.dlv.meta
+
+Assets/Scripts/EmbASP/AIs/FCC-group/Example-FortifyAIPhase.dlv

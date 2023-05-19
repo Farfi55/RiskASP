@@ -42,9 +42,12 @@ namespace TurnPhases.AI
                 PlayerAction action = null;
                 if (atom is FortifyPredicate move)
                 {
-                    action = new FortifyAction(player, _gm.Turn, _tr.FromName(move.From.StripQuotes()),
+                    action = new FortifyAction(player, move.Turn, _tr.FromName(move.From.StripQuotes()),
                         _tr.FromName(move.To.StripQuotes()), move.Troops);
                 }
+
+                if (atom is EndFortifyPredicate endFortify)
+                    action = new EndPhaseAction(player, endFortify.Turn);
 
                 if (action != null)
                     _ar.AddAction(action);

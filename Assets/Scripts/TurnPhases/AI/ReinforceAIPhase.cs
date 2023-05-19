@@ -48,7 +48,7 @@ namespace TurnPhases.AI
                 if (atom is DraftPredicate draft)
                 {
                     var territory = _tr.FromName(draft.Territory.StripQuotes());
-                    action = new ReinforceAction(player, _gm.Turn, territory, draft.Troops);
+                    action = new ReinforceAction(player, draft.Turn, territory, draft.Troops);
                     troopsDrafted += draft.Troops;
                 }
 

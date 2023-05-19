@@ -25,7 +25,7 @@ player_territories_count(T, Player, Count) :-
 player_territories_in_continent(T, Player, Continent, Count) :-
     curr_turn(T, _),
     player(Player),
-    continent(Continent),
+    continent(Continent, _),
     Count = #count{Territory : territory_control(T, Territory, Player, _), territory(Territory, Continent) }.
 
 player_missing_territories_in_continent(T, Player, Continent, Missing) :- 

@@ -18,6 +18,7 @@ curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
 
 :- #count{T, Player, From, To, FromTroops : fortify_troops(T, Player, From, To, FromTroops)} > 1.
 
+
 % prioritize moving troops from the strongest internal territory in a island
 :~ fortify_troops(T, Player, From, _, FromTroops),
     territory_island(T, Id, From, Player),
@@ -50,6 +51,9 @@ curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
     Cost = (MaxTroops - FromTroops) * 1.
     [Cost@4]
 
+% prefer doing something than nothing 
+:~ end_fortify(T). [50@5]
+
 max_internal_troops(T, Player, MaxTroops) :-
     curr_turn(T, Player),
     MaxTroops = #max{ Troops : island_strongest_internal(T, Id, Player, From, Troops) }.
@@ -68,6 +72,6 @@ end_fortify(T) :- curr_turn(T, Player), not has_fortified(T, Player).
 a(1).
 :~ a(X). [1@1, X]
 
-#show fortify_troops/5.
-% #show fortify/4.
+% #show fortify_troops/5.
+#show fortify/4.
 #show end_fortify/1.

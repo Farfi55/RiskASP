@@ -4,25 +4,70 @@
 
 curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
 
-move_try(A,Z):- &int(1,N;Z),territory_control(_,A,_,N).
 
-
-fortify(T, From, To, Troops) | not_fortify(T,From,To,Troops) :- 
+% FromTroops is the number of troops in the From territory
+% not the number of troops that will be moved
+% which is at least 1 and at most FromTroops - 1
+{ fortify_troops(T, Player, From, To, FromTroops) } <= 1 :- 
     curr_turn(T, Player),
-    territory_control(T, From, Player, _),
+    territory_control(T, From, Player, FromTroops),
     territory_control(T, To, Player, _),
-    move_try(From,Troops), 
     connection(From,To),
+    FromTroops > 1,
     From != To.
 
+:- #count{T, Player, From, To, FromTroops : fortify_troops(T, Player, From, To, FromTroops)} > 1.
 
-:- fortify(_,From,To,Troops), fortify(_,From2,To2,Troops2), From != From2.
-:- fortify(_,From,To,Troops), fortify(_,From2,To2,Troops2), To != To2.
-:- fortify(_,From,To,Troops), fortify(_,From,To,Troops2), Troops != Troops2.
+% prioritize moving troops from the strongest internal territory in a island
+:~ fortify_troops(T, Player, From, _, FromTroops),
+    territory_island(T, Id, From, Player),
+    not island_strongest_internal(T, Id, Player, From, FromTroops).
+    [-10@5]
 
-:- fortify(_, From, _, Troops), territory_control(_,From,_,Troops).
+
+% prioritize moving troops to the weakest fronteer territory in a island
+:~ fortify_troops(T, Player, _, To, _),
+    territory_island(T, Id, To, Player),
+    territory_control(T, To, Player, ToTroops),
+    not island_weakest_fronteer(T, Id, Player, To, ToTroops).
+    [-20@5]
 
 
+% deprioritize moving troops from a fronteer territory
+:~ fortify_troops(T, Player, From, _, _),
+    not fronteer_territory(T, Player, From).
+    [30@5]
+
+% prioritize moving troops to a fronteer territory
+:~ fortify_troops(T, Player, _, To, _),
+    not fronteer_territory(T, Player, To).
+    [-10@5]
+
+
+% prioritize moving the maximum number of troops 
+:~ fortify_troops(T, Player, _, _, FromTroops),
+    max_internal_troops(T, Player, MaxTroops),
+    Cost = (MaxTroops - FromTroops) * 1.
+    [Cost@4]
+
+max_internal_troops(T, Player, MaxTroops) :-
+    curr_turn(T, Player),
+    MaxTroops = #max{ Troops : island_strongest_internal(T, Id, Player, From, Troops) }.
+
+    
+
+% TODO: chose the number of troops to move
+fortify(T, From, To, Troops) :- 
+    fortify_troops(T, _, From, To, FromTroops),
+    Troops = FromTroops - 1. 
+
+
+has_fortified(T, Player) :- curr_turn(T, Player), fortify(T, _, _, _).
+end_fortify(T) :- curr_turn(T, Player), not has_fortified(T, Player).
 
 a(1).
 :~ a(X). [1@1, X]
+
+#show fortify_troops/5.
+% #show fortify/4.
+#show end_fortify/1.

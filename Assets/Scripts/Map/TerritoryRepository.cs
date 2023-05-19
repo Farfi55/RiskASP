@@ -23,6 +23,7 @@ namespace Map
         {
             if (Instance != null && Instance != this)
             {
+                Debug.LogWarning("More than one TerritoryRepository in scene");
                 Destroy(gameObject);
             }
             else

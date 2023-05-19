@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cards;
 using Extensions;
 using Map;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
@@ -16,6 +18,11 @@ namespace player
 
         private readonly HashSet<Territory> _territories = new();
         public IEnumerable<Territory> Territories => _territories;
+        public List<Card> Cards { get; } = new();
+
+        public Dictionary<CardType, int> CardTypeCountMap { get; } = new ();
+
+
         public PlayerColor Color;
 
 
@@ -95,6 +102,33 @@ namespace player
         public void ClearTroops()
         {
             foreach (var territory in _territories) territory.SetTroops(0);
+        }
+        
+        
+        public void AddCard(Card card)
+        {
+            if(Cards.Contains(card))
+                throw new Exception($"Player {Name} already has card {card}");
+            Cards.Add(card);
+            
+            CardTypeCountMap.TryAdd(card.Type, 0);
+            CardTypeCountMap[card.Type]++;
+        }
+        
+        public void RemoveCard(Card card)
+        {
+            if(!Cards.Contains(card))
+                throw new Exception($"Player {Name} doesn't have card {card}");
+            Cards.Remove(card);
+            CardTypeCountMap[card.Type]--;
+        }
+        
+        public void RemoveCards(List<Card> cards)
+        {
+            foreach (var card in cards)
+            {
+                RemoveCard(card);
+            }
         }
     }
 }

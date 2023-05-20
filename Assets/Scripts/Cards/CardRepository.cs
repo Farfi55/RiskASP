@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Extensions;
 using Map;
+using player;
 using UnityEngine;
 
 namespace Cards
@@ -11,6 +12,7 @@ namespace Cards
     {
         public static CardRepository Instance { get; private set; }
 
+        private GameManager _gm;
         private TerritoryRepository _tr;
 
         public Card[] AllCards { get; private set; }
@@ -29,11 +31,24 @@ namespace Cards
             else
                 Instance = this;
 
+            _gm = GameManager.Instance;
             _tr = TerritoryRepository.Instance;
-
+            
             AllCards = GenerateCards();
             CardsInDeck = new HashSet<Card>(AllCards);
             foreach (var card in AllCards) CardsInDeck.Add(card);
+            
+            _gm.OnPlayerTurnEnded += OnPlayerTurnEnded;
+        }
+        
+        
+        private void OnPlayerTurnEnded(Player player)
+        {
+            if(_gm.AttackPhase.ConqueredTerritoriesCount == 0 || player.Cards.Count >= 5) 
+                return;
+
+            var card = DrawRandomCard();
+            player.AddCard(card);
         }
 
         private Card[] GenerateCards()
@@ -64,42 +79,12 @@ namespace Cards
         {
             return new CardExchangeType[]
             {
-                new()
-                {
-                    RequiredCards = new() { { CardType.Artillery, 3 } },
-                    Troops = 4
-                },
-                new()
-                {
-                    RequiredCards = new() { { CardType.Infantry, 3 } },
-                    Troops = 6
-                },
-                new()
-                {
-                    RequiredCards = new() { { CardType.Cavalry, 3 } },
-                    Troops = 8
-                },
-                new()
-                {
-                    RequiredCards = new()
-                        { { CardType.Artillery, 1 }, { CardType.Infantry, 1 }, { CardType.Cavalry, 1 } },
-                    Troops = 10
-                },
-                new()
-                {
-                    RequiredCards = new() { { CardType.Wild, 1 }, { CardType.Artillery, 2 } },
-                    Troops = 12
-                },
-                new()
-                {
-                    RequiredCards = new() { { CardType.Wild, 1 }, { CardType.Infantry, 2 } },
-                    Troops = 12
-                },
-                new()
-                {
-                    RequiredCards = new() { { CardType.Wild, 1 }, { CardType.Cavalry, 2 } },
-                    Troops = 12
-                }
+                new(requiredCards: new() { { CardType.Artillery, 3 } }, troops: 4),
+                new(requiredCards: new() { { CardType.Infantry, 3 } }, troops: 6),
+                new(requiredCards: new() { { CardType.Cavalry, 3 } }, troops: 8),
+                new(requiredCards: new() { { CardType.Wild, 1 }, { CardType.Artillery, 2 } }, troops: 12),
+                new(requiredCards: new() { { CardType.Wild, 1 }, { CardType.Infantry, 2 } }, troops: 12),
+                new(requiredCards: new() { { CardType.Wild, 1 }, { CardType.Cavalry, 2 } }, troops: 12)
             };
         }
 

@@ -8,8 +8,14 @@ namespace Cards
 {
     public class CardExchangeType
     {
-        public Dictionary<CardType, int> RequiredCards;
-        public int Troops;
+        public readonly Dictionary<CardType, int> RequiredCards;
+        public readonly int Troops;
+
+        public CardExchangeType(Dictionary<CardType, int> requiredCards, int troops)
+        {
+            RequiredCards = requiredCards;
+            Troops = troops;
+        }
 
         public bool CanExchange(Dictionary<CardType, int> cards)
         {
@@ -36,7 +42,7 @@ namespace Cards
 
         
         
-        public (List<Card> bestCombination, int bestValue) GetBestExchange(List<Card> cards, player.Player player)
+        public (List<Card> bestCombination, int bestValue) GetBestExchange(IReadOnlyList<Card> cards, player.Player player)
         {
             if (cards.Count < 3)
                 return (null, 0);
@@ -63,7 +69,7 @@ namespace Cards
 
         }
 
-        private List<List<Card>> CardsCombinations(List<Card> cards)
+        private List<List<Card>> CardsCombinations(IReadOnlyList<Card> cards)
         {
             var cardCombinations = new List<List<Card>>();
             for (int i = 0; i < cards.Count; i++)
@@ -79,7 +85,7 @@ namespace Cards
             return cardCombinations;
         }
 
-        public int ExchangeValue(List<Card> cards, Player player)
+        public int ExchangeValue(IReadOnlyList<Card> cards, Player player)
         {
             if (cards.Count != 3)
                 throw new ArgumentException("Must exchange exactly 3 cards");

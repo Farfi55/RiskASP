@@ -18,7 +18,10 @@ namespace player
 
         private readonly HashSet<Territory> _territories = new();
         public IEnumerable<Territory> Territories => _territories;
-        public List<Card> Cards { get; } = new();
+
+        
+        public IReadOnlyList<Card> Cards => _cards;
+        [SerializeField] private List<Card> _cards = new();
 
         public Dictionary<CardType, int> CardTypeCountMap { get; } = new ();
 
@@ -109,7 +112,7 @@ namespace player
         {
             if(Cards.Contains(card))
                 throw new Exception($"Player {Name} already has card {card}");
-            Cards.Add(card);
+            _cards.Add(card);
             
             CardTypeCountMap.TryAdd(card.Type, 0);
             CardTypeCountMap[card.Type]++;
@@ -119,11 +122,11 @@ namespace player
         {
             if(!Cards.Contains(card))
                 throw new Exception($"Player {Name} doesn't have card {card}");
-            Cards.Remove(card);
+            _cards.Remove(card);
             CardTypeCountMap[card.Type]--;
         }
         
-        public void RemoveCards(List<Card> cards)
+        public void RemoveCards(IEnumerable<Card> cards)
         {
             foreach (var card in cards)
             {

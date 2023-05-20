@@ -49,6 +49,7 @@ public class GameManager : MonoBehaviour
     public Action<IPhase> OnPhaseEnded;
     public Action<IPhase, IPhase> OnTurnPhaseChanged;
     public Action<Player, Player> OnPlayerTurnChanged;
+    public Action<Player> OnPlayerTurnEnded;
 
 
     private void Awake()
@@ -167,6 +168,9 @@ public class GameManager : MonoBehaviour
     private void NextTurn()
     {
         var oldPlayer = _currentPlayer;
+        if(oldPlayer != null)
+            OnPlayerTurnEnded?.Invoke(oldPlayer);
+        
         do
         {
             _currentPlayer = _playerQueue.Dequeue();

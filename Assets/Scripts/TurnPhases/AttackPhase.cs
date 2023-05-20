@@ -18,6 +18,8 @@ namespace TurnPhases
         private readonly TerritoryRepository _tr;
         private readonly BattleSimulator _bs;
 
+        public int ConqueredTerritoriesCount { get; private set; }
+
         public AttackState State => _state;
         private AttackState _state = AttackState.Attacking;
 
@@ -53,6 +55,7 @@ namespace TurnPhases
         public void Start(Player player)
         {
             _attackResults.Clear();
+            ConqueredTerritoriesCount = 0;
             _attackTurn = 1;
             SetState(AttackState.Attacking);
             OnAttackTurn?.Invoke();
@@ -96,6 +99,7 @@ namespace TurnPhases
             if (attackResult.HasAttackerWonTerritory())
             {
                 attackResult.Target.SetOwner(attackAction.Player, 0);
+                ConqueredTerritoriesCount++;
                 SetState(AttackState.Fortifying);
             }
             

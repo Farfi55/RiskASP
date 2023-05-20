@@ -14,8 +14,6 @@ namespace TurnPhases
         public string Name => "Attack";
 
         private readonly GameManager _gm;
-        private readonly ContinentRepository _cr;
-        private readonly TerritoryRepository _tr;
         private readonly BattleSimulator _bs;
 
         public int ConqueredTerritoriesCount { get; private set; }
@@ -36,19 +34,10 @@ namespace TurnPhases
         public Action OnAttackStateChanged;
         public Action OnAttackTurn;
 
-        public AttackPhase(
-            GameManager gameManager,
-            ContinentRepository continentRepository,
-            TerritoryRepository territoryRepository,
-            BattleSimulator battleSimulator)
+        public AttackPhase(GameManager gm, BattleSimulator bs)
         {
-            _gm = gameManager;
-            _cr = continentRepository;
-            _tr = territoryRepository;
-            _bs = battleSimulator;
-            
-            //todo: remove line
-            OnAttackTurn += () => Debug.Log($"Attack turn: {_attackTurn}");
+            _gm = gm;
+            _bs = bs;
         }
 
 

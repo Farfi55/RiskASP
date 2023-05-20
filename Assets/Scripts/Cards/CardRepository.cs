@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Extensions;
+using JetBrains.Annotations;
 using Map;
 using player;
 using UnityEngine;
@@ -11,8 +12,7 @@ namespace Cards
     public class CardRepository : MonoBehaviour
     {
         public static CardRepository Instance { get; private set; }
-
-        private GameManager _gm;
+        
         private TerritoryRepository _tr;
 
         public Card[] AllCards { get; private set; }
@@ -30,26 +30,14 @@ namespace Cards
             }
             else
                 Instance = this;
-
-            _gm = GameManager.Instance;
-            _tr = TerritoryRepository.Instance;
             
+            _tr = TerritoryRepository.Instance;
+
             AllCards = GenerateCards();
             CardsInDeck = new HashSet<Card>(AllCards);
             foreach (var card in AllCards) CardsInDeck.Add(card);
-            
-            _gm.OnPlayerTurnEnded += OnPlayerTurnEnded;
         }
         
-        
-        private void OnPlayerTurnEnded(Player player)
-        {
-            if(_gm.AttackPhase.ConqueredTerritoriesCount == 0 || player.Cards.Count >= 5) 
-                return;
-
-            var card = DrawRandomCard();
-            player.AddCard(card);
-        }
 
         private Card[] GenerateCards()
         {
@@ -98,6 +86,13 @@ namespace Cards
             return card;
         }
 
+        public void ReturnCardsToDeck(IEnumerable<Card> cards)
+        {
+            foreach (var card in cards)
+                CardsInDeck.Add(card);
+        }
+        
+        
         public List<(List<Card> combination, int value)> GetBestExchanges(player.Player player)
         {
             var bestExchanges = new List<(List<Card> combination, int value)>();
@@ -112,6 +107,18 @@ namespace Cards
 
             return bestExchanges;
         }
+
+        [CanBeNull]
+        public CardExchangeType GetExchangeType(Card[] cards)
+        {
+            if (cards.Length != 3)
+                return null;
+
+            return ExchangeTypes.FirstOrDefault(exchangeType => exchangeType.CanExchange(cards));
+        }
+        
+        
+        
         
     }
 }

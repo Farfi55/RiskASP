@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Actions;
+using Cards;
 using Extensions;
 using Map;
 using player;
@@ -14,7 +15,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     private TerritoryRepository _tr;
-    private ContinentRepository _cr;
+    private CardRepository _cr;
     private BattleSimulator _bs;
 
     public int NPlayers => _nPlayers;
@@ -26,8 +27,6 @@ public class GameManager : MonoBehaviour
 
     public Player CurrentPlayer => _currentPlayer;
     private Player _currentPlayer;
-
-    public TerritoryRepository TerritoryRepository => _tr;
 
     public GamePhase GamePhase => _gamePhase;
     private GamePhase _gamePhase = GamePhase.Setup;
@@ -64,18 +63,40 @@ public class GameManager : MonoBehaviour
 
         SetGamePhase(GamePhase.Setup);
 
+
         _tr = TerritoryRepository.Instance;
-        _cr = ContinentRepository.Instance;
+        _cr = CardRepository.Instance;
         _bs = BattleSimulator.Instance;
         SetupPhases();
         CreatePlayers();
+
+        SubscribeToEvents();
+    }
+
+    private void SubscribeToEvents()
+    {
+        OnPlayerTurnEnded += TryDrawCardOnTurnEnd;
+        foreach (var player in Players)
+        {
+            player.OnEliminated += tuple => OnPlayerEliminated(tuple.eliminatedBy, tuple.eliminated);
+        }
+    }
+
+    private void OnPlayerEliminated(Player eliminatedBy, Player eliminated)
+    {
+        var cards = eliminated.Cards.ToList();
+        eliminatedBy.AddCards(cards);
+        eliminated.RemoveCards(cards);
+        
+        if(Players.Count(player => player.IsAlive()) == 1)
+            GameOver();
     }
 
     private void SetupPhases()
     {
-        ReinforcePhase = new ReinforcePhase(this, _cr, _tr);
-        AttackPhase = new AttackPhase(this, _cr, _tr, _bs);
-        FortifyPhase = new FortifyPhase(this, _cr, _tr);
+        ReinforcePhase = new ReinforcePhase(this, _cr);
+        AttackPhase = new AttackPhase(this, _bs);
+        FortifyPhase = new FortifyPhase(this);
         EmptyPhase = new EmptyPhase();
         SetTurnPhase(EmptyPhase);
     }
@@ -101,12 +122,14 @@ public class GameManager : MonoBehaviour
         if (Players.Count == 0)
             Players.AddRange(FindObjectsByType<Player>(FindObjectsInactive.Exclude, FindObjectsSortMode.None));
 
-        for (var i = Players.Count; i < NPlayers; i++)
-            Players.Add(PlayerCreator.Instance.CreateBotPlayer());
+        var playerCreator = PlayerCreator.Instance;
+        
+        for (var i = Players.Count; i < NPlayers; i++) 
+            Players.Add(playerCreator.CreateBotPlayer());
 
         foreach (var player in Players)
             if (player.Name == "")
-                PlayerCreator.Instance.SetUpPlayerFromRandomColor(player);
+                playerCreator.SetUpPlayerFromRandomColor(player);
     }
 
     private void EnqueuePlayers()
@@ -153,6 +176,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void TryDrawCardOnTurnEnd(Player player)
+    {
+        if (AttackPhase.ConqueredTerritoriesCount == 0 || player.Cards.Count >= 5)
+            return;
+
+        var card = _cr.DrawRandomCard();
+        player.AddCard(card);
+    }
 
     public void HandlePlayerAction(PlayerAction action)
     {
@@ -168,9 +199,9 @@ public class GameManager : MonoBehaviour
     private void NextTurn()
     {
         var oldPlayer = _currentPlayer;
-        if(oldPlayer != null)
+        if (oldPlayer != null)
             OnPlayerTurnEnded?.Invoke(oldPlayer);
-        
+
         do
         {
             _currentPlayer = _playerQueue.Dequeue();

@@ -1,5 +1,6 @@
 using System;
 using Actions;
+using Cards;
 using Map;
 using player;
 using UnityEngine;
@@ -11,8 +12,8 @@ namespace TurnPhases
         public string Name => "Reinforce";
 
         private readonly GameManager _gm;
-        private readonly ContinentRepository _cr;
-        private readonly TerritoryRepository _tr;
+        private readonly CardRepository _cardRepository;
+        
         public int RemainingTroopsToPlace => _remainingTroopsToPlace;
         private int _remainingTroopsToPlace;
 
@@ -20,12 +21,10 @@ namespace TurnPhases
         public Action<ReinforceAction> OnTroopsPlaced;
 
 
-        public ReinforcePhase(GameManager gameManager, ContinentRepository continentRepository,
-            TerritoryRepository territoryRepository)
+        public ReinforcePhase(GameManager gm, CardRepository cardRepository)
         {
-            _gm = gameManager;
-            _cr = continentRepository;
-            _tr = territoryRepository;
+            _gm = gm;
+            _cardRepository = cardRepository;
         }
 
         public void Start(Player player)
@@ -37,11 +36,21 @@ namespace TurnPhases
 
         public void OnAction(Player player, PlayerAction action)
         {
-            if (action is ReinforceAction placeTroopsAction)
+            if (action is ExchangeCardsAction exchangeCardsAction)
+            {
+                exchangeCardsAction.Player.RemoveCards(exchangeCardsAction.Cards);
+                _cardRepository.ReturnCardsToDeck(exchangeCardsAction.Cards);
+                _remainingTroopsToPlace += exchangeCardsAction.ExchangeValue;
+                
+                OnTroopsToPlaceChanged?.Invoke();
+            }
+            else if (action is ReinforceAction placeTroopsAction)
             {
                 placeTroopsAction.Territory.AddTroops(placeTroopsAction.Troops);
-                OnTroopsPlaced?.Invoke(placeTroopsAction);
                 _remainingTroopsToPlace -= placeTroopsAction.Troops;
+                
+                OnTroopsPlaced?.Invoke(placeTroopsAction);
+                OnTroopsToPlaceChanged?.Invoke();
             }
             else if (action is EndPhaseAction)
             {
@@ -51,6 +60,8 @@ namespace TurnPhases
                         $"Player {player.Name} ended Reinforce phase with {_remainingTroopsToPlace} troops to place, distributing randomly");
                     player.RandomlyDistributeTroops(_remainingTroopsToPlace);
                     _remainingTroopsToPlace = 0;
+                    
+                    OnTroopsToPlaceChanged?.Invoke();
                 }
 
                 _gm.NextTurnPhase();

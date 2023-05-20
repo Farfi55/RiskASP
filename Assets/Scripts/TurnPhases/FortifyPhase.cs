@@ -11,18 +11,12 @@ namespace TurnPhases
         public string Name => "Fortify";
 
         private readonly GameManager _gm;
-        private readonly ContinentRepository _cr;
-        private readonly TerritoryRepository _tr;
 
         public Action<FortifyAction> OnFortifyAction;
         
-        
-        public FortifyPhase(GameManager gameManager, ContinentRepository continentRepository,
-            TerritoryRepository territoryRepository)
+        public FortifyPhase(GameManager gm)
         {
-            _gm = gameManager;
-            _cr = continentRepository;
-            _tr = territoryRepository;
+            _gm = gm;
         }
 
         public void Start(Player player)

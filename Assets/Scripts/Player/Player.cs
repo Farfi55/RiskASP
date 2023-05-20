@@ -19,18 +19,23 @@ namespace player
         private readonly HashSet<Territory> _territories = new();
         public IEnumerable<Territory> Territories => _territories;
 
-        
+
         public IReadOnlyList<Card> Cards => _cards;
         [SerializeField] private List<Card> _cards = new();
 
-        public Dictionary<CardType, int> CardTypeCountMap { get; } = new ();
-
+        public Dictionary<CardType, int> CardTypeCountMap { get; } = new();
 
         public PlayerColor Color;
 
 
+        public Action<(Player eliminatedBy, Player eliminated)> OnEliminated;
+
+
         public bool IsHuman() => GetComponent<HumanPlayer>() != null;
         public bool IsBot() => GetComponent<BotPlayer>() != null;
+
+        public bool IsDead() => _territories.Count == 0;
+        public bool IsAlive() => _territories.Count > 0;
 
 
         public int GetTroopsCountInTerritories()
@@ -90,7 +95,11 @@ namespace player
         }
 
         public void AddTerritory(Territory territory) => _territories.Add(territory);
-        public void RemoveTerritory(Territory territory) => _territories.Remove(territory);
+
+        public void RemoveTerritory(Territory territory)
+        {
+            _territories.Remove(territory);
+        }
 
         public int GetTotalTroopBonus()
         {
@@ -99,39 +108,39 @@ namespace player
             return territoriesBonus + continentBonus;
         }
 
-        public bool IsDead() => _territories.Count == 0;
-        public bool IsAlive() => _territories.Count > 0;
 
         public void ClearTroops()
         {
             foreach (var territory in _territories) territory.SetTroops(0);
         }
-        
-        
+
+
         public void AddCard(Card card)
         {
-            if(Cards.Contains(card))
+            if (Cards.Contains(card))
                 throw new Exception($"Player {Name} already has card {card}");
             _cards.Add(card);
-            
+
             CardTypeCountMap.TryAdd(card.Type, 0);
             CardTypeCountMap[card.Type]++;
         }
-        
+
+        public void AddCards(IEnumerable<Card> cards)
+        {
+            foreach (var card in cards) AddCard(card);
+        }
+
         public void RemoveCard(Card card)
         {
-            if(!Cards.Contains(card))
+            if (!Cards.Contains(card))
                 throw new Exception($"Player {Name} doesn't have card {card}");
             _cards.Remove(card);
             CardTypeCountMap[card.Type]--;
         }
-        
+
         public void RemoveCards(IEnumerable<Card> cards)
         {
-            foreach (var card in cards)
-            {
-                RemoveCard(card);
-            }
+            foreach (var card in cards) RemoveCard(card);
         }
     }
 }

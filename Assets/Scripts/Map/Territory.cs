@@ -89,7 +89,17 @@ namespace Map
                 return;
             }
             Owner = newOwner;
-            if(oldOwner != null) oldOwner.RemoveTerritory(this);
+            if (oldOwner != null)
+            {
+                oldOwner.RemoveTerritory(this);
+                
+                // TODO: maybe this should be in Player.RemoveTerritory?
+                if (oldOwner.IsDead())
+                {
+                    oldOwner.OnEliminated?.Invoke((eliminatedBy:newOwner, eliminated:oldOwner));
+                }
+                    
+            }
             newOwner.AddTerritory(this);
             OnOwnerChanged?.Invoke(oldOwner, newOwner);
             OnStateChanged?.Invoke();

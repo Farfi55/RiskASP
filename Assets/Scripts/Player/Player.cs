@@ -28,8 +28,17 @@ namespace player
         public PlayerColor Color;
 
 
-        public Action<(Player eliminatedBy, Player eliminated)> OnEliminated;
+        public List<(List<Card> combination, int value)> BestCardExchangeCombinations { get; private set; } = new();
 
+
+        public Action<(Player eliminatedBy, Player eliminated)> OnEliminated;
+        public Action OnCardsChanged;
+
+
+        private void Awake()
+        {
+            OnCardsChanged += () => BestCardExchangeCombinations = CardRepository.Instance.GetBestExchanges(this);
+        }
 
         public bool IsHuman() => GetComponent<HumanPlayer>() != null;
         public bool IsBot() => GetComponent<BotPlayer>() != null;
@@ -115,7 +124,9 @@ namespace player
         }
 
 
-        public void AddCard(Card card)
+        #region Cards
+
+        private void AddCardInternal(Card card)
         {
             if (Cards.Contains(card))
                 throw new Exception($"Player {Name} already has card {card}");
@@ -125,12 +136,20 @@ namespace player
             CardTypeCountMap[card.Type]++;
         }
 
-        public void AddCards(IEnumerable<Card> cards)
+        public void AddCard(Card card)
         {
-            foreach (var card in cards) AddCard(card);
+            AddCardInternal(card);
+            OnCardsChanged?.Invoke();
         }
 
-        public void RemoveCard(Card card)
+
+        public void AddCards(IEnumerable<Card> cards)
+        {
+            foreach (var card in cards) AddCardInternal(card);
+            OnCardsChanged?.Invoke();
+        }
+
+        private void RemoveCardInternal(Card card)
         {
             if (!Cards.Contains(card))
                 throw new Exception($"Player {Name} doesn't have card {card}");
@@ -138,9 +157,18 @@ namespace player
             CardTypeCountMap[card.Type]--;
         }
 
+        public void RemoveCard(Card card)
+        {
+            RemoveCardInternal(card);
+            OnCardsChanged?.Invoke();
+        }
+
         public void RemoveCards(IEnumerable<Card> cards)
         {
-            foreach (var card in cards) RemoveCard(card);
+            foreach (var card in cards) RemoveCardInternal(card);
+            OnCardsChanged?.Invoke();
         }
+
+        #endregion
     }
 }

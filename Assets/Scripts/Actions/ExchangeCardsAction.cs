@@ -28,13 +28,7 @@ namespace Actions
                 LogError($"Current phase ({gm.CurrentPhase.Name}) is not ReinforcePhase");
                 return false;
             }
-            
-            if(Cards.Distinct() != Cards)
-            {
-                LogError($"Cards ({Cards}) contains duplicates");
-                return false;
-            }
-            
+
             if (Cards.Length != 3)
             {
                 LogError($"Cards ({Cards}) length is not 3");

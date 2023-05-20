@@ -12,18 +12,21 @@ namespace Cards
 
         public readonly string Name;
 
-        public Card(CardType type, [CanBeNull] Territory territory)
+        public Card(CardType type, [CanBeNull] Territory territory = null, string name = null)
         {
             Type = type;
             Territory = territory;
-            Name = territory != null ? territory.Name : type.ToString();
+            
+            if (name != null)
+                Name = name;
+            else
+                Name = territory != null ? territory.Name : type.ToString();
             
             if(type == CardType.Wild && territory != null)
                 throw new ArgumentException("Wild card cannot have a territory");
-
+            
             if (type != CardType.Wild && territory == null)
                 throw new ArgumentException("Non-wild card must have a territory");
-
         }
     }
 }

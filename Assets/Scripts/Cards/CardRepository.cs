@@ -16,6 +16,8 @@ namespace Cards
         private TerritoryRepository _tr;
 
         public Card[] AllCards { get; private set; }
+        
+        private readonly Dictionary<string, Card> _cardNameToCardMap = new();
 
         public HashSet<Card> CardsInDeck { get; private set; }
 
@@ -35,7 +37,13 @@ namespace Cards
 
             AllCards = GenerateCards();
             CardsInDeck = new HashSet<Card>(AllCards);
-            foreach (var card in AllCards) CardsInDeck.Add(card);
+            foreach (var card in AllCards)
+            {
+                CardsInDeck.Add(card);
+                _cardNameToCardMap.Add(card.Name, card);
+            }
+            
+            ExchangeTypes = GenerateExchangeTypes().ToArray();
         }
         
 
@@ -57,8 +65,8 @@ namespace Cards
                 cards[i + 28] = new Card(CardType.Artillery, territories[i + 28]);
             }
 
-            cards[42] = new Card(CardType.Wild, null);
-            cards[43] = new Card(CardType.Wild, null);
+            cards[42] = new Card(CardType.Wild, name: "Wild_1");
+            cards[43] = new Card(CardType.Wild, name: "Wild_2");
             cards.Shuffle();
             return cards;
         }
@@ -117,6 +125,11 @@ namespace Cards
             return ExchangeTypes.FirstOrDefault(exchangeType => exchangeType.CanExchange(cards));
         }
         
+        
+        public Card GetCardByName(string name)
+        {
+            return _cardNameToCardMap[name];
+        }
         
         
         

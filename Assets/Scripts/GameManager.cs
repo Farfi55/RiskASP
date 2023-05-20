@@ -84,7 +84,7 @@ public class GameManager : MonoBehaviour
 
     private void OnPlayerEliminated(Player eliminatedBy, Player eliminated)
     {
-        var cards = eliminated.Cards.ToList();
+        var cards = new List<Card>(eliminated.Cards);
         eliminatedBy.AddCards(cards);
         eliminated.RemoveCards(cards);
         

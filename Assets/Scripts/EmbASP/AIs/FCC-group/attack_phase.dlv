@@ -14,72 +14,117 @@
 %% $$HARD$$ stabilire un obiettivo (un paese preciso da conquistare, piuttosto che far perdere un bonus continente ad esempio) e fare gli attacchi in modo tale da avvicinarsi il più possibile.
 %%
 
-curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
-
 curr_attack_turn(T, AT, P) :- curr_turn(T,P), AT = #max{AT1 : attack_turn(T, AT1, P) }.
 
-friendly_territory(T, Territory, Troops) :- 
-    territory_control(T, Territory, Player, Troops), curr_turn(T, Player).
 
-enemy_territory(T, Territory, Player, Troops) :- 
-    territory_control(T, Territory, Player, Troops), 
-    curr_turn(T, Player1), Player != Player1.
+% player_action(T, AT, attack(T, AT, From, To, Troops)) :- attack(T, AT, From, To, Troops).
+% player_action(T, AT, attack_reinforce(T, AT, From, To, Troops)) :- attack_reinforce(T, AT, From, To, Troops).
+% player_action(T, AT, end_attack(T, AT)) :- end_attack(T, AT).
 
-
-player_action(T, AT, attack(T, AT, From, To, Troops)) :- attack(T, AT, From, To, Troops).
-player_action(T, AT, attack_reinforce(T, AT, From, To, Troops)) :- attack_reinforce(T, AT, From, To, Troops).
-player_action(T, AT, end_attack(T, AT)) :- end_attack(T, AT).
-
-% max 1 action per turn
-:- player_action(T,AT,ACTION1), player_action(T,AT,ACTION2), ACTION1 != ACTION2.
+% % max 1 action per turn
+% :- player_action(T,AT,ACTION1), player_action(T,AT,ACTION2), ACTION1 != ACTION2.
 
 
-has_reinforced_attack(T, AT, From, To) :- attack_reinforce(T, AT, From, To, _).
+% ====================================================================
+%                          ATTACK REINFORCE LOGIC
+% ====================================================================
 
-won_territory(T, AT, From, To) :- attack_result(T, AT, From, To, _, 0).
+% won_territory(T, AT, Player, Territory).
 
-% if the attack ended with 0 defending troops remaining we captured a territory and should
-:- won_territory(T, AT, From, To), not has_reinforced_attack(T,AT+1,From,To).
+% attack_result(T, AT, From, To, RemainingAttackerTroops, RemainingTroopsDefender, 
+%     AttackingTroops, DefendingTroops, MinReinforcementsTroops).
 
-% TODO: IMPROVE IMPLEMENTATION
-%attack_reinforce(T,AT,From,To, Troops) :- has_reinforced_attack(T,AT,From,To), 
-%    attack_result(T,AT_prec,From,To,TAtt,TDef), AT_prec=AT-1, Troops=TAtt-1.
 
-attack_reinforce(T,AT,From,To, Troops) :- 
-    attack_result(T,AT_prec,From,To,RTAtt,0), 
-    AT_prec=AT-1, 
-    Troops=RTAtt-1.
+last_attack_result(T, PrecAT, From, To, RemAttTroops, RemDefTroops, AttTroops, DefTroops, MinReinfTroops) :-
+    attack_result(T, PrecAT, From, To, RemAttTroops, RemDefTroops, AttTroops, DefTroops, MinReinfTroops),
+    curr_attack_turn(T, AT, _),
+    PrecAT = AT - 1.
 
+last_attack_result_simple(T, AT, From, To, RemAttTroops, RemDefTroops) :-
+    last_attack_result(T, AT, From, To, RemAttTroops, RemDefTroops, _, _, _).
+
+has_to_reinforce(T, AT, From, To) :- 
+    curr_attack_turn(T, AT, Player),
+    last_attack_result(T, PrecAT, From, To, _, 0, _, _, _),
+    PrecAT = AT - 1.
+
+has_to_reinforce_any(T, AT) :- has_to_reinforce(T, AT, _, _).
+
+
+attack_reinforce_possible_troops(T, AT, From, To, AvailableTroops) :- 
+    has_to_reinforce(T, AT, From, To),
+    territory_control(T, From, _, FromTroops),
+    AvailableTroops=FromTroops-1.
+
+
+attack_reinforce_possible_troops(T, AT, From, To, Troops) :- 
+    attack_reinforce_possible_troops(T, AT, From, To, Troops1),
+    last_attack_result(T, PrecAT, From, To, _, _, _, _, MinReinfTroops),
+    PrecAT = AT - 1,
+    Troops = Troops1 - 1,
+    Troops >= MinReinfTroops.
+
+
+attack_reinforce(T, AT, From, To, Troops) :- 
+    has_to_reinforce(T, AT, From, To),
+    Troops= #max{Troops1 : attack_reinforce_possible_troops(T, AT, From, To, Troops1)}.
+
+
+% ====================================================================
+%                          ATTACK LOGIC
+% ====================================================================
+
+
+can_attack(T, AT) :- curr_attack_turn(T, AT, _), not has_to_reinforce_any(T, AT).
 
 troops_for_attack(T, Territory, 1) :- 
-    friendly_territory(T, Territory, Troops), Troops > 1.
+    curr_player_territory(T, Territory, Troops), Troops > 1.
 
     
 troops_for_attack(T, Territory, Troops) :- 
     troops_for_attack(T, Territory, Troops1),
-    friendly_territory(T, Territory, MaxTroops), 
+    curr_player_territory(T, Territory, MaxTroops), 
     Troops = Troops1 +1, 
     Troops < MaxTroops, 
     Troops <= 3.
 
 
-attack(T, AT, TerritoryFrom, TerritoryTo, Troops) 
-    | no_attack(T, AT, TerritoryFrom, TerritoryTo, Troops) :- 
-    curr_attack_turn(T,AT, _), 
-    friendly_territory(T, TerritoryFrom, _),
-    enemy_territory(T, TerritoryTo, PTo, _),
+{ attack(T, AT, TerritoryFrom, TerritoryTo, Troops) } <= 1 :- 
+    can_attack(T, AT),
+    curr_player_territory(T, TerritoryFrom, _),
+    other_player_territory(T, TerritoryTo, PTo, _),
     connection(TerritoryFrom, TerritoryTo),
     Troops = #max{Troops1 : troops_for_attack(T, TerritoryFrom, Troops1)},
     Troops >= 1.
 
 
-has_done_something(T, AT) :- attack(T, AT, _,_,_).
-has_done_something(T, AT) :- attack_reinforce(T,AT,_,_,_).
+:- has_attacked(T, AT), 1 != #count{TerritoryFrom, TerritoryTo, Troops : attack(T, AT, TerritoryFrom, TerritoryTo, Troops)}.
 
-end_attack(T, AT) :- not has_done_something(T,AT), attack_turn(T,AT,_).
+has_attacked(T, AT) :- attack(T, AT, _, _, _).
 
 
-end_attack(T, NextAT) :- attack_reinforce(T,AT,_,_,_), NextAT=AT+1.
+
+end_attack(T, AT) :- can_attack(T, AT), not has_attacked(T, AT).
+
+
+% won_territories_count(T, Count) :-
+%     curr_turn(T, P),
+%     Count = #count{Territory : won_territory(T, _, P, Territory)}.
+ 
+% alternative
+won_territories_count(T, Count) :-
+    curr_turn(T, P),
+    Count = #count{Territory : attack_result(T, _, _, Territory, _, 0, _, _, _)}.
+
+has_won_territory(T, AT) :- 
+    curr_attack_turn(T, AT, P),
+    won_territories_count(T, Count),
+    Count > 0.
+
+% TODO: dumb way to ensure that the player ends the attack phase
+%       after winning a territory
+end_attack(T, AT) :- has_won_territory(T, AT), can_attack(T, AT).
+
 
 % has_attacked_on_turn(T, AT) :- attack(T, AT, _, _, _).
 
@@ -92,32 +137,6 @@ end_attack(T, NextAT) :- attack_reinforce(T,AT,_,_,_), NextAT=AT+1.
 
 
 %{ attack(T,AT,From1,To1,Troops1), end_attack(T,AT), attack_reinforce(T,AT,From2,To2,Troops2) } = 1 :- 
-
-
-
-
-% TESTING ONLY
-
-%turn(2, "p2").
-%turn(3, "p1").
-%turn(1, "p1").
-
-%attack_turn(3,1,"p1").
-%attack_turn(3,1,"p2").
-
-%attack(3,1,"t1","t2",3).
-%attack_result(3,1,"t1","t2",3,0).
-
-%connection("t1","t2").
-%connection("t1","t3").
-%connection("t2","t1").
-%connection("t2","t3").
-%connection("t3","t1").
-%connection("t3","t2").
-
-%territory_control(3,"t1","p1",2).
-%territory_control(3,"t3","p1",3).
-%territory_control(3,"t2","p2",3).
 
 
 a(1).

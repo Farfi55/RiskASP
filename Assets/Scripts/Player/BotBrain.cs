@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using Cards;
 using EmbASP.predicates;
 using it.unical.mat.embasp.@base;
@@ -45,7 +46,7 @@ namespace player
             _handler = LoadExecutable();
             RegisterClassesToMapper();
         }
-        
+
 
         private void SetupPhases()
         {
@@ -81,14 +82,15 @@ namespace player
         private void SetCurrentPhase(IAIPhase phase)
         {
             CurrentPhase?.OnPhaseEnd();
-            
+
             CurrentPhase = phase;
-            
+
             CurrentPhase.OnPhaseStart();
         }
 
 
         public void HandleCommunication(BotPlayer botPlayer) => HandleCommunication(botPlayer, botPlayer.Player);
+
         public void HandleCommunication(BotPlayer botPlayer, Player player)
         {
             InputProgram inputProgram = CreateProgram(botPlayer, player);
@@ -100,8 +102,7 @@ namespace player
             // var callback = new PhasesCallback(this, botPlayer, player);
             // _handler.StartAsync(callback);
 
-            
-            
+
             var output = _handler.StartSync();
             OnResponse(botPlayer, player, output);
         }
@@ -112,7 +113,7 @@ namespace player
             private readonly BotPlayer _botPlayer;
             private readonly Player _player;
 
-            public PhasesCallback(BotBrain botBrain, BotPlayer botPlayer,  Player player)
+            public PhasesCallback(BotBrain botBrain, BotPlayer botPlayer, Player player)
             {
                 _botBrain = botBrain;
                 _botPlayer = botPlayer;
@@ -132,31 +133,49 @@ namespace player
                 Debug.LogError("Output is not AnswerSets");
                 return;
             }
-            
+
             IList<AnswerSet> answerSets;
             if (botPlayer.BotConfiguration.UseOptimalAnswerSet)
                 answerSets = outputAnswerSets.GetOptimalAnswerSets();
             else
                 answerSets = outputAnswerSets.Answersets;
 
-            
+
             if (answerSets.Count == 0)
             {
-                Debug.LogError($"BotBrain: No answer set found {player.Name}, phase: {CurrentPhase.GetType().Name}\noutput-error: {output.ErrorsString}\noutput: {output.OutputString}" );
+                Debug.LogError(GetErrorMessage(player, output));
                 CurrentPhase.OnFailure(player);
                 return;
             }
 
             var answerSet = answerSets[0];
             OnResponseLoaded?.Invoke(answerSet);
-            
+
             CurrentPhase.OnResponse(player, answerSet);
+        }
+
+        private string GetErrorMessage(Player player, Output output)
+        {
+            var error = new StringBuilder();
+            error.Append("BotBrain: No answer set found").Append(player.Name)
+                .Append(" Phase: ").Append(CurrentPhase.GetType().Name)
+                .Append(" Turn: ").Append(_gm.Turn.ToString());
+            if (_gm.CurrentPhase is AttackPhase attackPhase)
+            {
+                error.Append(" AttackTurn: ").Append(attackPhase.AttackTurn.ToString());
+                error.Append(" AttackPhaseState: ").Append(attackPhase.State.ToString());
+            }
+
+            error.AppendLine()
+                .Append("output-error: ").AppendLine(output.ErrorsString)
+                .Append("output: ").AppendLine(output.OutputString);
+            return error.ToString();
         }
 
         public InputProgram CreateProgram(BotPlayer botPlayer, Player player)
         {
             InputProgram inputProgram = new ASPInputProgram();
-            
+
             string currentPhaseBrain = CurrentPhase switch
             {
                 ReinforceAIPhase => botPlayer.BotConfiguration.ReinforceBrainPath,
@@ -167,11 +186,11 @@ namespace player
 
             LoadPhaseInfo(inputProgram, player);
             OnPhaseInfoLoaded?.Invoke(inputProgram);
-            
+
             LoadCommonBrains(botPlayer, inputProgram);
 
             LoadBrain(currentPhaseBrain, inputProgram);
-            
+
 
             return inputProgram;
         }
@@ -192,7 +211,8 @@ namespace player
             // territory island
             foreach (var (territory, islandId) in tr.TerritoryToIslandMap)
             {
-                var territoryPredicate = new TerritoryIslandPredicate(turn, islandId, territory.Name, territory.Owner.Name);
+                var territoryPredicate =
+                    new TerritoryIslandPredicate(turn, islandId, territory.Name, territory.Owner.Name);
                 inputProgram.AddObjectInput(territoryPredicate);
             }
 
@@ -203,11 +223,11 @@ namespace player
                 // player cards count
                 inputProgram.AddObjectInput(new CardsCountPredicate(turn, player.Name, player.Cards.Count));
             }
-            
+
             // current player cards
             foreach (var currentPlayerCard in currentPlayer.Cards)
                 inputProgram.AddObjectInput(new CardPredicate(turn, currentPlayer.Name, currentPlayerCard));
-            
+
 
             CurrentPhase.OnRequest(currentPlayer, inputProgram);
         }
@@ -215,7 +235,7 @@ namespace player
 
         private void LoadCommonBrains(BotPlayer botPlayer, InputProgram inputProgram)
         {
-            foreach (var commonBrainPath in botPlayer.BotConfiguration.CommonBrainsPaths) 
+            foreach (var commonBrainPath in botPlayer.BotConfiguration.CommonBrainsPaths)
                 LoadBrain(commonBrainPath, inputProgram);
         }
 

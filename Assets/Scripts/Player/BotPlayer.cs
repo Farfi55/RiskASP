@@ -9,10 +9,10 @@ namespace player
     {
         public BotConfiguration BotConfiguration => _botConfiguration;
         [SerializeField] private BotConfiguration _botConfiguration;
-        
+
         public BotBrain BotBrain => _botBrain;
         [SerializeField] private BotBrain _botBrain;
-        
+
         public Player Player => _player;
         private Player _player;
         private GameManager _gm;
@@ -32,29 +32,33 @@ namespace player
         {
             _gm = GameManager.Instance;
             _gm.OnTurnPhaseChanged += OnTurnPhaseChanged;
-            _gm.AttackPhase.OnAttacked += OnAttacked;
+            _gm.AttackPhase.OnAttackTurn += OnAttackPhaseTurn;
         }
 
-        private void OnAttacked(AttackResult attackResult)
+
+        private void OnAttackPhaseTurn()
         {
             if (!_gm.IsCurrentPlayer(_player))
                 return;
-            
-            _botBrain.HandleCommunication(this, _player);
 
+            // skip first attack turn, since it's handled by
+            // OnTurnPhaseChanged
+            if (_gm.AttackPhase.AttackTurn <= 1)
+                return;
+
+
+            _botBrain.HandleCommunication(this, _player);
         }
 
         private void OnTurnPhaseChanged(IPhase oldPhase, IPhase newPhase)
         {
-            if (!_gm.IsCurrentPlayer(_player) 
+            if (!_gm.IsCurrentPlayer(_player)
                 || _gm.GamePhase != GamePhase.Playing)
                 return;
-            
+
             _botBrain.OnTurnPhaseChanged(oldPhase, newPhase);
-            if(newPhase is not EmptyPhase)
+            if (newPhase is not EmptyPhase)
                 _botBrain.HandleCommunication(this, _player);
         }
-        
-        
     }
 }

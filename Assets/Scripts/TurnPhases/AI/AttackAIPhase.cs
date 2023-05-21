@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Actions;
 using EmbASP.predicates;
 using Extensions;
@@ -32,7 +31,7 @@ namespace TurnPhases.AI
         {
         }
 
-        public void OnRequest(player.Player player, InputProgram inputProgram)
+        public void OnRequest(Player player, InputProgram inputProgram)
         {
             var turn = _gm.Turn;
             var attackTurn = _attackPhase.AttackTurn;
@@ -62,27 +61,27 @@ namespace TurnPhases.AI
             inputProgram.AddObjectInput(attackTurnPredicate);
         }
 
-        public void OnResponse(player.Player player, AnswerSet answerSet)
+        public void OnResponse(Player player, AnswerSet answerSet)
         {
             List<AttackPhaseAction> attackPhaseActions = new List<AttackPhaseAction>();
             EndPhaseAction endPhaseAction = null;
 
             foreach (var atom in answerSet.Atoms)
             {
-                if (atom is EmbASP.predicates.AttackPredicate attack)
+                if (atom is AttackPredicate attack)
                 {
                     var action = new AttackAction(player, attack.Turn, attack.AttackTurn,
                         _tr.FromName(attack.From.StripQuotes()), _tr.FromName(attack.To.StripQuotes()), attack.Troops);
                     attackPhaseActions.Add(action);
                 }
-                else if (atom is EmbASP.predicates.AttackReinforcePredicate afterAttackMove)
+                else if (atom is AttackReinforcePredicate afterAttackMove)
                 {
                     var attackAction = _attackPhase.LastAttackResult.AttackAction;
                     var action = new AttackReinforceAction(player, afterAttackMove.Turn,
                         afterAttackMove.AttackTurn, attackAction, afterAttackMove.Troops);
                     attackPhaseActions.Add(action);
                 }
-                else if (atom is EmbASP.predicates.EndAttackPredicate stopAttacking)
+                else if (atom is EndAttackPredicate stopAttacking)
                 {
                     endPhaseAction = new EndPhaseAction(player, stopAttacking.Turn);
                 }

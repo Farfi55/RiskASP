@@ -12,11 +12,11 @@ namespace Cards
     public class CardRepository : MonoBehaviour
     {
         public static CardRepository Instance { get; private set; }
-        
+
         private TerritoryRepository _tr;
 
         public Card[] AllCards { get; private set; }
-        
+
         private readonly Dictionary<string, Card> _cardNameToCardMap = new();
 
         public HashSet<Card> CardsInDeck { get; private set; }
@@ -32,7 +32,7 @@ namespace Cards
             }
             else
                 Instance = this;
-            
+
             _tr = TerritoryRepository.Instance;
 
             AllCards = GenerateCards();
@@ -42,10 +42,10 @@ namespace Cards
                 CardsInDeck.Add(card);
                 _cardNameToCardMap.Add(card.Name, card);
             }
-            
+
             ExchangeTypes = GenerateExchangeTypes().ToArray();
         }
-        
+
 
         private Card[] GenerateCards()
         {
@@ -78,6 +78,8 @@ namespace Cards
                 new(requiredCards: new() { { CardType.Artillery, 3 } }, troops: 4),
                 new(requiredCards: new() { { CardType.Infantry, 3 } }, troops: 6),
                 new(requiredCards: new() { { CardType.Cavalry, 3 } }, troops: 8),
+                new(requiredCards: new()
+                    { { CardType.Artillery, 1 }, { CardType.Infantry, 1 }, { CardType.Cavalry, 1 } }, troops: 10),
                 new(requiredCards: new() { { CardType.Wild, 1 }, { CardType.Artillery, 2 } }, troops: 12),
                 new(requiredCards: new() { { CardType.Wild, 1 }, { CardType.Infantry, 2 } }, troops: 12),
                 new(requiredCards: new() { { CardType.Wild, 1 }, { CardType.Cavalry, 2 } }, troops: 12)
@@ -99,8 +101,8 @@ namespace Cards
             foreach (var card in cards)
                 CardsInDeck.Add(card);
         }
-        
-        
+
+
         public List<CardExchange> GetBestExchanges(player.Player player)
         {
             var bestExchanges = new List<CardExchange>();
@@ -124,7 +126,7 @@ namespace Cards
 
             return ExchangeTypes.FirstOrDefault(exchangeType => exchangeType.CanExchange(cards));
         }
-        
+
         public int GetExchangeTypeIndex(Card[] cards)
         {
             if (cards.Length != 3)
@@ -138,24 +140,22 @@ namespace Cards
 
             return -1;
         }
+
         public int GetExchangeTypeIndex(CardExchangeType exchangeType)
         {
             for (var index = 0; index < ExchangeTypes.Length; index++)
             {
-                if(ExchangeTypes[index] == exchangeType)
+                if (ExchangeTypes[index] == exchangeType)
                     return index;
             }
 
             return -1;
         }
-        
-        
+
+
         public Card GetCardByName(string name)
         {
             return _cardNameToCardMap[name];
         }
-        
-        
-        
     }
 }

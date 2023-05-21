@@ -46,12 +46,10 @@ namespace TurnPhases.AI
                 // TODO: send every attack result to the AI
                 //       and a full history of the actions taken so far this phase
                 //       when the AI will be able to handle it
-                if (attackAction.AttackTurn == attackTurn - 1)
-                {
-                    var attackResultPredicate = new AttackResultPredicate(attackResult);
-                    inputProgram.AddObjectInput(attackResultPredicate);
-                }
-
+                
+                var attackResultPredicate = new AttackResultPredicate(attackResult);
+                inputProgram.AddObjectInput(attackResultPredicate);
+                
                 if (attackResult.HasAttackerWonTerritory())
                 {
                     var wonTerritory = new WonTerritoryPredicate(turn, attackAction.AttackTurn, player.Name, attackResult.Target.Name);

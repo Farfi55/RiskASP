@@ -20,12 +20,20 @@ namespace EmbASP.predicates
 
         [Param(5)] public int RemainingTroopsDefender;
 
+        [Param(6)] public int AttackingTroops;
+        
+        [Param(7)] public int DefendingTroops;
+        
+        [Param(8)] public int MinReinforcementsTroops;
+        
+        
+
         public AttackResultPredicate()
         {
             
         }
-    
-        public AttackResultPredicate(int turn, int attackTurn, string from, string to, int remainingTroopsAttacker, int remainingTroopsDefender)
+
+        public AttackResultPredicate(int turn, int attackTurn, string from, string to, int remainingTroopsAttacker, int remainingTroopsDefender, int attackingTroops, int defendingTroops, int minReinforcementsTroops)
         {
             Turn = turn;
             AttackTurn = attackTurn;
@@ -33,10 +41,12 @@ namespace EmbASP.predicates
             To = to;
             RemainingTroopsAttacker = remainingTroopsAttacker;
             RemainingTroopsDefender = remainingTroopsDefender;
+            AttackingTroops = attackingTroops;
+            DefendingTroops = defendingTroops;
+            MinReinforcementsTroops = minReinforcementsTroops;
         }
 
-
-        public AttackResultPredicate(global::AttackResult attackResult)
+        public AttackResultPredicate(AttackResult attackResult)
         {
             var action = attackResult.AttackAction;
             Turn = action.Turn;
@@ -45,6 +55,9 @@ namespace EmbASP.predicates
             To = attackResult.Target.Name;
             RemainingTroopsAttacker = attackResult.RemainingAttackingTroops;
             RemainingTroopsDefender = attackResult.RemainingDefendingTroops;
+            AttackingTroops = attackResult.AttackingTroops;
+            DefendingTroops = attackResult.DefendingTroops;
+            MinReinforcementsTroops = attackResult.GetMinTroopsToMoveAfterWin();
         }
         
         public int setTurn(int turn) => Turn = turn;
@@ -53,7 +66,9 @@ namespace EmbASP.predicates
         public string setTo(string to) => To = to;
         public int setRemainingTroopsAttacker(int troops) => RemainingTroopsAttacker = troops;
         public int setRemainingTroopsDefender(int troops) => RemainingTroopsDefender = troops;
-        
+        public int setAttackingTroops(int troops) => AttackingTroops = troops;
+        public int setDefendingTroops(int troops) => DefendingTroops = troops;
+        public int setMinReinforcementsTroops(int troops) => MinReinforcementsTroops = troops;
         
         public int getTurn() => Turn;
         public int getAttackTurn() => AttackTurn;
@@ -61,6 +76,9 @@ namespace EmbASP.predicates
         public string getTo() => To;
         public int getRemainingTroopsAttacker() => RemainingTroopsAttacker;
         public int getRemainingTroopsDefender() => RemainingTroopsDefender;
-        
+        public int getAttackingTroops() => AttackingTroops;
+        public int getDefendingTroops() => DefendingTroops;
+        public int getMinReinforcementsTroops() => MinReinforcementsTroops;
+
     }
 }

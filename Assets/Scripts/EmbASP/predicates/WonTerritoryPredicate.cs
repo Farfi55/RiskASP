@@ -5,8 +5,7 @@ namespace EmbASP.predicates
     [Id("won_territory")]
     public class WonTerritoryPredicate
     {
-        // won_territory(T, AT, Player, Territory).
-        
+
         [Param(0)] public int Turn;
         
         [Param(1)] public int AttackTurn;

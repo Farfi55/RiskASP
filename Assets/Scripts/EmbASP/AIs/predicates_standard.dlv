@@ -1,7 +1,9 @@
 % ================== CONSTANTS ==================
 
 territory(Territory, Continent).
+
 continent(Continent, Bonus).
+
 connection(Territory1, Territory2).
 
 
@@ -24,6 +26,7 @@ card(T, Player, CardName, CardType, CardTerritory).
 
 
 possible_card_exchange(T, Player, ExchangeId, ExchangeTypeId, Card1, Card2, Card3, Troops).
+
 exchange_cards(T, Player, ExchangeId).
 
 troops_to_place(T, Player, Troops).
@@ -44,7 +47,8 @@ attack(T, AT, From, To, Troops).
 
 attack_reinforce(T, AT, From, To, Troops).
 
-attack_result(T, AT, From, To, RemainingAttackerTroops, RemainingTroopsDefender).
+attack_result(T, AT, From, To, RemainingAttackerTroops, RemainingTroopsDefender, 
+    AttackingTroops, DefendingTroops, MinReinforcementsTroops).
 
 end_attack(T, AT).
 

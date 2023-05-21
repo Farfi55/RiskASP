@@ -8,6 +8,11 @@ territory_island_internal_weight(3).
 territory_island_fronteer_weight(1).
 territory_island_continent_bonus_weight(10).
 
+territory_index_welfare_strong_weight(4).
+territory_index_welfare_weak_weight(1).
+territory_index_bad_strong_weight(5).
+territory_index_bad_weak_weight(2).
+
 
 % _________________ CONSTANTS ____________________
 

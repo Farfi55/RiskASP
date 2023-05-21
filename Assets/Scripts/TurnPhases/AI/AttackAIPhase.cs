@@ -36,16 +36,29 @@ namespace TurnPhases.AI
         {
             var turn = _gm.Turn;
             var attackTurn = _attackPhase.AttackTurn;
-            if (_attackPhase.AttackResults.Any())
+
+            foreach (var attackResult in _attackPhase.AttackResults)
             {
-                var lastAttackAction = _attackPhase.LastAttackResult.AttackAction;
-                if (lastAttackAction != null && lastAttackAction.Turn == turn &&
-                    lastAttackAction.AttackTurn == attackTurn - 1)
+                var attackAction = attackResult.AttackAction;
+                if(attackAction.Turn != turn) 
+                    continue;
+                
+                // TODO: send every attack result to the AI
+                //       and a full history of the actions taken so far this phase
+                //       when the AI will be able to handle it
+                if (attackAction.AttackTurn == attackTurn - 1)
                 {
-                    var attackResult = new EmbASP.predicates.AttackResultPredicate(_attackPhase.LastAttackResult);
-                    inputProgram.AddObjectInput(attackResult);
+                    var attackResultPredicate = new AttackResultPredicate(attackResult);
+                    inputProgram.AddObjectInput(attackResultPredicate);
+                }
+
+                if (attackResult.HasAttackerWonTerritory())
+                {
+                    var wonTerritory = new WonTerritoryPredicate(turn, attackAction.AttackTurn, player.Name, attackResult.Target.Name);
+                    inputProgram.AddObjectInput(wonTerritory);   
                 }
             }
+            
 
             var attackTurnPredicate = new AttackTurnPredicate(turn, attackTurn, player.Name);
             inputProgram.AddObjectInput(attackTurnPredicate);

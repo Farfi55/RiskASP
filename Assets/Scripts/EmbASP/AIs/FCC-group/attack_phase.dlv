@@ -2,6 +2,17 @@
 %                           ATTACK PHASE
 % ====================================================================
 
+%% Quanto è utile attaccare un territorio?
+%%%% -- quanto miglioro la mia situazione? (Si considera un caso di successo per fare delle proiezioni)
+%%%% -- quanto peggioro la sua?
+%%
+%% Quanto è alto il rischio a cui mi espongo attaccando un territorio?
+%%%% -- (consideriamo un caso di fallimento per fare delle proiezioni) 
+%%
+%% Se conquisto il territorio, quante truppe dovrei mettere su quest'ultimo affinché sia sicuro?
+%%
+%% $$HARD$$ stabilire un obiettivo (un paese preciso da conquistare, piuttosto che far perdere un bonus continente ad esempio) e fare gli attacchi in modo tale da avvicinarsi il più possibile.
+%%
 
 curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
 

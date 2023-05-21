@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Cards;
 using EmbASP.predicates;
 using it.unical.mat.embasp.@base;
 using it.unical.mat.embasp.languages.asp;
@@ -50,8 +51,9 @@ namespace player
         {
             var ar = ActionReader.Instance;
             var tr = TerritoryRepository.Instance;
+            var cr = CardRepository.Instance;
 
-            ReinforcePhase = new ReinforceAIPhase(_gm, ar, tr);
+            ReinforcePhase = new ReinforceAIPhase(_gm, ar, tr, cr);
             AttackPhase = new AttackAIPhase(_gm, ar, tr);
             FortifyPhase = new FortifyAIPhase(_gm, ar, tr);
             EmptyPhase = new EmptyAIPhase();
@@ -179,24 +181,34 @@ namespace player
             var tr = TerritoryRepository.Instance;
 
             // turn info
-            var turn = new TurnPredicate(_gm.Turn, _gm.CurrentPlayer.Name);
-            inputProgram.AddObjectInput(turn);
+            var turn = _gm.Turn;
+            var turnPredicate = new TurnPredicate(turn, currentPlayer.Name);
+            inputProgram.AddObjectInput(turnPredicate);
 
             // territory control
-            var territoryControls = TerritoryControlPredicate.FromTerritoriesAsObjects(_gm.Turn, tr.Territories);
+            var territoryControls = TerritoryControlPredicate.FromTerritoriesAsObjects(turn, tr.Territories);
             inputProgram.AddObjectsInput(territoryControls);
 
             // territory island
             foreach (var (territory, islandId) in tr.TerritoryToIslandMap)
             {
-                var territoryPredicate = new TerritoryIslandPredicate(_gm.Turn, islandId, territory.Name, territory.Owner.Name);
+                var territoryPredicate = new TerritoryIslandPredicate(turn, islandId, territory.Name, territory.Owner.Name);
                 inputProgram.AddObjectInput(territoryPredicate);
             }
 
-            // players
             foreach (var player in _gm.Players)
+            {
+                // players
                 inputProgram.AddObjectInput(new PlayerPredicate(player.Name));
+                // player cards count
+                inputProgram.AddObjectInput(new CardsCountPredicate(turn, player.Name, player.Cards.Count));
+            }
             
+            // current player cards
+            foreach (var currentPlayerCard in currentPlayer.Cards)
+                inputProgram.AddObjectInput(new CardPredicate(turn, currentPlayer.Name, currentPlayerCard));
+            
+
             CurrentPhase.OnRequest(currentPlayer, inputProgram);
         }
 

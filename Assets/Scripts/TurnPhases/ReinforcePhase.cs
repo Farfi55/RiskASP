@@ -38,9 +38,10 @@ namespace TurnPhases
         {
             if (action is ExchangeCardsAction exchangeCardsAction)
             {
-                exchangeCardsAction.Player.RemoveCards(exchangeCardsAction.Cards);
-                _cardRepository.ReturnCardsToDeck(exchangeCardsAction.Cards);
-                _remainingTroopsToPlace += exchangeCardsAction.ExchangeValue;
+                var cardExchange = exchangeCardsAction.Exchange;
+                exchangeCardsAction.Player.RemoveCards(cardExchange.Cards);
+                _cardRepository.ReturnCardsToDeck(cardExchange.Cards);
+                _remainingTroopsToPlace += cardExchange.ExchangeValue;
                 
                 OnTroopsToPlaceChanged?.Invoke();
             }

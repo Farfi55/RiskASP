@@ -101,16 +101,16 @@ namespace Cards
         }
         
         
-        public List<(List<Card> combination, int value)> GetBestExchanges(player.Player player)
+        public List<CardExchange> GetBestExchanges(player.Player player)
         {
-            var bestExchanges = new List<(List<Card> combination, int value)>();
+            var bestExchanges = new List<CardExchange>();
             var cards = player.Cards;
 
             foreach (var cardExchangeType in ExchangeTypes)
             {
-                var (combination, value) = cardExchangeType.GetBestExchange(cards, player);
-                if (combination != null && value > 0)
-                    bestExchanges.Add((combination, value));
+                var cardExchange = cardExchangeType.GetBestExchange(cards, player);
+                if (cardExchange != null)
+                    bestExchanges.Add(cardExchange);
             }
 
             return bestExchanges;
@@ -123,6 +123,30 @@ namespace Cards
                 return null;
 
             return ExchangeTypes.FirstOrDefault(exchangeType => exchangeType.CanExchange(cards));
+        }
+        
+        public int GetExchangeTypeIndex(Card[] cards)
+        {
+            if (cards.Length != 3)
+                return -1;
+
+            for (var index = 0; index < ExchangeTypes.Length; index++)
+            {
+                var exchangeType = ExchangeTypes[index];
+                if (exchangeType.CanExchange(cards)) return index;
+            }
+
+            return -1;
+        }
+        public int GetExchangeTypeIndex(CardExchangeType exchangeType)
+        {
+            for (var index = 0; index < ExchangeTypes.Length; index++)
+            {
+                if(ExchangeTypes[index] == exchangeType)
+                    return index;
+            }
+
+            return -1;
         }
         
         

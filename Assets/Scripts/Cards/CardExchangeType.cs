@@ -40,24 +40,23 @@ namespace Cards
             return CanExchange(cardsDict);
         }
 
-        
-        
-        public (List<Card> bestCombination, int bestValue) GetBestExchange(IReadOnlyList<Card> cards, player.Player player)
+
+        public CardExchange GetBestExchange(IReadOnlyList<Card> cards, player.Player player)
         {
             if (cards.Count < 3)
-                return (null, 0);
-            
-            
+                return null;
+
+
             // generate all possible combinations of 3 cards
-            List<Card> bestCombination = null;
+            Card[] bestCombination = null;
             int bestValue = 0;
-            
+
             foreach (var cardsCombination in CardsCombinations(cards))
             {
                 if (CanExchange(cardsCombination))
                 {
                     var exchangeValue = ExchangeValue(cardsCombination, player);
-                    if(exchangeValue > bestValue)
+                    if (exchangeValue > bestValue)
                     {
                         bestCombination = cardsCombination;
                         bestValue = exchangeValue;
@@ -65,23 +64,25 @@ namespace Cards
                 }
             }
 
-            return (bestCombination, bestValue);
-
+            if (bestCombination != null)
+                return new CardExchange(bestCombination, this, player, bestValue);
+            return null;
         }
 
-        private List<List<Card>> CardsCombinations(IReadOnlyList<Card> cards)
+        private List<Card[]> CardsCombinations(IReadOnlyList<Card> cards)
         {
-            var cardCombinations = new List<List<Card>>();
+            var cardCombinations = new List<Card[]>();
             for (int i = 0; i < cards.Count; i++)
             {
                 for (int j = i + 1; j < cards.Count; j++)
                 {
                     for (int k = j + 1; k < cards.Count; k++)
                     {
-                        cardCombinations.Add(new List<Card> { cards[i], cards[j], cards[k] });
+                        cardCombinations.Add(new[] { cards[i], cards[j], cards[k] });
                     }
                 }
             }
+
             return cardCombinations;
         }
 
@@ -89,8 +90,8 @@ namespace Cards
         {
             if (cards.Count != 3)
                 throw new ArgumentException("Must exchange exactly 3 cards");
-            
-            
+
+
             int ownedCardTerritories = cards.Count(card => player.HasTerritory(card.Territory));
 
             return Troops + (2 * ownedCardTerritories);

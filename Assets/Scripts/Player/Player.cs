@@ -28,7 +28,7 @@ namespace player
         public PlayerColor Color;
 
 
-        public List<(List<Card> combination, int value)> BestCardExchangeCombinations { get; private set; } = new();
+        public List<CardExchange> BestCardExchangeCombinations { get; private set; } = new();
 
 
         public Action<(Player eliminatedBy, Player eliminated)> OnEliminated;

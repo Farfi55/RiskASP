@@ -5,7 +5,7 @@ namespace EmbASP.predicates
     [Id("exchange_cards")]
     public class ExchangeCardsPredicate
     {
-        // exchange_cards(T, Player, ExchangeId, ExchangeTypeId, Troops).
+        // exchange_cards(T, Player, ExchangeId).
 
         [Param(0)] public int Turn;
         
@@ -13,34 +13,25 @@ namespace EmbASP.predicates
         
         [Param(2)] public int ExchangeId;
         
-        [Param(3)] public int ExchangeTypeId;
-        
-        [Param(4)] public int Troops;
-        
         public ExchangeCardsPredicate()
         {
         }
         
-        public ExchangeCardsPredicate(int turn, string player, int exchangeId, int exchangeTypeId, int troops)
+        public ExchangeCardsPredicate(int turn, string player, int exchangeId)
         {
             Turn = turn;
             Player = player;
             ExchangeId = exchangeId;
-            ExchangeTypeId = exchangeTypeId;
-            Troops = troops;
         }
         
         
         public int setTurn(int turn) => Turn = turn;
         public string setPlayer(string player) => Player = player;
         public int setExchangeId(int exchangeId) => ExchangeId = exchangeId;
-        public int setExchangeTypeId(int exchangeTypeId) => ExchangeTypeId = exchangeTypeId;
-        public int setTroops(int troops) => Troops = troops;
         
         public int getTurn() => Turn;
         public string getPlayer() => Player;
         public int getExchangeId() => ExchangeId;
-        public int getExchangeTypeId() => ExchangeTypeId;
-        public int getTroops() => Troops;
+        
     }
 }

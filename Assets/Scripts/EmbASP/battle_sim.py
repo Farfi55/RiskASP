@@ -44,8 +44,8 @@ def simulate_all_battles(n_simulations: int, max_attacker: 20, max_defender: 20)
             print_result(result)
             results.append(result)
 
-            
     return results
+
 
 def print_result(result):
     (attacker, defender, win_rate) = result
@@ -56,9 +56,7 @@ def print_result(result):
 
 def main():
     n_simulations = 100000
-    simulate_all_battles(n_simulations, 20, 20)
-
-
+    simulate_all_battles(n_simulations, 40, 20)
 
 
 if __name__ == "__main__":

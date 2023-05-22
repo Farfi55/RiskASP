@@ -38,50 +38,59 @@ placed_troops(T, Player, Troops) :-
 
 %quanto migliora la condizione di un paese piazzandogli delle truppe?
 
-territory_welfare_index(T, Territory, Index):- territory_control(T, Territory, Player, Troops), curr_turn(T, Player),
+territory_welfare_index(T, Territory, Index) :- 
+    territory_control(T, Territory, Player, Troops), curr_turn(T, Player),
     adjacent_enemy_troops(T, Territory, PlayerOwner, Enemies),
     Troops > Enemies,
     Index = Troops - Enemies.
 
-territory_bad_index(T, Territory, Index):- territory_control(T, Territory, Player, Troops), curr_turn(T, Player),
+territory_bad_index(T, Territory, Index) :- 
+    territory_control(T, Territory, Player, Troops), curr_turn(T, Player),
     adjacent_enemy_troops(T, Territory, PlayerOwner, Enemies),
     Troops < Enemies,
     Index = Enemies - Troops.
 
-territory_welfare_index_projection(T, Territory, Value):- territory_welfare_index(T, Territory, Index),
+territory_welfare_index_projection(T, Territory, Value) :- 
+    territory_welfare_index(T, Territory, Index),
     territory_index_welfare_strong_weight(W), curr_turn(T, Player),
     place(T, Player, Territory, Troops),
     Index + Troops < 4, Value = (Index + Troops) * W.
 
-territory_welfare_index_projection(T, Territory, Value):- territory_welfare_index(T, Territory, Index),
+territory_welfare_index_projection(T, Territory, Value) :- 
+    territory_welfare_index(T, Territory, Index),
     territory_index_welfare_weak_weight(W),curr_turn(T, Player),
     place(T, Player, Territory, Troops),
     Index + Troops > 3, Value = (Index + Troops) * W.
 
-territory_welfare_index_projection(T, Territory, Value):- territory_bad_index(T, Territory, Index),
+territory_welfare_index_projection(T, Territory, Value) :- 
+    territory_bad_index(T, Territory, Index),
     place(T, Player, Territory, Troops), curr_turn(T, Player),
     Troops > Index, Troops - Index < 4,
     territory_index_bad_strong_weight(W),
     Value = (Troops - Index) * W.
     
-territory_welfare_index_projection(T, Territory, Value):- territory_bad_index(T, Territory, Index),
-   place(T, Player, Territory, Troops), curr_turn(T, Player),
-   Troops = Index,
-   territory_index_bad_strong_weight(W),
-   Value = (Troops) * W.
+territory_welfare_index_projection(T, Territory, Value) :- 
+    territory_bad_index(T, Territory, Index),
+    place(T, Player, Territory, Troops), curr_turn(T, Player),
+    Troops = Index,
+    territory_index_bad_strong_weight(W),
+    Value = (Troops) * W.
 
-territory_bad_index_projection(T, Territory, Value):- territory_bad_index(T, Territory, Index),
+territory_bad_index_projection(T, Territory, Value) :- 
+    territory_bad_index(T, Territory, Index),
     place(T, Player, Territory, Troops), curr_turn(T, Player),
     Troops < Index,
     territory_index_bad_weak_weight(W),
     Value = ( Index - Troops) * W.
 
 
-island_welfare_index(T, Id, Index):- curr_turn(T, Player), 
-    territory_island(T, Id, Territory, Player),
+island_welfare_index(T, Id, Index) :- 
+    curr_turn(T, Player), 
+    island_id(T, Id, Player),
     #sum{Value, Territory : territory_welfare_index_projection(T, Territory, Value)} = Index.
 
-island_bad_index(T, Index):- curr_turn(T, Player), 
+island_bad_index(T, Index) :- 
+    curr_turn(T, Player), 
     #sum{Value, Territory : territory_bad_index_projection(T, Territory, Value)} = Index.
 
 :~ island_welfare_index(T, Id, Index), Val = 10000-Index. [Val@3, Val]

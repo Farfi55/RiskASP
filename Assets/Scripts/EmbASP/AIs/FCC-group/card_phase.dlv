@@ -1,3 +1,7 @@
+% ======================================================================
+%                              CARDS LOGIC
+% ======================================================================
+
 
 %cards_count(T, Player, Cards).
 %card(T, Player, CardName, CardType, CardTerritory).
@@ -5,17 +9,16 @@
 %exchange_cards(T, Player, ExchangeId).
 
 
-
 %guess generico
-exchange(T,Player,ID,TypeID,Card1,Card2,Card3,Troops)|noExchange(T,Player,ID,TypeID,Card1,Card2,Card3,Troops) :- 
-        possible_card_exchange(T, Player, ExchangeId, ExchangeTypeId, Card1, Card2, Card3, Troops).
+{ exchange(T,Player, ID, TypeID, Card1,Card2,Card3,Troops) } <= 1 :- 
+    possible_card_exchange(T,Player, ID, TypeID, Card1,Card2,Card3,Troops).
 
-:- #count{T,Player,ID,TypeID,Card1,Card2,Card3,Troops : exchange(T,Player,ID,TypeID,Card1,Card2,Card3,Troops)} > 1.
+:- #count{T,ID : exchange(T,Player,ID,TypeID,Card1,Card2,Card3,Troops)} > 1.
 
 
 %pagare per ogni exchange in cui Troops è basso
-costExchange(T,Player,C) :- exchange(T,Player,_,_,_,_,_,Troops), C = 14-Troops.
-:~ costExchange(_,_,C), [C@2,C]
+costExchange(T,Player,C) :- exchange(T,Player,_,_,_,_,_,Troops), C = 16-Troops.
+:~ costExchange(_,_,C). [C@2,C]
 
 
 %effettuare uno scambio se il numero di truppe in tuo possesso è basso rispetto agli avversari (Prioritario)
@@ -31,41 +34,23 @@ costExchange(T,Player,C) :- exchange(T,Player,_,_,_,_,_,Troops), C = 14-Troops.
         territory_control(T, Territory, Player, Troops), 
         curr_turn(T, Player1), Player != Player1.
 
-        other_player_troops_maximum(T,Max) :- curr_turn(T,_), Max = #max{Troops : other_player_territory(T,Territory,Troops)}.
+        other_player_troops_maximum(T,Max) :- 
+            curr_turn(T,_), 
+            Max = #max{Troops : other_player_territory(T, Territory, Player, Troops) }.
 
         %differenza truppe in possesso
-        index_diff_troops(T,P,I):- curr_turn(T,P), curr_player_troops_count(T,Count), other_player_troops_maximum(T,Max), I = Max - Count.
+        index_diff_troops(T,P,I) :- 
+            curr_turn(T,P), 
+            curr_player_troops_count(T,Count),
+            other_player_territory(T,_,_,Max),
+            other_player_troops_maximum(T,Max), 
+            I = Max - Count.
 
         %exchange + index_diff_troops
-        :~ exchange(T,P,_,_,_,_,_,Troops), index_diff_troops(T,P,I), C = 1000+Troops-I. [C@3,C].
-
-
-
-
-
-
-        
-
-
-
-
-
-
-
-
+        :~ exchange(T,P,_,_,_,_,_,Troops), index_diff_troops(T,P,I), C = 1000+Troops-I. [C@3,C]
 
 
 %effettuare uno scambio se si vuole attuare una strategia di fortificazione(Medio)
 
 
 exchange_cards(T,Player,ID) :- exchange(T,Player,ID,_,_,_,_,_).
-
-
-
-
-
-
-
-
-
-

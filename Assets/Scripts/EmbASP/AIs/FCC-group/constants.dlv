@@ -33,6 +33,7 @@ continent_connection(Terr1, Terr2) :-
     territory(Terr2, Cont2),
     Cont1 != Cont2.
 
+true.
 
 % ________________ BASE CONSTANTS ____________________
 

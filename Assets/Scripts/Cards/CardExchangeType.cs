@@ -96,5 +96,11 @@ namespace Cards
 
             return Troops + (2 * ownedCardTerritories);
         }
+        
+        
+        public override string ToString()
+        {
+            return $"CardExchangeType({RequiredCards}, {Troops})";
+        }
     }
 }

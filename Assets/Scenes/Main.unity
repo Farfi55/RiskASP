@@ -28799,6 +28799,8 @@ MonoBehaviour:
   _logFullToFile: 1
   _logResponseToFile: 0
   _deleteOldDumpsOnStart: 1
+  _maxTurnsToLog: 5
+  _logAllTurns: 0
   _programPhaseText: 
   _programFullText: 
   _programResponseText: 

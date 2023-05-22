@@ -58,6 +58,10 @@ curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
 % prefer doing something than nothing 
 :~ end_fortify(T). [50@5]
 
+
+:~ true. [1000@5]
+:~ true. [1000@4]
+
 max_internal_troops(T, Player, MaxTroops) :-
     curr_turn(T, Player),
     MaxTroops = #max{ Troops : island_strongest_internal(T, Id, Player, From, Troops) }.
@@ -73,8 +77,7 @@ fortify(T, From, To, Troops) :-
 has_fortified(T, Player) :- curr_turn(T, Player), fortify(T, _, _, _).
 end_fortify(T) :- curr_turn(T, Player), not has_fortified(T, Player).
 
-a(1).
-:~ a(X). [1@1, X]
+
 
 % #show fortify_troops/5.
 #show fortify/4.

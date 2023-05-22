@@ -19,6 +19,7 @@ MonoBehaviour:
   - Assets/Scripts/EmbASP/AIs/FCC-group/common_logic.dlv
   _draftBrainsPaths:
   - Assets/Scripts/EmbASP/AIs/FCC-group/draft_phase.dlv
+  - Assets/Scripts/EmbASP/AIs/FCC-group/card_phase.dlv
   _attackBrainsPaths:
   - Assets/Scripts/EmbASP/AIs/FCC-group/attack_phase.dlv
   _fortifyBrainsPaths:

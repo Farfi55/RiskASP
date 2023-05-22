@@ -2,6 +2,7 @@
 %                           FORTIFY PHASE
 % ====================================================================
 
+
 curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
 
 
@@ -17,6 +18,8 @@ curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
     From != To.
 
 :- #count{T, Player, From, To, FromTroops : fortify_troops(T, Player, From, To, FromTroops)} > 1.
+
+
 
 
 % prioritize moving troops from the strongest internal territory in a island

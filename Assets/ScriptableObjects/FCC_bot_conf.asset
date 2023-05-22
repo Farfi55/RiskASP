@@ -13,10 +13,15 @@ MonoBehaviour:
   m_Name: FCC_bot_conf
   m_EditorClassIdentifier: 
   _name: FCC
+  _aspSolver: 0
   _commonBrainsPaths:
   - Assets/Scripts/EmbASP/AIs/FCC-group/constants.dlv
   - Assets/Scripts/EmbASP/AIs/FCC-group/common_logic.dlv
-  _reinforceBrainPath: Assets/Scripts/EmbASP/AIs/FCC-group/draft_phase.dlv
-  _attackBrainPath: Assets/Scripts/EmbASP/AIs/FCC-group/attack_phase.dlv
-  _fortifyBrainPath: Assets/Scripts/EmbASP/AIs/FCC-group/fortify_phase.dlv
+  - Assets/Scripts/EmbASP/AIs/FCC-group/battle_chances.dlv
+  _draftBrainsPaths:
+  - Assets/Scripts/EmbASP/AIs/FCC-group/draft_phase.dlv
+  _attackBrainsPaths:
+  - Assets/Scripts/EmbASP/AIs/FCC-group/attack_phase.dlv
+  _fortifyBrainsPaths:
+  - Assets/Scripts/EmbASP/AIs/FCC-group/fortify_phase.dlv
   _useOptimalAnswerSet: 1

@@ -32,6 +32,8 @@ namespace EmbASP
         [FormerlySerializedAs("_clearAllDumpsOnStart")]
         [Space(10)]
         [SerializeField] private bool _deleteOldDumpsOnStart;
+        [SerializeField, Range(0, 100)] private int _maxTurnsToLog = 10;
+        [SerializeField] private bool _logAllTurns = false;
 
         
         [Space(10), TextArea(4, 10), SerializeField] 
@@ -81,7 +83,7 @@ namespace EmbASP
             _programFullText = program.Programs;
             var phaseName = _botBrain.CurrentPhase.GetType().Name;
             var turn = _gm.Turn;
-            if (_logFullToFile)
+            if (_logFullToFile && (_logAllTurns || turn <= _maxTurnsToLog))
             {
                 
                 
@@ -94,7 +96,7 @@ namespace EmbASP
                 System.IO.File.WriteAllText(dumpPath, _programFullText);
             }
 
-            if (_logFullToConsole)
+            if (_logFullToConsole && (_logAllTurns || turn <= _maxTurnsToLog))
             {
                 Debug.Log($"turn {turn}, full info for {phaseName}:\n______________________\n{_programFullText}\n______________________");
             }
@@ -107,7 +109,7 @@ namespace EmbASP
             var phaseName = _botBrain.CurrentPhase.GetType().Name;
             var turn = _gm.Turn;
             
-            if (_logPhaseToFile)
+            if (_logPhaseToFile && (_logAllTurns || turn <= _maxTurnsToLog))
             {
                 string dumpPath;
                 if(_gm.CurrentPhase is AttackPhase attackPhase)
@@ -118,7 +120,7 @@ namespace EmbASP
                 System.IO.File.WriteAllText(dumpPath, _programPhaseText);
             }
 
-            if (_logPhaseToConsole)
+            if (_logPhaseToConsole && (_logAllTurns || turn <= _maxTurnsToLog))
             {
                 Debug.Log($"turn {turn}, phase info for {phaseName}:\n______________________\n{_programPhaseText}\n______________________");
             }
@@ -141,7 +143,7 @@ namespace EmbASP
             var phaseName = _botBrain.CurrentPhase.GetType().Name;
             var turn = _gm.Turn;
             
-            if (_logResponseToFile)
+            if (_logResponseToFile && (_logAllTurns || turn <= _maxTurnsToLog))
             {
                 string dumpPath;
                 if(_gm.CurrentPhase is AttackPhase attackPhase)
@@ -152,7 +154,7 @@ namespace EmbASP
                 System.IO.File.WriteAllText(dumpPath, _programResponseText);
             }
             
-            if (_logResponseToConsole)
+            if (_logResponseToConsole && (_logAllTurns || turn <= _maxTurnsToLog))
             {
                 Debug.Log($"turn {turn}, response for {phaseName}:\n______________________\n{_programResponseText}\n______________________");
             }

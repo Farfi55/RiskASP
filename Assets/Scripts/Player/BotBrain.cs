@@ -10,6 +10,7 @@ using EmbASP.predicates;
 using it.unical.mat.embasp.@base;
 using it.unical.mat.embasp.languages.asp;
 using it.unical.mat.embasp.platforms.desktop;
+using it.unical.mat.embasp.specializations.clingo.desktop;
 using it.unical.mat.embasp.specializations.dlv2.desktop;
 using Map;
 using TurnPhases;
@@ -24,7 +25,9 @@ namespace player
         private GameManager _gm;
 
         public IAIPhase CurrentPhase { get; private set; }
-        private Handler _handler;
+
+        private Handler _dlv2Handler;
+        private Handler _clingoHandler;
 
 
         public Action<InputProgram> OnProgramLoaded;
@@ -43,7 +46,7 @@ namespace player
 
             _gm = GameManager.Instance;
             SetupPhases();
-            _handler = LoadExecutable();
+            LoadExecutables();
             RegisterClassesToMapper();
         }
 
@@ -95,15 +98,22 @@ namespace player
         {
             InputProgram inputProgram = CreateProgram(botPlayer, player);
 
-            _handler.RemoveAll();
-            _handler.AddProgram(inputProgram);
+            var currHandler = botPlayer.BotConfiguration.ASPSolver switch
+            {
+                ASPSolver.DLV2 => _dlv2Handler,
+                ASPSolver.Clingo => _clingoHandler,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
+            currHandler.RemoveAll();
+            currHandler.AddProgram(inputProgram);
             OnProgramLoaded?.Invoke(inputProgram);
 
             // var callback = new PhasesCallback(this, botPlayer, player);
             // _handler.StartAsync(callback);
 
 
-            var output = _handler.StartSync();
+            var output = currHandler.StartSync();
             OnResponse(botPlayer, player, output);
         }
 
@@ -128,9 +138,12 @@ namespace player
 
         private void OnResponse(BotPlayer botPlayer, Player player, Output output)
         {
-            if (output is not AnswerSets outputAnswerSets)
+            if (output is not AnswerSets outputAnswerSets
+                || outputAnswerSets.Answersets is null
+                || outputAnswerSets.Answersets.Count == 0)
             {
-                Debug.LogError("Output is not AnswerSets");
+                Debug.LogError(GetErrorMessage(botPlayer, output));
+                CurrentPhase.OnFailure(player);
                 return;
             }
 
@@ -143,10 +156,14 @@ namespace player
 
             if (answerSets.Count == 0)
             {
-                Debug.LogError(GetErrorMessage(player, output));
+                Debug.LogError(GetErrorMessage(botPlayer, output));
                 CurrentPhase.OnFailure(player);
                 return;
             }
+            
+            if(output.ErrorsString.Length > 0)
+                Debug.LogWarning(GetCurrentPhaseInfo(botPlayer) + "\nerror: " + output.ErrorsString);
+
 
             var answerSet = answerSets[0];
             OnResponseLoaded?.Invoke(answerSet);
@@ -154,17 +171,11 @@ namespace player
             CurrentPhase.OnResponse(player, answerSet);
         }
 
-        private string GetErrorMessage(Player player, Output output)
+        private string GetErrorMessage(BotPlayer player, Output output)
         {
             var error = new StringBuilder();
-            error.Append("BotBrain: No answer set found").Append(player.Name)
-                .Append(" Phase: ").Append(CurrentPhase.GetType().Name)
-                .Append(" Turn: ").Append(_gm.Turn.ToString());
-            if (_gm.CurrentPhase is AttackPhase attackPhase)
-            {
-                error.Append(" AttackTurn: ").Append(attackPhase.AttackTurn.ToString());
-                error.Append(" AttackPhaseState: ").Append(attackPhase.State.ToString());
-            }
+            error.Append("BotBrain: No answer set found");
+            error.Append(GetCurrentPhaseInfo(player));
 
             error.AppendLine()
                 .Append("output-error: ").AppendLine(output.ErrorsString)
@@ -172,24 +183,35 @@ namespace player
             return error.ToString();
         }
 
+        private string GetCurrentPhaseInfo(BotPlayer botPlayer)
+        {
+            var info = new StringBuilder("Player: ").Append(botPlayer.Player.Name)
+                .Append(" Config: ").Append(botPlayer.BotConfiguration.Name)
+                .Append(" Solver: ").Append(botPlayer.BotConfiguration.ASPSolver.ToString())
+                .Append(" Phase: ").Append(CurrentPhase.GetType().Name)
+                .Append(" Turn: ").Append(_gm.Turn.ToString());
+            if (_gm.CurrentPhase is AttackPhase attackPhase)
+            {
+                info.Append(" AttackTurn: ").Append(attackPhase.AttackTurn.ToString());
+                info.Append(" AttackPhaseState: ").Append(attackPhase.State.ToString());
+            }
+
+            return info.ToString();
+        }
+
         public InputProgram CreateProgram(BotPlayer botPlayer, Player player)
         {
             InputProgram inputProgram = new ASPInputProgram();
 
-            string currentPhaseBrain = CurrentPhase switch
-            {
-                ReinforceAIPhase => botPlayer.BotConfiguration.ReinforceBrainPath,
-                AttackAIPhase => botPlayer.BotConfiguration.AttackBrainPath,
-                FortifyAIPhase => botPlayer.BotConfiguration.FortifyBrainPath,
-                _ => "",
-            };
+            var currentPhaseBrains = botPlayer.BotConfiguration.BrainsPathsForPhase(CurrentPhase);
 
             LoadPhaseInfo(inputProgram, player);
             OnPhaseInfoLoaded?.Invoke(inputProgram);
 
             LoadCommonBrains(botPlayer, inputProgram);
 
-            LoadBrain(currentPhaseBrain, inputProgram);
+            foreach (var currentPhaseBrain in currentPhaseBrains)
+                LoadBrain(currentPhaseBrain, inputProgram);
 
 
             return inputProgram;
@@ -250,20 +272,32 @@ namespace player
         }
 
 
-        private Handler LoadExecutable()
+        private void LoadExecutables()
         {
-            var separator = Path.DirectorySeparatorChar;
-            string executablePath;
+            var sep = Path.DirectorySeparatorChar;
+            string dlv2ExecutablePath = $"Executables{sep}dlv2{sep}dlv2";
+            string clingoExecutablePath = $"Executables{sep}clingo{sep}clingo";
+
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                executablePath = $"Executables{separator}dlv2.exe";
+            {
+                dlv2ExecutablePath += "-win.exe";
+                clingoExecutablePath += "-win.exe";
+            }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                executablePath = $"Executables{separator}dlv2-linux";
+            {
+                dlv2ExecutablePath += "-linux";
+                clingoExecutablePath += "-linux";
+            }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                executablePath = $"Executables{separator}dlv2-mac";
+            {
+                dlv2ExecutablePath += "-mac";
+                clingoExecutablePath += "-mac";
+            }
             else throw new Exception("OS not supported");
 
 
-            return new DesktopHandler(new DLV2DesktopService(executablePath));
+            _dlv2Handler = new DesktopHandler(new DLV2DesktopService(dlv2ExecutablePath));
+            _clingoHandler = new DesktopHandler(new ClingoDesktopService(clingoExecutablePath));
         }
 
 

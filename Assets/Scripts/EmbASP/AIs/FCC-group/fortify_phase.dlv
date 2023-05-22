@@ -48,6 +48,7 @@ curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
 % prioritize moving the maximum number of troops 
 :~ fortify_troops(T, Player, _, _, FromTroops),
     max_internal_troops(T, Player, MaxTroops),
+    island_strongest_internal(T, Id, Player, From, MaxTroops),
     Cost = (MaxTroops - FromTroops) * 1.
     [Cost@4]
 

@@ -146,10 +146,26 @@ namespace player
                 CurrentPhase.OnFailure(player);
                 return;
             }
+            if(output.ErrorsString.Length > 0)
+                Debug.LogWarning(GetCurrentPhaseInfo(botPlayer) + "\n" + output.ErrorsString);
 
+
+            
             IList<AnswerSet> answerSets;
             if (botPlayer.BotConfiguration.UseOptimalAnswerSet)
-                answerSets = outputAnswerSets.GetOptimalAnswerSets();
+            {
+                try
+                {
+                    answerSets = outputAnswerSets.GetOptimalAnswerSets();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Debug.LogError(GetErrorMessage(botPlayer, output));
+                    Debug.LogError(e);
+                    CurrentPhase.OnFailure(player);
+                    throw;
+                }
+            }
             else
                 answerSets = outputAnswerSets.Answersets;
 
@@ -161,10 +177,6 @@ namespace player
                 return;
             }
             
-            if(output.ErrorsString.Length > 0)
-                Debug.LogWarning(GetCurrentPhaseInfo(botPlayer) + "\nerror: " + output.ErrorsString);
-
-
             var answerSet = answerSets[0];
             OnResponseLoaded?.Invoke(answerSet);
 

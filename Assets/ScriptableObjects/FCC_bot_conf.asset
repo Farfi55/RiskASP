@@ -17,7 +17,6 @@ MonoBehaviour:
   _commonBrainsPaths:
   - Assets/Scripts/EmbASP/AIs/FCC-group/constants.dlv
   - Assets/Scripts/EmbASP/AIs/FCC-group/common_logic.dlv
-  - Assets/Scripts/EmbASP/AIs/FCC-group/battle_chances.dlv
   _draftBrainsPaths:
   - Assets/Scripts/EmbASP/AIs/FCC-group/draft_phase.dlv
   _attackBrainsPaths:

@@ -126,6 +126,7 @@ has_won_territory(T, AT) :-
 end_attack(T, AT) :- has_won_territory(T, AT), can_attack(T, AT).
 
 :~ end_attack(T, AT), not has_won_territory(T, AT). [10@2]
+% :~ has_attacked(T, AT), not has_won_territory(T, AT). [10@2]
 
 
 % has_attacked_on_turn(T, AT) :- attack(T, AT, _, _, _).

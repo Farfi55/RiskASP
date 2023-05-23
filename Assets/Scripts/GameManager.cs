@@ -115,6 +115,17 @@ public class GameManager : MonoBehaviour
         DistributeTroops();
         EnqueuePlayers();
         _turn = 0;
+        
+        
+        // TODO REMOVE DEBUG CODE
+        foreach (var player in Players)
+        {
+            const int cardsToDraw = 4;
+            for (int i = 0; i < cardsToDraw; i++)
+            {
+                player.AddCard(_cr.DrawRandomCard());
+            }
+        }
     }
 
     private void CreatePlayers()

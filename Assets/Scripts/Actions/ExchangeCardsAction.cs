@@ -4,7 +4,7 @@ using player;
 
 namespace Actions
 {
-    class ExchangeCardsAction : PlayerAction
+    public class ExchangeCardsAction : PlayerAction
     {
         public CardExchange Exchange { get; }
 

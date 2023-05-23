@@ -21,15 +21,21 @@ public class AttackResult
     public Territory Target => AttackAction.Target;
     public int AttackingTroops => AttackAction.Troops;
     public int DefendingTroops { get; }
+    
+    public int[] AttackerRolls { get; }
+    public int[] DefenderRolls { get; }
 
 
-    public AttackResult(
+public AttackResult(
         AttackAction attackAction,
         int attackerLosses,
         int defenderLosses,
         int remainingAttackingTroops,
         int remainingDefendingTroops,
-        int defendingTroops)
+        int defendingTroops,
+        int[] attackerRolls,
+        int[] defenderRolls
+    )
     {
         AttackAction = attackAction;
         AttackerLosses = attackerLosses;
@@ -37,6 +43,8 @@ public class AttackResult
         RemainingAttackingTroops = remainingAttackingTroops;
         RemainingDefendingTroops = remainingDefendingTroops;
         DefendingTroops = defendingTroops;
+        AttackerRolls = attackerRolls;
+        DefenderRolls = defenderRolls;
     }
 
     public bool HasAttackerWonTerritory() => RemainingDefendingTroops == 0;

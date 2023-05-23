@@ -1820,6 +1820,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1197010546}
     m_Modifications:
+    - target: {fileID: 2184493103765311346, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: Color
+      value: 
+      objectReference: {fileID: 11400000, guid: a07b9ef78ac76d27fa81ad826091ada0, type: 2}
+    - target: {fileID: 2184493103765311346, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: _name
+      value: CiccioBOT
+      objectReference: {fileID: 0}
     - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
       propertyPath: m_RootOrder
       value: 3
@@ -1890,7 +1898,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6030655713958463109, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
       propertyPath: m_Name
-      value: BOT Player FFC
+      value: BOT Player FFC 2
       objectReference: {fileID: 0}
     - target: {fileID: 6030655713958463109, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
       propertyPath: m_IsActive
@@ -7044,6 +7052,14 @@ PrefabInstance:
     m_TransformParent: {fileID: 1197010546}
     m_Modifications:
     - target: {fileID: 2184493103765311346, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: Color
+      value: 
+      objectReference: {fileID: 11400000, guid: 87e4f4506d81c8c528e1a0daf1fc7300, type: 2}
+    - target: {fileID: 2184493103765311346, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: _name
+      value: FarfiBOT
+      objectReference: {fileID: 0}
+    - target: {fileID: 2184493103765311346, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
       propertyPath: _cards.Array.size
       value: 0
       objectReference: {fileID: 0}
@@ -7101,7 +7117,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 52db439aef6df01fab8268ebd802ed16, type: 2}
     - target: {fileID: 6030655713958463109, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
       propertyPath: m_Name
-      value: BOT Player
+      value: BOT Player FCC 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
@@ -14168,6 +14184,7 @@ Transform:
   - {fileID: 1694986563}
   - {fileID: 478454607}
   - {fileID: 1776771779}
+  - {fileID: 1558324131}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -17693,6 +17710,99 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
+--- !u!1001 &1456057049
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 1197010546}
+    m_Modifications:
+    - target: {fileID: 2184493103765311346, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: Color
+      value: 
+      objectReference: {fileID: 11400000, guid: ff429dc18531760fbabe1b681cfbe2b9, type: 2}
+    - target: {fileID: 2184493103765311346, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: _name
+      value: CheccoBOT
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4.261346
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.501556
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.013631632
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487455324051920567, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: _attackBrainPath
+      value: Assets/Scripts/EmbASP/AIs/FCC-group/attack_phase.dlv
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487455324051920567, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: _botConfiguration
+      value: 
+      objectReference: {fileID: 11400000, guid: 52db439aef6df01fab8268ebd802ed16, type: 2}
+    - target: {fileID: 4487455324051920567, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: _fortifyBrainPath
+      value: Assets/Scripts/EmbASP/AIs/FCC-group/fortify_phase.dlv
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487455324051920567, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: _reinforceBrainPath
+      value: Assets/Scripts/EmbASP/AIs/FCC-group/draft_phase.dlv
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487455324051920567, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: _commonBrainsPaths.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487455324051920567, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: _commonBrainsPaths.Array.data[0]
+      value: Assets/Scripts/EmbASP/AIs/FCC-group/constants.dlv
+      objectReference: {fileID: 0}
+    - target: {fileID: 6030655713958463109, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_Name
+      value: BOT Player FFC 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6030655713958463109, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
 --- !u!1001 &1456926363
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20242,6 +20352,11 @@ Transform:
   m_Father: {fileID: 194070984}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1558324131 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+  m_PrefabInstance: {fileID: 1456057049}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1560112644
 PrefabInstance:
   m_ObjectHideFlags: 0

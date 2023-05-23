@@ -54,13 +54,15 @@ public class BattleSimulator : MonoBehaviour
             defenderLosses,
             remainingAttackingTroops,
             remainingDefendingTroops,
-            defendingTroops
+            defendingTroops,
+            attackerRolls,
+            defenderRolls
         );
     }
 
     private int Roll() => UnityEngine.Random.Range(1, 7);
 
-    private IList<int> RollDices(int dices)
+    private int[] RollDices(int dices)
     {
         // var rolls = new List<int>(dices);
         var rolls = new int[dices];

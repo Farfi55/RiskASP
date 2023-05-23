@@ -5,7 +5,11 @@
 
 curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
 
-enemy(P) :- player(P), curr_turn(T, Pl), P != Pl.
+curr_player(P) :- curr_turn(_, P).
+other_player(P) :- player(P), curr_player(CP), P != CP.
+
+% to make sure we can use optimization
+:~ true. [1@1]
 
 
 curr_player_territory(T, Territory, Troops) :- 
@@ -21,6 +25,22 @@ player_territories_count(T, Player, Count) :-
     curr_turn(T, _),
     player(Player),
     Count = #count{Territory : territory_control(T, Territory, Player, _)}.
+
+
+player_troops_count(T, Player, Count) :-
+    curr_turn(T, _),
+    player(Player),
+    Count = #sum{Troops, Territory : territory_control(T, Territory, Player, Troops)}.
+
+curr_player_troops_count(T, Player, Count) :-
+    player_troops_count(T, Player, Count),
+    curr_turn(T, Player).
+
+other_player_troops_count(T, Player, Count) :-
+    player_troops_count(T, Player, Count),
+    other_player(Player),
+    curr_turn(T, _).
+
 
 player_territories_in_continent(T, Player, Continent, Count) :-
     curr_turn(T, _),

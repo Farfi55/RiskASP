@@ -8,12 +8,11 @@ public class ActionReader : MonoBehaviour
 {
     public static ActionReader Instance { get; private set; }
 
-    [SerializeField][Range(0f,5f)] private float _actionDelay = 0.5f;
+    [SerializeField][Range(0f,5f)] private float _botActionDelay = 0.5f;
     private float _remainingActionDelay = 0f;
     
     private Queue<PlayerAction> _actions = new();
-    
-    
+
 
     private void Awake()
     {
@@ -40,7 +39,8 @@ public class ActionReader : MonoBehaviour
         {
             var action = _actions.Dequeue();
             GameManager.Instance.HandlePlayerAction(action);
-            _remainingActionDelay = _actionDelay;
+            if(action.Player.IsBot())
+                _remainingActionDelay = _botActionDelay;
         }
     }
 }

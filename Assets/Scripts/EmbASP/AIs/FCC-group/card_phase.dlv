@@ -92,6 +92,7 @@ has_exchanged(T,Player) :- exchange(T,Player, _, _).
 %effettuare uno scambio se si vuole attuare una strategia di fortificazione(Medio)
 
 #show possible_card_exchange/8.
+#show exchange_cards/3.
 #show exchange/4.
 #show draft/3.
 

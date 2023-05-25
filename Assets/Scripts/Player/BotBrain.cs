@@ -42,8 +42,6 @@ namespace player
 
         private void Awake()
         {
-            Debug.Log("BotBrain Awake");
-
             _gm = GameManager.Instance;
             SetupPhases();
             LoadExecutables();

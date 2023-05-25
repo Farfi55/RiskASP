@@ -92,11 +92,12 @@ namespace TurnPhases
                 SetState(AttackState.Fortifying);
             }
             
+           
+            // Debug.Log($"AttackPhase: Attacked {attackResult.Target.Name} from {attackResult.Origin.Name}, " +
+            //           $"result: {attackResult.AttackerLosses} losses for attacker, " +
+            //           $"{attackResult.DefenderLosses} losses for defender");
             
-            Debug.Log($"AttackPhase: Attacked {attackResult.Target.Name} from {attackResult.Origin.Name}, " +
-                      $"result: {attackResult.AttackerLosses} losses for attacker, " +
-                      $"{attackResult.DefenderLosses} losses for defender");
-            
+
             OnAttacked?.Invoke(attackResult);
             OnAttackTurn?.Invoke();
         }

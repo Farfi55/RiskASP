@@ -42,13 +42,11 @@ namespace TurnPhases.Selection
                 {
                     var from = _attackPhase.LastAttackResult.Origin;
                     _from = _sm.TerritoryToSelectionMap[from];
-                    Debug.Log($"set from: {from.Name}");
                 }
                 if (_to == null)
                 {
                     var to = _attackPhase.LastAttackResult.Target;
                     _to = _sm.TerritoryToSelectionMap[to];
-                    Debug.Log($"set to: {to.Name}");
                 }
 
                 EnableTerritoriesToConfirmMove();

@@ -2,9 +2,27 @@
 %                           DRAFT PHASE
 % ====================================================================
 
+
+
+
+
+troops_from_cards(T,Player,Troops):-
+    possible_card_exchange(T, Player, ExchangeId, _, _, _, _, Troops),
+    exchange_cards(T, Player, ExchangeId).
+
+exchanged_cards(T, Player):- exchange_cards(T, Player, ExchangeId).
+
+troops_from_cards(T,Player,0):-
+    curr_turn(T, Player), not exchanged_cards(T, Player).
+
+troops_to_place_with_cards(T, Player, MaxTroops):-
+    troops_to_place(T, Player, Troops),
+    troops_from_cards(T,Player,Card_Troops),
+    MaxTroops = Troops + Card_Troops.
+
 troops(0).
 troops(Troops) :- 
-    troops_to_place(T, Player, MaxTroops), 
+    troops_to_place_with_cards(T, Player, MaxTroops),
     curr_turn(T,P), 
     troops(Troops1), 
     Troops=Troops1+1, 
@@ -22,7 +40,7 @@ placed_troops(T, Player, Troops) :-
     curr_turn(T, Player), 
     Troops = #sum{N,Terr : place(T,Player,Terr,N)}.
 
-:- troops_to_place(T,P,Troops), not placed_troops(T, P, Troops).
+:- troops_to_place_with_cards(T,P,Troops), not placed_troops(T, P, Troops).
 
 % al territorio T, quanti vicini amici ha? FATTO
 % al territorio T, quanti vicini nemici ha? FATTO
@@ -49,7 +67,7 @@ territory_bad_index(T, Territory, Index) :-
     territory_control(T, Territory, Player, Troops), 
     curr_turn(T, Player),
     adjacent_enemy_troops(T, Territory, PlayerOwner, Enemies),
-    Troops < Enemies,
+    Troops <= Enemies,
     Index = Enemies - Troops.
 
 territory_good_index_projection(T, Territory, Value) :- 
@@ -140,7 +158,7 @@ drafts_count(T, Player, Count) :-
 
 % massimizzare il numero di territori diversi in cui si fa draft
 
-:~ troops_to_place(T, Player, MaxPlacesCount), 
+:~ troops_to_place_with_cards(T, Player, MaxPlacesCount), 
      drafts_count(T, Player, PlacesCount),
      Cost = (MaxPlacesCount - PlacesCount) * 150.
      [Cost@2, Cost]

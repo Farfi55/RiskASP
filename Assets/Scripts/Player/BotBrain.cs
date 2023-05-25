@@ -109,12 +109,12 @@ namespace player
             currHandler.AddProgram(inputProgram);
             OnProgramLoaded?.Invoke(inputProgram);
 
-            // var callback = new PhasesCallback(this, botPlayer, player);
-            // _handler.StartAsync(callback);
+            var callback = new PhasesCallback(this, botPlayer, player);
+            currHandler.StartAsync(callback);
 
 
-            var output = currHandler.StartSync();
-            OnResponse(botPlayer, player, output);
+            // var output = currHandler.StartSync();
+            // OnResponse(botPlayer, player, output);
         }
 
         private class PhasesCallback : ICallback

@@ -22,10 +22,9 @@ curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
 
 
 
-% prioritize moving troops from the strongest internal territory in a island
-:~ fortify_troops(T, Player, From, _, FromTroops),
-    territory_island(T, Id, From, Player),
-    not island_strongest_internal(T, Id, Player, From, FromTroops).
+% prioritize moving troops to a fronteer territory
+:~ fortify_troops(T, Player, _, To, _),
+    not fronteer_territory(T, To, Player).
     [-10@5]
 
 
@@ -34,33 +33,34 @@ curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
     territory_island(T, Id, To, Player),
     territory_control(T, To, Player, ToTroops),
     not island_weakest_fronteer(T, Id, Player, To, ToTroops).
+    [-10@5]
+
+% prioritize moving troops from a internal territory
+:~ fortify_troops(T, Player, From, _, _),
+    not internal_territory(T, From, Player).
     [-20@5]
 
-
-% deprioritize moving troops from a fronteer territory
-:~ fortify_troops(T, Player, From, _, _),
-    not fronteer_territory(T, Player, From).
-    [30@5]
-
-% prioritize moving troops to a fronteer territory
-:~ fortify_troops(T, Player, _, To, _),
-    not fronteer_territory(T, Player, To).
+% prioritize moving troops from the strongest internal territory in a island
+:~ fortify_troops(T, Player, From, _, FromTroops),
+    territory_island(T, Id, From, Player),
+    not island_strongest_internal(T, Id, Player, From, FromTroops).
     [-10@5]
 
 
+
 % prioritize moving the maximum number of troops 
-:~ fortify_troops(T, Player, _, _, FromTroops),
-    max_internal_troops(T, Player, MaxTroops),
-    island_strongest_internal(T, Id, Player, From, MaxTroops),
-    Cost = (MaxTroops - FromTroops) * 1.
-    [Cost@4]
+% :~ fortify_troops(T, Player, _, _, FromTroops),
+%     max_internal_troops(T, Player, MaxTroops),
+%     island_strongest_internal(T, Id, Player, From, MaxTroops),
+%     Cost = (MaxTroops - FromTroops) * 1.
+%     [Cost@4]
+
 
 % prefer doing something than nothing 
-:~ end_fortify(T). [50@5]
+:~ end_fortify(T). [-15@5]
 
 
 :~ true. [1000@5]
-:~ true. [1000@4]
 
 max_internal_troops(T, Player, MaxTroops) :-
     curr_turn(T, Player),

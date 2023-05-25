@@ -10,10 +10,10 @@ troops_from_cards(T,Player,Troops):-
     possible_card_exchange(T, Player, ExchangeId, _, _, _, _, Troops),
     exchange_cards(T, Player, ExchangeId).
 
-exchanged_cards(T, Player):- exchange_cards(T, Player, ExchangeId).
+has_exchanged_cards(T, Player):- exchange_cards(T, Player, ExchangeId).
 
 troops_from_cards(T,Player,0):-
-    curr_turn(T, Player), not exchanged_cards(T, Player).
+    curr_turn(T, Player), not has_exchanged_cards(T, Player).
 
 troops_to_place_with_cards(T, Player, MaxTroops):-
     troops_to_place(T, Player, Troops),
@@ -28,13 +28,15 @@ troops(Troops) :-
     Troops=Troops1+1, 
     Troops<=MaxTroops.
 
-place(T, Player, Territory, Troops) | noPlace(T, Player, Territory, Troops) :- 
-    territory_control(T, Territory, Player, _), 
+
+{ place(T, Player, Territory, Troops) : 
+    territory_control(T, Territory, Player, _) } <= 1 :- 
     curr_turn(T,Player),
     troops(Troops), 
     Troops > 0.
-    
+
 :- place(T, P, Territory, N1), place(T, P, Territory, N2), N1!=N2.
+
 
 placed_troops(T, Player, Troops) :- 
     curr_turn(T, Player), 
@@ -121,7 +123,7 @@ island_bad_index(T, Index) :-
     curr_turn(T, Player), 
     #sum{Value, Territory : territory_bad_index_projection(T, Territory, Value)} = Index.
 
-:~ island_good_index(T, Id, Index), Val = 10000-Index. [Val@3, Val]
+:~ island_good_index(T, Id, Index), Val = 1000-Index. [Val@3, Val]
 
 :~ island_bad_index(T, Index). [Index@2, Index]
 
@@ -169,4 +171,3 @@ draft(T, Territory, N) :- place(T, _, Territory, N).
 
 % 1. isola
 % 2. n_truppe + frontiera
-

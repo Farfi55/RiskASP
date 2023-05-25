@@ -132,6 +132,20 @@ difference_troops_territory(T, Territory, PlayerOwner, Diff) :-
     adjacent_enemy_troops(T, Territory, PlayerOwner, Enemies),
     Diff = Friendly - Enemies.
 
+difference_max_enemy_troops_territory(T, Territory, PlayerOwner, Diff) :- 
+    fronteer_territory(T, Territory, PlayerOwner),
+    territory_control(T, Territory, PlayerOwner, Friendly),
+    Enemies = #max{Troops, T1 : 
+        territory_control(T, T1, PlayerEnemy, Troops), 
+        connection(Territory, T1), 
+        PlayerEnemy != PlayerOwner},
+    Diff = Friendly - Enemies.
+
+difference_max_enemy_troops_territory(T, Territory, Player, Troops) :- 
+    internal_territory(T, Territory, Player),
+    territory_control(T, Territory, Player, Troops).
+
+
 difference_troops_territory_inverted(T, Territory, PlayerOwner, Diff) :- 
     territory_control(T, Territory, PlayerOwner, Friendly),
     adjacent_enemy_troops(T, Territory, PlayerOwner, Enemies),
@@ -239,7 +253,9 @@ island_value_index(T, Id, Player, ValueIndex) :-
     ValueIndex = 1000 - Value.
 
 
-
+best_island_value(T, Id, Player, Value) :- 
+    island_value(T, Id, Player, Value),
+    Value = #max{ValueIndex1, Id1 : island_value(T, Id1, Player, ValueIndex1)}.
 
 
 island_weakest_fronteer_troops(T, Id, Player, MinTroops) :-

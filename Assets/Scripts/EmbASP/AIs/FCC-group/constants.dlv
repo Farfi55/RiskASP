@@ -14,6 +14,9 @@ territory_index_bad_strong_weight(5).
 territory_index_bad_weak_weight(2).
 
 
+fronteer_troops_diff_weight(2).
+troops_to_place_weight(10).
+
 % _________________ CONSTANTS ____________________
 
 max_continent_bonus(24).

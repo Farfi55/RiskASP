@@ -9,21 +9,57 @@
 %exchange_cards(T, Player, ExchangeId).
 
 
+must_do_exchange(T,Player) :- 
+    possible_card_exchange(T, Player, ID, TypeID, Card1,Card2,Card3,Troops),
+    Troops >= 10.
+
+
+% best_island_id(T, Id, Player) :-
+%     best_island_value(T, ID, Player, Value),
+%     Id = #min{ID, best_island_value(T, ID, Player, Value)}.
+    
+
+fronteer_troops_diff(T, Player, DiffSum) :-
+    curr_turn(T,Player),
+    DiffSum = #sum{Diff, Territory: 
+        difference_max_enemy_troops_territory(T, Territory, Player, Diff), 
+        fronteer_territory(T, Territory, Player) }.
+
+
+must_do_exchange(T,Player) :- 
+    possible_card_exchange(T, Player, ID, TypeID, Card1,Card2,Card3,Troops),
+    fronteer_troops_diff(T, Player, DiffSum),
+    troops_to_place(T, Player, TroopsToPlace),
+    fronteer_troops_diff_weight(FTDW),
+    troops_to_place_weight(TTPW),
+    DiffSum * FTDW > TroopsToPlace * TTPW.
+
+
+
+
+
 %guess generico
-{ exchange(T,Player, ID, TypeID, Card1,Card2,Card3,Troops) } <= 1 :- 
+{ exchange(T,Player, ID, Troops) } <= 1 :- 
     possible_card_exchange(T, Player, ID, TypeID, Card1,Card2,Card3,Troops),
     curr_turn(T, Player).
 
-:- #count{T,ID : exchange(T,Player,ID,TypeID,Card1,Card2,Card3,Troops)} > 1.
+has_exchanged(T,Player) :- exchange(T,Player, _, _).
+
+:- must_do_exchange(T,Player), not has_exchanged(T,Player).
+
+:- exchange(T,Player,ID1,_), exchange(T,Player,ID2,_), ID1 != ID2.
 
 
 %pagare per ogni exchange in cui Troops è basso
 
-exchange_cost(T,Player,C) :- 
-    exchange(T,Player,_,_,_,_,_,Troops), 
-    C = 16-Troops.
+% exchange_cost(T,Player,C) :- 
+%     exchange(T,Player,_,Troops), 
+%     C = 16-Troops.
 
-:~ exchange_cost(_,_,C). [C@2,C]
+:~ exchange(T,Player,_,Troops), C = -Troops. [C@10]
+
+:~ true. [16@10]
+
 
 
 %effettuare uno scambio se il numero di truppe in tuo possesso è basso rispetto agli avversari (Prioritario)
@@ -49,10 +85,14 @@ exchange_cost(T,Player,C) :-
         Diff = CurrCount - OtherCount.
 
     %exchange + index_diff_troops
-    :~ exchange(T,P,_,_,_,_,_,Troops), index_diff_troops(T,P,OP,Diff), C = 1000+Troops-Diff. [C@3,C]
+    % :~ exchange(T,P,_,Troops), index_diff_troops(T,P,OP,Diff), C = 1000+Troops-Diff. [C@9,C]
+     
 
 
 %effettuare uno scambio se si vuole attuare una strategia di fortificazione(Medio)
 
+#show possible_card_exchange/8.
+#show exchange/4.
+#show draft/3.
 
-exchange_cards(T,Player,ID) :- exchange(T,Player,ID,_,_,_,_,_).
+exchange_cards(T,Player,ID) :- exchange(T,Player,ID,_).

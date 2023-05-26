@@ -81,7 +81,7 @@ namespace Map
                     continue;
 
                 TerritoryToIslandMap.Add(currentTerritory, islandIndex);
-                currentTerritory.GetComponent<TerritoryGraphics>()._territoryNameText.text = islandIndex.ToString();
+                // currentTerritory.GetComponent<TerritoryGraphics>()._territoryNameText.text = islandIndex.ToString();
                 foreach (var neighbor in currentTerritory.NeighbourTerritories)
                 {
                     if (neighbor.Owner == currentTerritory.Owner)

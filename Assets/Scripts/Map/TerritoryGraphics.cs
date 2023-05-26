@@ -34,7 +34,7 @@ namespace Map
             else 
                 Debug.LogWarning("TerritorySelection is null");
 
-            _territoryNameText.text = _territory.Name;
+            _territoryNameText.text = _territory.Name.Replace('_', ' ');
 
 
             _territory.OnTroopsChanged += OnTroopsChanged;

@@ -7,7 +7,6 @@ namespace UI
 {
     public class UIPlayerInfo : MonoBehaviour
     {
-        private RectTransform _rectTransform;
         [SerializeField] private Player _player;
 
         [SerializeField] private TMP_Text _nameText;
@@ -16,9 +15,13 @@ namespace UI
         [SerializeField] private TMP_Text _cardsText;
         [SerializeField] private Image _colorImage;
 
-        [SerializeField] private float _widthOnCurrentPlayer = 320f;
-        private float _defaultWidth = 300f;
+        [SerializeField] private RectTransform _backgroundRectTransform;
+        [SerializeField] private Image _backgroundImage;
+        [SerializeField] private float _backgroundOffsetOnCurrentPlayer = 20f;
 
+        private Color _defaultBackgroundColor;
+        [SerializeField] private Color _currentPlayerBackgroundColor;
+        
         public Player Player
         {
             get => _player;
@@ -34,8 +37,7 @@ namespace UI
 
         private void SetPlayer(Player value)
         {
-            _rectTransform = GetComponent<RectTransform>();
-            _defaultWidth = _rectTransform.rect.width;
+            _defaultBackgroundColor = _backgroundImage.color;
             _player = value;
             _nameText.text = _player.Name;
 
@@ -44,22 +46,28 @@ namespace UI
             _player.OnEliminated += (_) => _colorImage.color = _player.Color.Disabled;
 
             var gameManager = GameManager.Instance;
-            _colorImage.color = gameManager.IsCurrentPlayer(_player) ? _player.Color.Selected : _player.Color.Normal;
-            gameManager.OnPlayerTurnChanged += OnPlayerTurnChanged;
+           
+            OnPlayerTurnChanged(gameManager.CurrentPlayer);
+            
+            gameManager.OnPlayerTurnChanged += (_, newPlayer) => OnPlayerTurnChanged(newPlayer);
             gameManager.AttackPhase.OnAttacked += (_) => UpdatePlayerData();
+            gameManager.OnGamePhaseChanged += (_) => UpdatePlayerData();
+            gameManager.ReinforcePhase.OnTroopsPlaced += (_) => UpdatePlayerData();
         }
 
-        private void OnPlayerTurnChanged(Player oldPlayer, Player newPlayer)
+        private void OnPlayerTurnChanged(Player newPlayer)
         {
             if (newPlayer == _player)
             {
                 _colorImage.color = _player.Color.Selected;
-                _rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _widthOnCurrentPlayer);
+                _backgroundRectTransform.anchoredPosition = Vector2.right * _backgroundOffsetOnCurrentPlayer;
+                _backgroundImage.color = _currentPlayerBackgroundColor;
             }
             else
             {
                 _colorImage.color = _player.Color.Normal;
-                _rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _defaultWidth);
+                _backgroundRectTransform.anchoredPosition = Vector2.zero;
+                _backgroundImage.color = _defaultBackgroundColor;
             }
 
             if (_player.IsDead())

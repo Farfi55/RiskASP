@@ -58,7 +58,7 @@ has_exchanged(T,Player) :- exchange(T,Player, _, _).
 
 :~ exchange(T,Player,_,Troops), C = -Troops. [C@10]
 
-:~ true. [16@10]
+% :~ true. [16@10]
 
 
 

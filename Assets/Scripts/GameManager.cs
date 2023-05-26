@@ -118,6 +118,7 @@ public class GameManager : MonoBehaviour
         
         
         // TODO REMOVE DEBUG CODE
+        
         foreach (var player in Players)
         {
             const int cardsToDraw = 4;
@@ -126,6 +127,7 @@ public class GameManager : MonoBehaviour
                 player.AddCard(_cr.DrawRandomCard());
             }
         }
+    
     }
 
     private void CreatePlayers()

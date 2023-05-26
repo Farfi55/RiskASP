@@ -250,7 +250,7 @@ island_value(T, Id, Player, Value) :-
 % smaller is better
 island_value_index(T, Id, Player, ValueIndex) :- 
     island_value(T, Id, Player, Value),
-    ValueIndex = 1000 - Value.
+    ValueIndex = -Value.
 
 
 best_island_value(T, Id, Player, Value) :- 

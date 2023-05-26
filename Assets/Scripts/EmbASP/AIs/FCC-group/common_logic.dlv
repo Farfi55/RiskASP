@@ -161,7 +161,9 @@ internal_territory(T, Territory, Player) :-
     adjacent_enemy_territories(T, Territory, Player, N),
     N = 0.
 
-
+fronteer_territory_count(T, Player, Count):- 
+    curr_turn(T, Player),
+    #count{Territory : fronteer_territory(T, Territory, Player)} = Count.
 
 
 % ______________________________ ISLANDS ______________________________

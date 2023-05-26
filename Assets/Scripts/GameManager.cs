@@ -120,8 +120,7 @@ public class GameManager : MonoBehaviour
         _turn = 0;
         
         
-        // TODO REMOVE DEBUG CODE
-        
+        // TODO REMOVE DEBUG COD
         foreach (var player in Players)
         {
             const int cardsToDraw = 4;

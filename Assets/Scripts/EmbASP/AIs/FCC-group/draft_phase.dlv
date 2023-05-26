@@ -24,19 +24,54 @@ troops(0).
 troops(Troops) :- 
     troops_to_place_with_cards(T, Player, MaxTroops),
     curr_turn(T,P), 
+    troops(Troops1),
+    MaxTroops>10,
+    MaxTroops<20,
+    Troops=Troops1+1, 
+    Troops<=MaxTroops/2.
+
+troops(Troops) :- 
+    troops_to_place_with_cards(T, Player, MaxTroops),
+    curr_turn(T,P), 
+    troops(Troops1),
+    MaxTroops>=20,
+    Troops=Troops1+1, 
+    Troops<=MaxTroops/3+2.
+
+troops(Troops) :- 
+    troops_to_place_with_cards(T, Player, MaxTroops),
+    curr_turn(T,P), 
     troops(Troops1), 
+    MaxTroops<= 10,
     Troops=Troops1+1, 
     Troops<=MaxTroops.
+
+%%%% BUG TO BE FIXED, OVERFLOW ON RANGE BOUNDS.
 
 
 min_troops_to_place(T, Player, MinTroops) :- 
     troops_to_place_with_cards(T, Player, MaxTroops),
     min_troops_to_place_divider(MTTPD),
+    MaxTroops <25,
     MinTroops = MaxTroops / MTTPD.
+
+max_place_count(3).
+
+fronteer_territory_count(T, Player, Count):- 
+    curr_turn(T, Player),
+    #count{Territory : fronteer_territory(T, Territory, Player)} = Count.
+
+min_troops_to_place(T, Player, MinTroops) :- 
+    troops_to_place_with_cards(T, Player, MaxTroops),
+    min_troops_to_place_divider(MTTPD),
+    MaxTroops >=25,
+    #min{Count : fronteer_territory_count(T, Player, Count); X: max_place_count(X)} = Div,
+    MinTroops = MaxTroops / Div.
+
 
 
 { place(T, Player, Territory, Troops) : 
-    territory_control(T, Territory, Player, _) } <= 1 :- 
+    fronteer_territory(T, Territory, Player) } <= 1 :- 
     curr_turn(T,Player),
     troops(Troops), 
     min_troops_to_place(T, Player, MinTroops),
@@ -66,35 +101,6 @@ placed_troops(T, Player, Troops) :-
 
 %quanto migliora la condizione di un paese piazzandogli delle truppe?
 
-% territory_good_index(T, Territory, Index) :- 
-%     territory_control(T, Territory, Player, Troops), 
-%     curr_turn(T, Player),
-%     adjacent_enemy_troops(T, Territory, PlayerOwner, Enemies),
-%     Troops > Enemies,
-%     Index = Troops - Enemies.
-
-% territory_bad_index(T, Territory, Index) :- 
-%     territory_control(T, Territory, Player, Troops), 
-%     curr_turn(T, Player),
-%     adjacent_enemy_troops(T, Territory, PlayerOwner, Enemies),
-%     Troops <= Enemies,
-%     Index = Enemies - Troops.
-
-% territory_good_index_projection(T, Territory, Value) :- 
-%     territory_good_index(T, Territory, Index),
-%     territory_index_good_strong_weight(W), 
-%     curr_turn(T, Player),
-%     place(T, Player, Territory, Troops),
-%     Index + Troops < 4, 
-%     Value = (Index + Troops) * W.
-
-% territory_good_index_projection(T, Territory, Value) :- 
-%     territory_good_index(T, Territory, Index),
-%     territory_index_good_weak_weight(W),
-%     curr_turn(T, Player),
-%     place(T, Player, Territory, Troops),
-%     Index + Troops > 3, 
-%     Value = (Index + Troops) * W.
 
 territory_welfare_index(T, Territory, Index) :- 
     territory_control(T, Territory, Player, Troops),
@@ -178,9 +184,8 @@ territory_welfare_index_projection(T, Territory, Value) :-
 %    [Cost@2, Territory]
 
 
-drafts_count(T, Player, Count) :-
-    curr_turn(T, Player),
-    Count = #count{Territory : place(T, Player, Territory, _)}.
+:-  curr_turn(T, Player),
+    Count = #count{Territory : place(T, Player, Territory, _)}, Count > 7.
 
 
 % massimizzare il numero di territori diversi in cui si fa draft

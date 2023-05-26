@@ -38,7 +38,7 @@ def battle_sim(n_attacker: int, n_defender: int, n_simulations: int) -> float:
 
 def simulate_all_battles(n_simulations: int, max_attacker: 20, max_defender: 20):
     results = []
-    for i in range(1, max_attacker + 1):
+    for i in range(0, max_attacker + 1):
         for j in range(1, max_defender + 1):
             result = (i, j, battle_sim(i, j, n_simulations))
             print_result(result)
@@ -49,14 +49,20 @@ def simulate_all_battles(n_simulations: int, max_attacker: 20, max_defender: 20)
 
 def print_result(result):
     (attacker, defender, win_rate) = result
-    win_rate_int = int(win_rate * 1000)
-    print(f"battle_chance({attacker},{defender},{win_rate_int}).")
+    win_rate_int = round(win_rate * 1000)
+    win_rate_def = 1000 - win_rate_int
+    
+    if defender == 1:
+        print()
+    print(f"battle_chance({attacker},{defender: >3},{win_rate_int: >5},{win_rate_def: >5}).")
+
+    
 
 
 
 def main():
     n_simulations = 100000
-    simulate_all_battles(n_simulations, 40, 20)
+    simulate_all_battles(n_simulations, 50, 30)
 
 
 if __name__ == "__main__":

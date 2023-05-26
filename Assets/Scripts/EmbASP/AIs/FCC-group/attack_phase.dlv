@@ -95,7 +95,160 @@ troops_for_attack(T, Territory, Troops) :-
     other_player_territory(T, TerritoryTo, PTo, _),
     connection(TerritoryFrom, TerritoryTo),
     Troops = #max{Troops1 : troops_for_attack(T, TerritoryFrom, Troops1)},
-    Troops >= 1.
+    Troops >= 2.
+
+attack_chance(T, AT, TerritoryFrom, TerritoryTo, Troops, WinChance) :-
+    attack(T, AT, TerritoryFrom, TerritoryTo, Troops),
+    territory_control(T, TerritoryFrom, _, TroopsFrom),
+    territory_control(T, TerritoryTo, _, TroopsTo),
+    battle_chance(TroopsFrom-1, TroopsTo, WinChance, _).
+
+
+:- attack_chance(T, AT, TerritoryFrom, TerritoryTo, Troops, WinChance),
+    not disrupting_continent_control_any(T, AT),
+    not conquering_continent_any(T, AT),
+    WinChance < 500.
+
+
+:- attack_chance(T, AT, TerritoryFrom, TerritoryTo, Troops, WinChance),
+    has_won_territory(T, AT),
+    not disrupting_continent_control_any(T, AT),
+    not conquering_continent_any(T, AT),
+    WinChance < 650.
+
+
+:- conquering_continent(T, AT, PlayerFrom, TerritoryTo, Continent),
+    adjacent_battle_chance(T, AT, TerritoryTo, PlayerFrom, _, WinChance),
+    WinChance < 750.
+
+
+disrupting_continent_control(T, AT, PlayerFrom, TerritoryTo, Continent) :-
+    attack(T, AT, _, TerritoryTo, _),
+    curr_attack_turn(T, AT, PlayerFrom),
+    territory(TerritoryTo, Continent),
+    player_continent_control(T, _, Continent, _).
+
+disrupting_continent_control_any(T, AT) :-
+    disrupting_continent_control(T, AT, _, _, _).
+
+
+% when distrupting a continent owned by another player, the win chance is calculated
+% using a sum of adjacent troops to the territory we are attacking 
+:- disrupting_continent_control(T, AT, PlayerFrom, TerritoryTo, Continent),
+    curr_attack_turn(T, AT, PlayerFrom),
+    adjacent_battle_chance(T, AT, TerritoryTo, PlayerFrom, _, WinChance),
+    WinChance < 750.
+
+
+:- future_adjacent_battle_chance(T, AT, TerritoryFrom, TerritoryTo, _, _, DefenseWinChance),
+    conquering_continent_any(T, AT),
+    DefenseWinChance < 450.
+
+:- future_adjacent_battle_chance(T, AT, TerritoryFrom, TerritoryTo, _, _, DefenseWinChance),
+    not conquering_continent_any(T, AT),
+    DefenseWinChance < 600.
+
+
+conquering_continent_any(T, AT) :-
+    conquering_continent(T, AT, _, _, _).
+
+conquering_continent(T, AT, PlayerFrom, TerritoryTo, Continent) :-
+    attack(T, AT, _, TerritoryTo, _),
+    curr_attack_turn(T, AT, PlayerFrom),
+    territory(TerritoryTo, Continent),
+    player_missing_territories_in_continent(T, PlayerFrom, Continent, Missing),
+    Missing <= 2.
+
+
+adjacent_available_troops_different_player(T, Territory, Player, AvailableTroops) :-
+    curr_turn(T, _),
+    player(Player),
+    territory_control(T, Territory, _, _),
+    AvailableTroops = #sum{ AvailableTroops1, Territory1 : 
+        territory_control(T, Territory1, Player1, Troops), 
+        connection(Territory, Territory1), 
+        Player1 != Player,
+        AvailableTroops1 = Troops - 1
+    }.
+
+
+
+future_adjacent_battle_chance(T, AT, TerritoryFrom, TerritoryTo, PlayerFrom, PlayerTo, DefenseWinChance) :-
+    adjacent_available_troops_different_player(T, TerritoryTo, PlayerFrom, AttackTroops),
+    attack(T, AT, TerritoryFrom, TerritoryTo, _),
+    territory_control(T, TerritoryFrom, PlayerFrom, TroopsFrom),
+    territory_control(T, TerritoryTo, PlayerTo, _),
+    DefendingTroopsEstimate = (TroopsFrom-1) * 65 / 100, % we assume 65% of our troops will be defending
+    battle_chance(AttackTroops, DefendingTroopsEstimate, _, DefenseWinChance).
+
+
+
+
+
+% adjacent_enemy_player_territories(T, Territory, PlayerOwner, Player, N)
+% adjacent_enemy_player_troops(T, Territory, PlayerOwner, Player, N).
+
+adjacent_enemy_player_available_troops(T, Territory, PlayerOwner, Player, N) :-
+    adjacent_enemy_player_troops(T, Territory, PlayerOwner, Player, Troops),
+    adjacent_enemy_player_territories(T, Territory, PlayerOwner, Player, Territories),
+    N = Troops - Territories.
+
+
+adjacent_battle_chance(T, AT, TerritoryTo, PlayerFrom, PlayerTo, WinChance) :-
+    attack(T, AT, TerritoryFrom, TerritoryTo, _),
+    adjacent_enemy_player_available_troops(T, TerritoryTo, PlayerTo, PlayerFrom, TroopsAvailable),
+    territory_control(T, TerritoryTo, PlayerTo, TroopsTo),
+    territory_control(T, TerritoryFrom, PlayerFrom, _),
+    battle_chance(TroopsAvailable, TroopsTo, WinChance, _).
+
+
+#show adjacent_battle_chance/6.
+#show conquering_continent/5.
+#show disrupting_continent_control/5.
+#show player_missing_territories_in_continent/4.
+#show future_adjacent_battle_chance/7.
+
+
+:~ attack_chance(T,AT, TerritoryFrom, TerritoryTo, Troops, WinChance),
+    Cost = -WinChance.
+    [Cost@2]
+
+:~ true. [2000@2]
+
+
+last_attack_result_territories(T, AT, TerritoryFrom, TerritoryTo) :- 
+    last_attack_result_simple(T, AT, TerritoryFrom, TerritoryTo, _, _).
+
+% :~ attack(T, AT, TerritoryFrom, TerritoryTo, Troops), 
+%     not last_attack_result_territories(T, AT, TerritoryFrom, TerritoryTo).
+%     [100@2]
+
+
+% player_territories_in_continent(T, Player, Continent, Count).
+% player_missing_territories_in_continent(T, Player, Continent, Missing).
+% continent(ID, Bonus, Size, Ratio1000) 
+
+
+:~ attack(T, AT, _, TerritoryTo, _), 
+    player_missing_territories_in_continent(T, Player, Continent, Missing),
+    continent_size(Continent, _, Size, _), 
+    curr_attack_turn(T, AT, Player),
+    territory(TerritoryTo, Continent),
+    Ratio = Missing * 100 / Size,
+    Cost = Ratio * 2.
+    [Cost@2]
+
+
+
+
+% player_continent_control(T, Player, Continent, Bonus)
+:~ attack(T, AT, _, TerritoryTo, _), 
+    continent_size(Continent, Bonus, _, _), 
+    curr_attack_turn(T, AT, Player),
+    territory(TerritoryTo, Continent),
+    Cost = Bonus * 2.
+    [Cost@2]
+
 
 
 :- has_attacked(T, AT), 1 != #count{TerritoryFrom, TerritoryTo, Troops : attack(T, AT, TerritoryFrom, TerritoryTo, Troops)}.
@@ -121,11 +274,6 @@ has_won_territory(T, AT) :-
     won_territories_count(T, Count),
     Count > 0.
 
-% TODO: dumb way to ensure that the player ends the attack phase
-%       after winning a territory
-end_attack(T, AT) :- has_won_territory(T, AT), can_attack(T, AT).
-
-:~ end_attack(T, AT), not has_won_territory(T, AT). [10@2]
 
 #show attack_reinforce/5.
 #show has_to_reinforce/4.

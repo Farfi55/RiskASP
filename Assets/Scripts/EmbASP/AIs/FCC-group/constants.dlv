@@ -24,7 +24,7 @@ min_troops_to_place_divider(5).
 
 max_continent_bonus(24).
 
-% continent(ID, Bonus, Size, Ratio100) 
+% continent(ID, Bonus, Size, Ratio1000) 
 continent_size("n_america", 5, 9,  180).
 continent_size("s_america", 2, 4,  200).
 continent_size("africa",    3, 7,  233).

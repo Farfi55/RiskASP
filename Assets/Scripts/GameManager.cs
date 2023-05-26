@@ -264,7 +264,6 @@ public class GameManager : MonoBehaviour
     private void GameOver()
     {
         SetGamePhase(GamePhase.Over);
-        throw new NotImplementedException();
     }
 
     public bool IsCurrentPlayer(Player player)

@@ -68,7 +68,7 @@ player_continent_control(T, Player, Continent, Bonus) :-
 player_continent_bonus(T, Player, ContinentBonus) :- 
     curr_turn(T, _),
     player(Player),
-    ContinentBonus = #sum{Bonus : player_continent_control(T, Player, Continent, Bonus) }.
+    ContinentBonus = #sum{Bonus, Continent : player_continent_control(T, Player, Continent, Bonus) }.
 
 player_territories_bonus(T, Player, TerritoriesBonus) :- 
     curr_turn(T, _),
@@ -97,16 +97,15 @@ adjacent_enemy_territories(T, Territory, PlayerOwner, N) :-
     N = #count{T1 : 
         territory_control(T, T1, Player, _), 
         connection(Territory, T1),
-        player(Player),
         PlayerOwner != Player
     }.
 
 
-adjacent_enemy_player_territories(T, Territory, PlayerOwner, Player, N) :- 
+adjacent_enemy_player_territories(T, Territory, PlayerOwner, EnemyPlayer, N) :- 
     territory_control(T, Territory, PlayerOwner, _),
-    player(Player),
-    N = #count{T1 : territory_control(T, T1, Player, _), connection(Territory, T1)},
-    PlayerOwner != Player.
+    player(EnemyPlayer),
+    N = #count{T1 : territory_control(T, T1, EnemyPlayer, _), connection(Territory, T1)},
+    PlayerOwner != EnemyPlayer.
 
 adjacent_friendly_troops(T, Territory, Player, N) :- 
     territory_control(T, Territory, Player, _),
@@ -115,9 +114,11 @@ adjacent_friendly_troops(T, Territory, Player, N) :-
 
 adjacent_enemy_troops(T, Territory, PlayerOwner, N) :- 
     territory_control(T, Territory, PlayerOwner, _),
-    player(Player),
-    N = #sum{Troops, T1 : territory_control(T, T1, Player, Troops), connection(Territory, T1)},
-    PlayerOwner != Player.
+    N = #sum{Troops, T1 : 
+        territory_control(T, T1, Player, Troops), 
+        connection(Territory, T1),
+        PlayerOwner != Player
+    }.
 
 
 adjacent_enemy_player_troops(T, Territory, PlayerOwner, Player, N) :- 

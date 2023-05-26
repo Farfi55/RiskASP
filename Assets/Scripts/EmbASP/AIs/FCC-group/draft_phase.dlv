@@ -29,10 +29,18 @@ troops(Troops) :-
     Troops<=MaxTroops.
 
 
+min_troops_to_place(T, Player, MinTroops) :- 
+    troops_to_place_with_cards(T, Player, MaxTroops),
+    min_troops_to_place_divider(MTTPD),
+    MinTroops = MaxTroops / MTTPD.
+
+
 { place(T, Player, Territory, Troops) : 
     territory_control(T, Territory, Player, _) } <= 1 :- 
     curr_turn(T,Player),
     troops(Troops), 
+    min_troops_to_place(T, Player, MinTroops),
+    Troops >= MinTroops,
     Troops > 0.
 
 :- place(T, P, Territory, N1), place(T, P, Territory, N2), N1!=N2.
@@ -95,6 +103,7 @@ territory_welfare_index(T, Territory, Index) :-
     adjacent_enemy_troops(T, Territory, PlayerOwner, Enemies),
     Index = Troops - Enemies.
 
+%
 territory_welfare_index_projection(T, Territory, Value) :- 
     territory_welfare_index(T, Territory, Index),
     territory_index_strong_weight(W), 
@@ -118,7 +127,7 @@ territory_welfare_index_projection(T, Territory, Value) :-
     territory_index_medium_weight(W), 
     curr_turn(T, Player),
     place(T, Player, Territory, Troops),
-    Index + Troops >=0,
+    Index + Troops >= 0,
     Index + Troops < 3, 
     Value = (Index + Troops) * W * (Index).
 
@@ -153,11 +162,11 @@ territory_welfare_index_projection(T, Territory, Value) :-
 :~ place(T, Player, Territory, Troops), 
     territory_island(T, Id, Territory, Player),
     island_value_index(T, Id, Player, ValueIndex),
-    Val  = ValueIndex *15.
+    Val = ValueIndex * 15.
     [Val@3, Territory]
 
 
-:~ true. [1300@3]
+:~ true. [5000@3]
 % ----------- MID PRIORITY -----------
 
 

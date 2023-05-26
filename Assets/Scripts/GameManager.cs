@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
     public List<Player> Players;
 
     private Queue<Player> _playerQueue = new();
+    public List<Player> GetPlayersInTurnOrder() => _playerQueue.ToList();
 
     public Player CurrentPlayer => _currentPlayer;
     private Player _currentPlayer;
@@ -49,6 +50,8 @@ public class GameManager : MonoBehaviour
     public Action<IPhase, IPhase> OnTurnPhaseChanged;
     public Action<Player, Player> OnPlayerTurnChanged;
     public Action<Player> OnPlayerTurnEnded;
+    
+    public Action<GamePhase> OnGamePhaseChanged;
 
 
     private void Awake()
@@ -140,7 +143,12 @@ public class GameManager : MonoBehaviour
 
         foreach (var player in Players)
             if (player.Name == "")
-                playerCreator.SetUpPlayerFromRandomColor(player);
+            {
+                if(player.Color == null || player.Color.name == "UNDEFINED")
+                    playerCreator.SetUpPlayerFromRandomColor(player);
+                else
+                    playerCreator.SetUpPlayerFromColor(player, player.Color);
+            }
     }
 
     private void EnqueuePlayers()
@@ -248,6 +256,7 @@ public class GameManager : MonoBehaviour
     private void SetGamePhase(GamePhase gamePhase)
     {
         _gamePhase = gamePhase;
+        OnGamePhaseChanged?.Invoke(gamePhase);
     }
 
 
@@ -261,6 +270,7 @@ public class GameManager : MonoBehaviour
     {
         return _currentPlayer == player;
     }
+    
 }
 
 public enum GamePhase

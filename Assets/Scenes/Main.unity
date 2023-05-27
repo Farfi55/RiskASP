@@ -2128,10 +2128,10 @@ PrefabInstance:
     - target: {fileID: 2184493103765311346, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
       propertyPath: Color
       value: 
-      objectReference: {fileID: 11400000, guid: a07b9ef78ac76d27fa81ad826091ada0, type: 2}
+      objectReference: {fileID: 11400000, guid: ff429dc18531760fbabe1b681cfbe2b9, type: 2}
     - target: {fileID: 2184493103765311346, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
       propertyPath: _name
-      value: 
+      value: NEO-FASCI
       objectReference: {fileID: 0}
     - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
       propertyPath: m_RootOrder
@@ -2207,7 +2207,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6030655713958463109, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
@@ -2735,8 +2735,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 286686166d245e64bbe3ad872878ba11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _nPlayers: 3
+  _nPlayers: 2
   Players: []
+  _startingCardsPerPlayer: 0
+  _maxCardsPerPlayer: -1
 --- !u!4 &280334211
 Transform:
   m_ObjectHideFlags: 0
@@ -2798,7 +2800,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55ff44a7efcf4746b62b6bc681301590, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _botActionDelay: 0.5
+  _botActionDelay: 2
 --- !u!114 &280334215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7580,10 +7582,10 @@ PrefabInstance:
     - target: {fileID: 2184493103765311346, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
       propertyPath: Color
       value: 
-      objectReference: {fileID: 11400000, guid: 87e4f4506d81c8c528e1a0daf1fc7300, type: 2}
+      objectReference: {fileID: 11400000, guid: 9e2a4f97665cb68cabc0e0e4a6a329ee, type: 2}
     - target: {fileID: 2184493103765311346, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
       propertyPath: _name
-      value: 
+      value: NAZI-REGIME
       objectReference: {fileID: 0}
     - target: {fileID: 2184493103765311346, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
       propertyPath: _cards.Array.size
@@ -7647,10 +7649,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6030655713958463109, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+--- !u!4 &564711026 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+  m_PrefabInstance: {fileID: 770286744}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &641308396
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10041,6 +10048,99 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
+--- !u!1001 &770286744
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 1197010546}
+    m_Modifications:
+    - target: {fileID: 2184493103765311346, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: Color
+      value: 
+      objectReference: {fileID: 11400000, guid: 93992ebf17158f92bab2b49d11fa39d5, type: 2}
+    - target: {fileID: 2184493103765311346, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: _name
+      value: NATO
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_RootOrder
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4.261346
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.501556
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.013631632
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487455324051920567, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: _attackBrainPath
+      value: Assets/Scripts/EmbASP/AIs/FCC-group/attack_phase.dlv
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487455324051920567, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: _botConfiguration
+      value: 
+      objectReference: {fileID: 11400000, guid: 9c1e0697c9c614d3dadc6231b4715dff, type: 2}
+    - target: {fileID: 4487455324051920567, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: _fortifyBrainPath
+      value: Assets/Scripts/EmbASP/AIs/FCC-group/fortify_phase.dlv
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487455324051920567, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: _reinforceBrainPath
+      value: Assets/Scripts/EmbASP/AIs/FCC-group/draft_phase.dlv
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487455324051920567, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: _commonBrainsPaths.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487455324051920567, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: _commonBrainsPaths.Array.data[0]
+      value: Assets/Scripts/EmbASP/AIs/FCC-group/constants.dlv
+      objectReference: {fileID: 0}
+    - target: {fileID: 6030655713958463109, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_Name
+      value: BOT Player I FEDELI 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6030655713958463109, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
 --- !u!1001 &770500046
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14830,9 +14930,104 @@ Transform:
   - {fileID: 478454607}
   - {fileID: 1776771779}
   - {fileID: 1558324131}
+  - {fileID: 1841703071}
+  - {fileID: 564711026}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1199427296
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 1197010546}
+    m_Modifications:
+    - target: {fileID: 2184493103765311346, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: Color
+      value: 
+      objectReference: {fileID: 11400000, guid: 87e4f4506d81c8c528e1a0daf1fc7300, type: 2}
+    - target: {fileID: 2184493103765311346, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: _name
+      value: Fantasma del comunismo
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_RootOrder
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4.261346
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.501556
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.013631632
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487455324051920567, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: _attackBrainPath
+      value: Assets/Scripts/EmbASP/AIs/FCC-group/attack_phase.dlv
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487455324051920567, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: _botConfiguration
+      value: 
+      objectReference: {fileID: 11400000, guid: 9c1e0697c9c614d3dadc6231b4715dff, type: 2}
+    - target: {fileID: 4487455324051920567, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: _fortifyBrainPath
+      value: Assets/Scripts/EmbASP/AIs/FCC-group/fortify_phase.dlv
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487455324051920567, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: _reinforceBrainPath
+      value: Assets/Scripts/EmbASP/AIs/FCC-group/draft_phase.dlv
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487455324051920567, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: _commonBrainsPaths.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487455324051920567, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: _commonBrainsPaths.Array.data[0]
+      value: Assets/Scripts/EmbASP/AIs/FCC-group/constants.dlv
+      objectReference: {fileID: 0}
+    - target: {fileID: 6030655713958463109, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_Name
+      value: BOT Player I FEDELI 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6030655713958463109, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
 --- !u!1001 &1209785261
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -26111,6 +26306,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8117319427863881805, guid: b3676f0096f2cc0dd81ad3757ec3a866, type: 3}
   m_PrefabInstance: {fileID: 1825817791}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &1841703071 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2704742226423634088, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
+  m_PrefabInstance: {fileID: 1199427296}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1845210004
 GameObject:
   m_ObjectHideFlags: 0
@@ -29950,7 +30150,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2109612600
 MonoBehaviour:
   m_ObjectHideFlags: 0

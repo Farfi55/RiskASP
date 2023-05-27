@@ -1,0 +1,320 @@
+%continent(n_america, 5).
+%continent(s_america, 2).
+%continent(africa,    3).
+%continent(europe,    5).
+%continent(asia,      7).
+%continent(australia, 2).
+%
+%
+%% territory(ID, Continent).
+%territory(alaska,                   n_america).
+%territory(alberta,                  n_america).
+%territory(central_america,          n_america).
+%territory(eastern_us,               n_america).
+%territory(greenland,                n_america).
+%territory(northwest_territory,      n_america).
+%territory(ontario,                  n_america).
+%territory(quebec,                   n_america).
+%territory(western_us,               n_america).
+%
+%territory(argentina,                s_america).
+%territory(brazil,                   s_america).
+%territory(peru,                     s_america).
+%territory(venezuela,                s_america).
+%
+%territory(congo,                    africa).
+%territory(east_africa,              africa).
+%territory(egypt,                    africa).
+%territory(madagascar,               africa).
+%territory(north_africa,             africa).
+%territory(south_africa,             africa).
+%
+%territory(great_britain,            europe).
+%territory(iceland,                  europe).
+%territory(northern_europe,          europe).
+%territory(scandinavia,              europe).
+%territory(southern_europe,          europe).
+%territory(ukraine,                  europe).
+%territory(western_europe,           europe).
+%
+%territory(afghanistan,              asia).
+%territory(china,                    asia).
+%territory(india,                    asia).
+%territory(irkutsk,                  asia).
+%territory(japan,                    asia).
+%territory(kamchatka,                asia).
+%territory(middle_east,              asia).
+%territory(mongolia,                 asia).
+%territory(siam,                     asia).
+%territory(siberia,                  asia).
+%territory(ural,                     asia).
+%territory(yakutsk,                  asia).
+%
+%territory(eastern_australia,        australia).
+%territory(indonesia,                australia).
+%territory(new_guinea,               australia).
+%territory(western_australia,        australia).
+%
+%
+%
+%connection(ID1, ID2) :- connection(ID2, ID1).
+%
+%
+%% n_america
+%
+%connection(alaska,                   northwest_territory).
+%connection(alaska,                   alberta).
+%connection(alaska,                   kamchatka).
+%
+%connection(alberta,                  northwest_territory).
+%connection(alberta,                  ontario).
+%connection(alberta,                  western_us).
+%
+%connection(central_america,          western_us).
+%connection(central_america,          eastern_us).
+%connection(central_america,          venezuela).
+%
+%connection(eastern_us,               ontario).
+%connection(eastern_us,               quebec).
+%connection(eastern_us,               western_us).
+%
+%connection(greenland,                quebec).
+%connection(greenland,                ontario).
+%connection(greenland,                northwest_territory).
+%connection(greenland,                iceland).
+%
+%connection(northwest_territory,      ontario).
+%connection(northwest_territory,      alberta).
+%
+%connection(ontario,                  quebec).
+%connection(ontario,                  western_us).
+%connection(ontario,                  eastern_us).
+%
+%% s_america
+%
+%connection(argentina,                brazil).
+%connection(argentina,                peru).
+%
+%connection(brazil,                   venezuela).
+%connection(brazil,                   peru).
+%connection(brazil,                   north_africa).
+%
+%connection(peru,                     venezuela).
+%
+%% africa
+%
+%connection(congo,                    north_africa).
+%connection(congo,                    east_africa).
+%connection(congo,                    south_africa).
+%
+%connection(east_africa,              north_africa).
+%connection(east_africa,              egypt).
+%connection(east_africa,              middle_east).
+%connection(east_africa,              madagascar).
+%connection(east_africa,              south_africa).
+%
+%connection(egypt,                    north_africa).
+%connection(egypt,                    middle_east).
+%connection(egypt,                    southern_europe).
+%
+%connection(madagascar,               south_africa).
+%
+%connection(north_africa,             southern_europe).
+%connection(north_africa,             western_europe).
+%
+%% europe
+%
+%connection(great_britain,           iceland).
+%connection(great_britain,           scandinavia).
+%connection(great_britain,           northern_europe).
+%connection(great_britain,           western_europe).
+%
+%connection(iceland,                 scandinavia).
+%
+%connection(northern_europe,         scandinavia).
+%connection(northern_europe,         ukraine).
+%connection(northern_europe,         southern_europe).
+%connection(northern_europe,         western_europe).
+%
+%connection(scandinavia,             ukraine).
+%
+%connection(southern_europe,         ukraine).
+%connection(southern_europe,         western_europe).
+%connection(southern_europe,         middle_east).
+%
+%connection(ukraine,                 afghanistan).
+%connection(ukraine,                 ural).
+%connection(ukraine,                 middle_east).
+%
+%% asia
+%
+%connection(afghanistan,             ural).
+%connection(afghanistan,             china).
+%connection(afghanistan,             india).
+%connection(afghanistan,             middle_east).
+%
+%connection(china,                   ural).
+%connection(china,                   siberia).
+%connection(china,                   mongolia).
+%connection(china,                   india).
+%connection(china,                   siam).
+%
+%connection(india,                   middle_east).
+%connection(india,                   siam).
+%
+%connection(irkutsk,                 siberia).
+%connection(irkutsk,                 yakutsk).
+%connection(irkutsk,                 kamchatka).
+%connection(irkutsk,                 mongolia).
+%
+%connection(japan,                   kamchatka).
+%connection(japan,                   mongolia).
+%
+%connection(kamchatka,               yakutsk).
+%connection(kamchatka,               mongolia).
+%
+%connection(mongolia,                siberia).
+%
+%connection(siam,                    indonesia).
+%
+%connection(siberia,                 ural).
+%connection(siberia,                 yakutsk).
+%
+%% australia
+%
+%connection(eastern_australia,       new_guinea).
+%connection(eastern_australia,       western_australia).
+%
+%connection(indonesia,               new_guinea).
+%connection(indonesia,               western_australia).
+%
+%connection(new_guinea,              western_australia).
+%
+%%=====================
+%
+%%continent(C, P).
+%%territory(N, C).
+%%connection(N1, N2).
+%%player(Player)
+%%turn(T, Player).
+%%territory_control(T, Territory, Player, Troops).
+%%troops_to_place(T, Player, Troops)
+%%=====TEST===========
+%player(marco).
+%player(pasquale).
+%player(simone).
+%turn(1,pasquale).
+%turn(2,marco).
+%attack_turn(2,1,marco).
+%
+%territory_control(2,mongolia,marco,2).
+%territory_control(2,kamchatka,marco,2).
+%territory_control(2,siberia,marco,4).
+%
+%territory_control(2,irkutsk,pasquale,2).
+%territory_control(2,yakutsk,pasquale,1).
+%
+%% ammesso che il turno sia di marco
+%curr_player_territory(2,mongolia,2).
+%curr_player_territory(2,kamchatka,2).
+%curr_player_territory(2,siberia,4).
+%
+%other_player_territory(2,irkutsk,pasquale,2).
+%other_player_territory(2,yakutsk,pasquale,1).
+%
+%attack_result(2,1,siberia,yakutsk,3,0,3,0,1).
+%=====ENDTEST===========
+
+
+curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
+
+curr_attack_turn(T, AT, P) :- curr_turn(T,P), AT = #max{AT1 : attack_turn(T, AT1, P) }.
+
+last_attack_result(T, PrecAT, From, To, RemAttTroops, RemDefTroops, AttTroops, DefTroops, MinReinfTroops) :-
+    attack_result(T, PrecAT, From, To, RemAttTroops, RemDefTroops, AttTroops, DefTroops, MinReinfTroops),
+    curr_attack_turn(T, AT, _),
+    PrecAT = AT - 1.
+
+last_attack_result_simple(T, AT, From, To, RemAttTroops, RemDefTroops) :-
+    last_attack_result(T, AT, From, To, RemAttTroops, RemDefTroops, _, _, _).
+
+has_to_reinforce(T, AT, From, To) :- 
+    curr_attack_turn(T, AT, Player),
+    last_attack_result(T, PrecAT, From, To, _, 0, _, _, _),
+    PrecAT = AT - 1.
+
+has_to_reinforce_any(T, AT) :- has_to_reinforce(T, AT, _, _).
+
+
+can_attack(T, AT) :- curr_attack_turn(T, AT, _), not has_to_reinforce_any(T, AT).
+
+
+
+attack(T, AT, TerritoryFrom, TerritoryTo, Troops) | no_attack(T, AT, TerritoryFrom, TerritoryTo, Troops) :- 
+    can_attack(T, AT),
+    curr_player_territory(T, TerritoryFrom, _),
+    other_player_territory(T, TerritoryTo, PTo, _),
+    connection(TerritoryFrom, TerritoryTo),
+    Troops = #max{Troops1 : troops_for_attack(T, TerritoryFrom, Troops1)},
+    Troops >= 1.
+
+troops_for_attack(T, Territory, 1) :- 
+    curr_player_territory(T, Territory, Troops), Troops > 1.
+
+    
+troops_for_attack(T, Territory, Troops) :- 
+    troops_for_attack(T, Territory, Troops1),
+    curr_player_territory(T, Territory, MaxTroops), 
+    Troops = Troops1 + 1,
+    Troops < MaxTroops,
+    Troops <= 3.
+
+
+% i don't want to attack a territory that has more troops than mine
+:- attack(T, AT, TerritoryFrom, TerritoryTo, _),
+    curr_player_territory(T, TerritoryFrom, MaxCurrentTroops),
+    other_player_territory(T, TerritoryTo, _, MaxTroops),
+    MaxTroops >= MaxCurrentTroops.
+
+% minimize the number of troops to attack
+:~ attack(T, AT, _, TerritoryTo, _), other_player_territory(T, TerritoryTo, _, MaxTroops). [MaxTroops@1, T, TerritoryTo, MaxTroops]
+
+
+:- X = #count{T, AT, TerritoryFrom, TerritoryTo, Troops : attack(T, AT, TerritoryFrom, TerritoryTo, Troops)},
+    X > 1.
+
+won_territory(T, AT, From, To) :- attack_result(T, AT, From, To, _, 0,_,_,_).
+
+% %% if the attack ended with 0 defending troops remaining we captured a territory and should
+% :- has_to_reinforce(T, AT, From, To), not has_reinforced_attack(T,AT+1,From,To).
+
+% has_reinforced_attack(T, AT, From, To) :- attack_reinforce(T, AT, From, To, _).
+
+% attack_reinforce(T,AT,From,To, Troops) :-
+%     has_reinforced_attack(T,AT,From,To), 
+%     attack_result(T,AT_prec,From,To,RemainingAttackerTroops,TDef,Attacking,DefendingTRoops,MinReinforcementsTroops),
+%     AT_prec=AT-1,
+%     Troops=RemainingAttackerTroops-1.
+
+attack_reinforce(T,AT,From,To, Troops) :-
+    curr_attack_turn(T, AT, _),
+    attack_result(T,AT_prec,From,To,RemainingAttackerTroops,0,Attacking,DefendingTroops,MinReinforcementsTroops),
+    AT_prec=AT-1,
+    Troops=RemainingAttackerTroops-1.
+
+
+
+has_attacked(T, AT) :- attack(T, AT, _, _, _).
+end_attack(T, AT) :- can_attack(T, AT), not has_attacked(T, AT).
+
+:~ end_attack(T, AT). [1@2, AT]
+
+%#show attack/5.
+%#show attack_reinforce/5.
+%#show attack_result/9.
+%#show tt/2.
+%#show no_attack/5.
+%#show has_reinforced_attack/4.
+%#show has_done_something/2.
+%#show won_territory/4.
+%#show end_attack/2.

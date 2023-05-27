@@ -1,0 +1,372 @@
+
+continent(n_america, 5).
+continent(s_america, 2).
+continent(africa,    3).
+continent(europe,    5).
+continent(asia,      7).
+continent(australia, 2).
+
+
+% territory(ID, Continent).
+territory(alaska,                   n_america).
+territory(alberta,                  n_america).
+territory(central_america,          n_america).
+territory(eastern_us,               n_america).
+territory(greenland,                n_america).
+territory(northwest_territory,      n_america).
+territory(ontario,                  n_america).
+territory(quebec,                   n_america).
+territory(western_us,               n_america).
+
+territory(argentina,                s_america).
+territory(brazil,                   s_america).
+territory(peru,                     s_america).
+territory(venezuela,                s_america).
+
+territory(congo,                    africa).
+territory(east_africa,              africa).
+territory(egypt,                    africa).
+territory(madagascar,               africa).
+territory(north_africa,             africa).
+territory(south_africa,             africa).
+
+territory(great_britain,            europe).
+territory(iceland,                  europe).
+territory(northern_europe,          europe).
+territory(scandinavia,              europe).
+territory(southern_europe,          europe).
+territory(ukraine,                  europe).
+territory(western_europe,           europe).
+
+territory(afghanistan,              asia).
+territory(china,                    asia).
+territory(india,                    asia).
+territory(irkutsk,                  asia).
+territory(japan,                    asia).
+territory(kamchatka,                asia).
+territory(middle_east,              asia).
+territory(mongolia,                 asia).
+territory(siam,                     asia).
+territory(siberia,                  asia).
+territory(ural,                     asia).
+territory(yakutsk,                  asia).
+
+territory(eastern_australia,        australia).
+territory(indonesia,                australia).
+territory(new_guinea,               australia).
+territory(western_australia,        australia).
+
+
+
+connection(ID1, ID2) :- connection(ID2, ID1).
+
+
+% n_america
+
+connection(alaska,                   northwest_territory).
+connection(alaska,                   alberta).
+connection(alaska,                   kamchatka).
+
+connection(alberta,                  northwest_territory).
+connection(alberta,                  ontario).
+connection(alberta,                  western_us).
+
+connection(central_america,          western_us).
+connection(central_america,          eastern_us).
+connection(central_america,          venezuela).
+
+connection(eastern_us,               ontario).
+connection(eastern_us,               quebec).
+connection(eastern_us,               western_us).
+
+connection(greenland,                quebec).
+connection(greenland,                ontario).
+connection(greenland,                northwest_territory).
+connection(greenland,                iceland).
+
+connection(northwest_territory,      ontario).
+connection(northwest_territory,      alberta).
+
+connection(ontario,                  quebec).
+connection(ontario,                  western_us).
+connection(ontario,                  eastern_us).
+
+% s_america
+
+connection(argentina,                brazil).
+connection(argentina,                peru).
+
+connection(brazil,                   venezuela).
+connection(brazil,                   peru).
+connection(brazil,                   north_africa).
+
+connection(peru,                     venezuela).
+
+% africa
+
+connection(congo,                    north_africa).
+connection(congo,                    east_africa).
+connection(congo,                    south_africa).
+
+connection(east_africa,              north_africa).
+connection(east_africa,              egypt).
+connection(east_africa,              middle_east).
+connection(east_africa,              madagascar).
+connection(east_africa,              south_africa).
+
+connection(egypt,                    north_africa).
+connection(egypt,                    middle_east).
+connection(egypt,                    southern_europe).
+
+connection(madagascar,               south_africa).
+
+connection(north_africa,             southern_europe).
+connection(north_africa,             western_europe).
+
+% europe
+
+connection(great_britain,           iceland).
+connection(great_britain,           scandinavia).
+connection(great_britain,           northern_europe).
+connection(great_britain,           western_europe).
+
+connection(iceland,                 scandinavia).
+
+connection(northern_europe,         scandinavia).
+connection(northern_europe,         ukraine).
+connection(northern_europe,         southern_europe).
+connection(northern_europe,         western_europe).
+
+connection(scandinavia,             ukraine).
+
+connection(southern_europe,         ukraine).
+connection(southern_europe,         western_europe).
+connection(southern_europe,         middle_east).
+
+connection(ukraine,                 afghanistan).
+connection(ukraine,                 ural).
+connection(ukraine,                 middle_east).
+
+% asia
+
+connection(afghanistan,             ural).
+connection(afghanistan,             china).
+connection(afghanistan,             india).
+connection(afghanistan,             middle_east).
+
+connection(china,                   ural).
+connection(china,                   siberia).
+connection(china,                   mongolia).
+connection(china,                   india).
+connection(china,                   siam).
+
+connection(india,                   middle_east).
+connection(india,                   siam).
+
+connection(irkutsk,                 siberia).
+connection(irkutsk,                 yakutsk).
+connection(irkutsk,                 kamchatka).
+connection(irkutsk,                 mongolia).
+
+connection(japan,                   kamchatka).
+connection(japan,                   mongolia).
+
+connection(kamchatka,               yakutsk).
+connection(kamchatka,               mongolia).
+
+connection(monogolia,               siberia).
+
+connection(siam,                    indonesia).
+
+connection(siberia,                 ural).
+connection(siberia,                 yakutsk).
+
+% australia
+
+connection(eastern_australia,       new_guinea).
+connection(eastern_australia,       western_australia).
+
+connection(indonesia,               new_guinea).
+connection(indonesia,               western_australia).
+
+connection(new_guinea,              western_australia).
+
+%=====================
+
+%====ADDED CONSTANT===
+continent_terr(n_america,9).
+continent_terr(s_america,4).
+continent_terr(africa,6).
+continent_terr(europe,7).
+continent_terr(asia,12).
+continent_terr(australia,4).
+
+%=====================
+
+%continent(C, P).
+%territory(N, C).
+%connection(N1, N2).
+%player(Player)
+%turn(T, Player).
+%territory_control(T, Territory, Player, Troops).
+%troops_to_place(T, Player, Troops)
+%=====TEST===========
+% player(marco).
+% player(pasquale).
+% player(simone).
+% turn(1,pasquale).
+% turn(2,marco).
+% troops_to_place(2,marco,6).
+% troops_to_place(1,pasquale,3).
+% territory_control(2,indonesia,marco,3).
+% territory_control(2,eastern_australia,marco,3).
+% territory_control(2,new_guinea,marco,3).
+% territory_control(2,western_australia,marco,3).
+% territory_control(2,ural,marco,3).
+% territory_control(2,china,marco,3).
+% territory_control(2,ukraine,marco,3).
+% territory_control(2,iceland,marco,3).
+
+% territory_control(2,venezuela,marco,3).
+% territory_control(2,peru,marco,3).
+% territory_control(2,brazil,marco,3).
+
+
+% territory_control(2,central_america,pasquale,5).
+% territory_control(2,siam,pasquale,5).
+% territory_control(2,argentina,pasquale,4).
+% territory_control(2,alberta,pasquale,4).
+% territory_control(2,greenland,pasquale,4).
+% territory_control(2,north_africa,pasquale,6).
+%=====ENDTEST===========
+
+
+%=====GUESS================
+curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P), player(P).
+troops(Z):- &int(1,Troops;Z), troops_to_place_card(T, Player, Troops), curr_turn(T,Player), Troops>0.
+draft(T, Territory, N) | noDraft(T, Territory, N):- troops_to_place_card(T, Player, _), territory_control(T, Territory, Player, Troops), troops(N),curr_turn(T,Player).
+
+%====HARD CONSTRAINS========
+%Troops placed always as the troops available
+:- #sum{Troops,Territory : draft(T,Territory,Troops)} = TotalTroops, troops_to_place_card(T,Player,AvailableTroops),curr_turn(T,Player), TotalTroops != AvailableTroops.
+%Double place facts for the same Territory
+:- draft(T, Territory, N1), draft(T, Territory, N2),curr_turn(T,_), N1!=N2.
+
+%====CARDS DRAFT========
+can_exchange(ExchangeId,Troops) :- 
+    curr_turn(T,Player),
+    possible_card_exchange(T, Player, ExchangeId, ExchangeTypeId, Card1, Card2, Card3, Troops),
+    Troops >=6.
+aux_can_exchange :- can_exchange(_,_).
+
+max_exchange_troops(T,Player,MaxTroopsExchangeable) :- 
+    curr_turn(T,Player),
+    #max{Troops,ExchangeId : can_exchange(ExchangeId,Troops)} = MaxTroopsExchangeable.
+
+exchange_cards(T,Player,ExchangeId) :- 
+    curr_turn(T,Player),
+    max_exchange_troops(T,Player,MaxTroopsExchangeable),
+    can_exchange(ExchangeId,MaxTroopsExchangeable).
+
+troops_to_place_card(T,Player,NewTroops) :- 
+    troops_to_place(T,Player,OldTroops),
+    exchange_cards(T,Player,ExchangeId), 
+    can_exchange(ExchangeId,Troops),
+    NewTroops = OldTroops + Troops.
+
+troops_to_place_card(T,Player,Troops) :- 
+    troops_to_place(T,Player,Troops),
+    not aux_can_exchange. 
+
+%====SUPPORT RULES=========
+controlled_continent(Continent) :- 
+    curr_turn(Turn,Myself), 
+    continent_info(Continent, NumberOfTotalTerritories,_,_), 
+    #count{OwnedTerritory : territory_control(Turn,OwnedTerritory, Myself, _),territory(OwnedTerritory, Continent)} = NumberOfOwnedTerritories,
+    NumberOfOwnedTerritories == NumberOfTotalTerritories.
+
+% ricavo i confini minacciati dei continenti che possiedi
+%THREATENED_BORDER
+
+%ausiliaria per vincolo debole
+at_least_one_threat :- threatened_border(_,_,_).
+
+% tutti i miei territori minacciati
+threatened_territory(PlayerTerritory,OpponentTerritory,TroopsDiff) :-
+    curr_turn(T,Player),
+    territory_control(T,PlayerTerritory,Player,PlayerTroops), 
+    territory_control(T,OpponentTerritory,Opponent,OpponentTroops), 
+    connection(PlayerTerritory,OpponentTerritory),
+    TroopsDiff >=0,
+    TroopsDiff=OpponentTroops-PlayerTroops,
+    Player!=Opponent.
+
+% nome e continente di ogni territorio
+%TERRITORY AND CONTINENT
+
+% numero di territori conquistati per ogni continente
+%CONQUERED TERRITORIES FOR CONTINENT
+
+% quando si controlla metà dei territori di un continente
+attempt_continent_conquest(Continent) :- 
+    continent_info(Continent,_,_,ConqRatio),
+    not controlled_continent(Continent), 
+    conquered_territories_for_continent(Continent,Num_Of_Conquered_Territories), 
+    ConqRatio >= 50.
+
+%un territorio minacciato che verrà riforzato COPRENDO LA DIFFERENZA DI TRUPPE
+threatened_reinforced(Territory) :- 
+    curr_turn(Turn,Player),
+    threatened_border(Territory,_,TroopsDiff),
+    draft(Turn,Territory,TroopsReinf),
+    TroopsReinf >= TroopsDiff.
+
+%tutti territori minacciati rinforzati COPRENDO LA DIFFERENZA DI TRUPPE
+all_threatened_reinforced :- 
+    #count{Territory : threatened_reinforced(Territory)} = TerritoryReinforced,
+    #count{Territory : threatened_border(Territory,_,_)} = TerritoryThreatened,
+    TerritoryReinforced = TerritoryThreatened.
+
+%nuovo continent info
+continent_info(Continent,NumberOfTotalTerr,TroopsBonus, ConqRatio) :- 
+    curr_turn(Turn,Player),
+    continent(Continent,TroopsBonus), 
+    continent_terr(Continent,NumberOfTotalTerr),
+    conquered_territories_for_continent(Continent,NumOfConqueredTerritories),
+    ConqRatio = NumOfConqueredTerritories*100 / NumberOfTotalTerr.
+
+% predicato ausiliario per vincolo debole
+aux_threatened_border(Territory) :- 
+    threatened_border(Territory,_,_).
+
+% ogni volta che si rinforza un territorio non minacciato
+reinforced_territory_not_threatened(Territory,Troops) :- 
+    draft(_,Territory,Troops),
+    not aux_threatened_border(Territory).
+
+% regola ausiliaria per vincolo debole
+reinforced_territory(Territory) :- 
+    draft(_,Territory,_).
+
+%territorio che è in un continente del quale si possiede almeno il 50%,
+%che è connesso ad uno nemico è con il quale la differenza di truppe
+%è di almeno una unità
+fighting_territory(PlayerTerritory,Continent,TroopsDiff) :- 
+    curr_turn(Turn,Player),
+    territory_and_continent(PlayerTerritory,Continent,Player),
+    attempt_continent_conquest(Continent),
+    territory_and_continent(OpponentTerritory,Continent,OpponentPlayer),
+    connection(PlayerTerritory,OpponentTerritory),
+    Player != OpponentPlayer,
+    threatened_territory(PlayerTerritory,OpponentTerritory,TroopsDiff).
+
+%====WEAK CONSTRAINS========
+%Minimizza il numero di territori bordi minacciati
+:~ aux_threatened_border(Territory), not reinforced_territory(Territory). [1@2,Territory]
+%Minimizza il numero di truppe posizionate su un territorio non threatened fino a quando non le hai rinforzate tutte
+:~ reinforced_territory_not_threatened(Territory,Troops), not all_threatened_reinforced, at_least_one_threat. [Troops@2,Territory]
+
+%Dato un continente occupato almeno a metà, voglio
+%minimizzare il numero di territori che sono in quel continente, sono confinanti con territori nemici,
+%hanno una differenza di truppe maggiore di zero(svantaggio) e non sono rinforzati
+:~ fighting_territory(Territory,Continent,TroopsDiff), not reinforced_territory(Territory). [1@1,Territory,Continent]

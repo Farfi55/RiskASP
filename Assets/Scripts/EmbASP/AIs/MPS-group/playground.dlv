@@ -1,0 +1,106 @@
+facts(facts).    
+    territory(afghanistan,              asia).
+    territory(china,                    asia).
+    territory(india,                    asia).
+    territory(irkutsk,                  asia).
+    territory(japan,                    asia).
+    territory(kamchatka,                asia).
+    territory(middle_east,              asia).
+    territory(mongolia,                 asia).
+    territory(siam,                     asia).
+    territory(siberia,                  asia).
+    territory(ural,                     asia).
+    territory(yakutsk,                  asia).
+
+    territory(eastern_australia,        australia).
+    territory(indonesia,                australia).
+    territory(new_guinea,               australia).
+    territory(western_australia,        australia).
+
+    connection(afghanistan,             ural).
+    connection(afghanistan,             china).
+    connection(afghanistan,             india).
+    connection(afghanistan,             middle_east).
+
+    connection(china,                   ural).
+    connection(china,                   siberia).
+    connection(china,                   mongolia).
+    connection(china,                   india).
+    connection(china,                   siam).
+
+    connection(india,                   middle_east).
+    connection(india,                   siam).
+
+    connection(irkutsk,                 siberia).
+    connection(irkutsk,                 yakutsk).
+    connection(irkutsk,                 kamchatka).
+    connection(irkutsk,                 mongolia).
+
+    connection(japan,                   kamchatka).
+    connection(japan,                   mongolia).
+
+    connection(kamchatka,               yakutsk).
+    connection(kamchatka,               mongolia).
+
+    connection(monogolia,               siberia).
+
+    connection(siam,                    indonesia).
+
+    connection(siberia,                 ural).
+    connection(siberia,                 yakutsk).
+
+    connection(eastern_australia,       new_guinea).
+    connection(eastern_australia,       western_australia).
+    connection(indonesia,               new_guinea).
+    connection(indonesia,               western_australia).
+    connection(new_guinea,              western_australia).
+    
+    connection(X,Y) :- connection(Y,X).
+
+
+%=========  TEST CASES  ===========
+player(marco).
+player(simone).
+
+turn(1,marco).
+turn(2,simone).
+
+%TODO: Add the number of territories in continent
+% ENEMY
+%territory_control(2,  siam,  marco,  1).
+
+% ALLY
+territory_control(2,  indonesia,         simone,   3).
+territory_control(2,  western_australia, marco,    1). % marco
+territory_control(2,  eastern_australia, simone,   1).
+territory_control(2,  new_guinea,        simone,   1).
+% ============================
+
+
+% Trovo un territorio nemico debole
+% un territorio debole è un territorio nemico che non confina con nessun altro territorio nemico
+
+% ricavo i territori nemici che non confinano con altri territori nemici
+enemy_with_at_least_an_adiacent_enemy_territory(Turn,TerritoryEnemy,AdiacentTerritory) :-
+    turn(Turn,Player),
+    territory_control(Turn,TerritoryEnemy,marco,TroopsX),
+    connection(TerritoryEnemy,AdiacentTerritory),
+    territory_control(Turn,AdiacentTerritory,marco,TroopsY),
+    TerritoryEnemy!=AdiacentTerritory.
+
+% ricavo i territori deboli (isolati)
+weak_enemy_territory(TerritoryEnemy,Troops) :- 
+    turn(Turn,Player),
+    territory_control(Turn,TerritoryEnemy,PlayerEnemy,Troops),
+    #count {TerritoryEnemy : enemy_with_at_least_an_adiacent_enemy_territory(Turn,TerritoryEnemy,Territory2) }=CNT,
+    CNT=0,
+    Player!=PlayerEnemy.
+
+
+
+
+
+
+% === === ===  SHOW  === === ===
+#show enemy_with_at_least_an_adiacent_enemy_territory/3.
+#show weak_enemy_territory/2.

@@ -36,10 +36,11 @@ def battle_sim(n_attacker: int, n_defender: int, n_simulations: int) -> float:
             attacker_wins += 1
     return attacker_wins / n_simulations
 
-def simulate_all_battles(n_simulations: int, max_attacker: 20, max_defender: 20):
+def simulate_all_battles(n_simulations: int, max_attacker: 20, max_defender: 20, 
+                         min_attacker: int = 0, min_defender: int = 1):
     results = []
-    for i in range(0, max_attacker + 1):
-        for j in range(1, max_defender + 1):
+    for i in range(min_attacker, max_attacker + 1):
+        for j in range(min_defender, max_defender + 1):
             result = (i, j, battle_sim(i, j, n_simulations))
             print_result(result)
             results.append(result)
@@ -61,8 +62,8 @@ def print_result(result):
 
 
 def main():
-    n_simulations = 100000
-    simulate_all_battles(n_simulations, 50, 30)
+    n_simulations = 5000
+    simulate_all_battles(n_simulations, 50, 70, 0, 30)
 
 
 if __name__ == "__main__":

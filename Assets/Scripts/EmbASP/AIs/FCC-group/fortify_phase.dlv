@@ -31,15 +31,6 @@ curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
     [-20@5, WEAK_ID]
 
 
-% maximize the change in TroopsDiff in the FromTerritory (High Troops Diff, safe)
-:~ fortify_troops(T, Player, From, To, _),
-    territory_adjecent_available_troops_diff(T, From, Player, FromTroopsDiff),
-    territory_adjecent_available_troops_diff(T, To, Player, ToTroopsDiff),
-    Diff = FromTroopsDiff - ToTroopsDiff,
-    WEAK_ID=6.
-    [Diff@5, WEAK_ID]
-
-
 % prioritize moving troops to the weakest fronteer territory in a island
 :~ fortify_troops(T, Player, _, To, _),
     territory_island(T, Id, To, Player),
@@ -67,6 +58,17 @@ curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
     continent_connection(To, _),
     WEAK_ID=5.
     [-10@5, WEAK_ID]
+
+
+
+:~ fortify_troops(T, Player, From, To, _),
+    territory_adjecent_available_troops_diff(T, From, Player, FromTroopsDiff),
+    territory_adjecent_available_troops_diff(T, To, Player, ToTroopsDiff),
+    % FromTroopsDiff probably high and > 0
+    % ToTroopsDiff probably low and < 0
+    Diff = ToTroopsDiff - FromTroopsDiff,
+    WEAK_ID=6.
+    [Diff@5, WEAK_ID]
     
 
 
@@ -100,7 +102,8 @@ fortify(T, From, To, Troops) :-
     territory_control(T, To, Player, ToTroops),
     MaxTransfer = FromTroops - 1,
     MaxTransfer > ToTroops,
-    Troops = (MaxTransfer - ToTroops) / 2.
+    Troops = #max{ X: X = 1;
+                   X: X = (MaxTransfer - ToTroops) / 2 }.
 
 
 
@@ -129,7 +132,4 @@ end_fortify(T) :- curr_turn(T, Player), not has_fortified(T, Player).
 % #show fortify_troops/5.
 #show fortify/4.
 #show end_fortify/1.
-
-
-#show territory_adjecent_available_troops_diff/4.
 

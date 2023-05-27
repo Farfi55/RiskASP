@@ -65,10 +65,47 @@ attack_reinforce_possible_troops(T, AT, From, To, Troops) :-
     Troops >= MinReinfTroops.
 
 
+% attack_reinforce(T, AT, From, To, Troops) :- 
+%     has_to_reinforce(T, AT, From, To),
+%     Troops= #max{Troops1 : attack_reinforce_possible_troops(T, AT, From, To, Troops1)}.
+
+
+% after an attack, when the To territory becomes internal
+% move the minimum amount of troops
 attack_reinforce(T, AT, From, To, Troops) :- 
     has_to_reinforce(T, AT, From, To),
-    Troops= #max{Troops1 : attack_reinforce_possible_troops(T, AT, From, To, Troops1)}.
+    internal_territory(T, To, Player),
+    last_attack_result(T, _, From, To, _, _, _, _, MinReinfTroops),
+    Troops = MinReinfTroops. 
 
+
+% after an attack
+% if the From territory and To territory are both Fronteer territories
+% split the troops between the two territories
+attack_reinforce(T, AT, From, To, Troops) :- 
+    has_to_reinforce(T, AT, From, To),
+    fronteer_territory(T, From, Player),
+    fronteer_territory(T, To, Player),
+    territory_control(T, From, Player, FromTroops),
+    MaxTransfer = FromTroops - 1,
+    last_attack_result(T, _, From, To, _, _, _, _, MinReinfTroops),
+    Troops = #max{
+        X: X = MaxTransfer/2; 
+        X: X = MinReinfTroops
+    }.
+
+
+
+% after an attack, 
+% if the From territory becomes a internal territory 
+% and to is a fronteer territory
+% move all the available troops
+attack_reinforce(T, AT, From, To, Troops) :- 
+    has_to_reinforce(T, AT, From, To),
+    internal_territory(T, From, Player),
+    fronteer_territory(T, To, Player),
+    territory_control(T, From, Player, FromTroops),
+    Troops = FromTroops - 1. 
 
 % ====================================================================
 %                          ATTACK LOGIC
@@ -190,11 +227,6 @@ adjacent_battle_chance(T, AT, TerritoryTo, PlayerFrom, PlayerTo, WinChance) :-
     battle_chance(TroopsAvailable, TroopsTo, WinChance, _).
 
 
-#show adjacent_battle_chance/6.
-#show conquering_continent/5.
-#show disrupting_continent_control/5.
-#show player_missing_territories_in_continent/4.
-#show future_adjacent_battle_chance/7.
 
 
 :~ attack_chance(T,AT, TerritoryFrom, TerritoryTo, Troops, WinChance),
@@ -261,6 +293,11 @@ has_won_territory(T, AT) :-
     curr_attack_turn(T, AT, P),
     won_territories_count(T, Count),
     Count > 0.
+
+
+#show adjacent_battle_chance/6.
+#show conquering_continent/5.
+#show disrupting_continent_control/5.
 
 
 #show attack_reinforce/5.

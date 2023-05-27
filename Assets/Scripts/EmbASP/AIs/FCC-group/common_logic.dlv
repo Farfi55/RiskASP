@@ -306,5 +306,3 @@ territory_adjecent_available_troops_diff(T, Territory, Player, TroopsDiff) :-
     adjacent_available_troops_different_player(T, Territory, Player, AvailableEnemyTroops),
     TroopsDiff = Troops - AvailableEnemyTroops.
 
-#show territory_adjecent_available_troops_diff/4.
-

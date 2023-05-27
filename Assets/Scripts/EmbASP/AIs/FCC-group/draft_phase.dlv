@@ -46,8 +46,6 @@ troops(Troops) :-
     Troops=Troops1+1, 
     Troops<=MaxTroops.
 
-%%%% BUG TO BE FIXED, OVERFLOW ON RANGE BOUNDS.
-
 end_draft_phase(T,Player):- troops_to_place_with_cards(T, Player, MaxTroops), MaxTroops = 0.
 
 min_troops_to_place(T, Player, MinTroops) :- 
@@ -67,7 +65,7 @@ min_troops_to_place(T, Player, MinTroops) :-
     MinTroops = MaxTroops / Div.
 
 
-{ place(T, Player, Territory, Troops)} <= 1 :- 
+{ place(T, Player, Territory, Troops) } <= 1 :- 
     fronteer_territory(T, Territory, Player),
     curr_turn(T,Player),
     troops(Troops), 
@@ -208,7 +206,7 @@ territory_welfare_index_projection(T, Territory, Value) :-
     [Val@3, Territory]
 
 
-:~ true. [7000@3]
+:~ true. [100000@3]
 % ----------- MID PRIORITY -----------
 
 

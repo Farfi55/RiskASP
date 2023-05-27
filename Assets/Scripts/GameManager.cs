@@ -45,6 +45,10 @@ public class GameManager : MonoBehaviour
     public EmptyPhase EmptyPhase { get; private set; }
 
 
+    [SerializeField] private int _startingCardsPerPlayer = 4;
+    [SerializeField] private int _maxCardsPerPlayer = 5;
+    
+    
     public Action<IPhase> OnPhaseStarted;
     public Action<IPhase> OnPhaseEnded;
     public Action<IPhase, IPhase> OnTurnPhaseChanged;
@@ -117,19 +121,19 @@ public class GameManager : MonoBehaviour
         _tr.RandomlyAssignTerritories(Players);
         DistributeTroops();
         EnqueuePlayers();
+        DrawStartingCards();
         _turn = 0;
-        
-        
-        // TODO REMOVE DEBUG COD
+    }
+
+    private void DrawStartingCards()
+    {
         foreach (var player in Players)
         {
-            const int cardsToDraw = 4;
-            for (int i = 0; i < cardsToDraw; i++)
+            for (int i = 0; i < _startingCardsPerPlayer; i++)
             {
                 player.AddCard(_cr.DrawRandomCard());
             }
         }
-    
     }
 
     private void CreatePlayers()
@@ -198,7 +202,8 @@ public class GameManager : MonoBehaviour
 
     private void TryDrawCardOnTurnEnd(Player player)
     {
-        if (AttackPhase.ConqueredTerritoriesCount == 0 || player.Cards.Count >= 5)
+        if (AttackPhase.ConqueredTerritoriesCount == 0 
+            || (_maxCardsPerPlayer >= 0 && player.Cards.Count >= _maxCardsPerPlayer))
             return;
 
         var card = _cr.DrawRandomCard();

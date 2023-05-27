@@ -93,11 +93,14 @@ namespace TurnPhases.AI
             {
                 _ar.AddAction(reinforceAction);
             }
-
-
+            
             if (troopsDrafted != remainingTroopsToPlace)
                 Debug.LogError(
                     $"The AI drafted {troopsDrafted} troops, but it should have drafted {remainingTroopsToPlace} troops");
+            else if (remainingTroopsToPlace == 0 && troopsDrafted == 0)
+            {
+                _ar.AddAction(new EndPhaseAction(player, _gm.Turn));
+            }
         }
 
         public void OnFailure(Player player)

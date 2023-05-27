@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Actions;
 using Cards;
 using Map;
@@ -39,7 +40,7 @@ namespace TurnPhases
         {
             _remainingTroopsToPlace = player.GetTotalTroopBonus();
             OnTroopsToPlaceChanged?.Invoke();
-            if (_remainingTroopsToPlace == 0) _gm.NextTurnPhase();
+            if (_remainingTroopsToPlace == 0 && !player.HasPossibleExchange()) _gm.NextTurnPhase();
         }
 
         public void OnAction(Player player, PlayerAction action)

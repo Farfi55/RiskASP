@@ -169,6 +169,11 @@ namespace player
             OnCardsChanged?.Invoke();
         }
 
+        public bool HasPossibleExchange()
+        {
+            return BestCardExchangeCombinations.Count > 0;
+        }
+
         #endregion
     }
 }

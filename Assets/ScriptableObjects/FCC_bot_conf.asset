@@ -21,6 +21,7 @@ MonoBehaviour:
   - Assets/Scripts/EmbASP/AIs/FCC-group/draft_phase.dlv
   - Assets/Scripts/EmbASP/AIs/FCC-group/card_phase.dlv
   _attackBrainsPaths:
+  - Assets/Scripts/EmbASP/AIs/FCC-group/battle_chances_40vs20.dlv
   - Assets/Scripts/EmbASP/AIs/FCC-group/attack_phase.dlv
   _fortifyBrainsPaths:
   - Assets/Scripts/EmbASP/AIs/FCC-group/fortify_phase.dlv

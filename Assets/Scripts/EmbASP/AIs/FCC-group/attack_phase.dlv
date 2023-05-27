@@ -160,18 +160,6 @@ conquering_continent(T, AT, PlayerFrom, TerritoryTo, Continent) :-
     Missing <= 2.
 
 
-adjacent_available_troops_different_player(T, Territory, Player, AvailableTroops) :-
-    curr_turn(T, _),
-    player(Player),
-    territory_control(T, Territory, _, _),
-    AvailableTroops = #sum{ AvailableTroops1, Territory1 : 
-        territory_control(T, Territory1, Player1, Troops), 
-        connection(Territory, Territory1), 
-        Player1 != Player,
-        AvailableTroops1 = Troops - 1
-    }.
-
-
 
 future_adjacent_battle_chance(T, AT, TerritoryFrom, TerritoryTo, PlayerFrom, PlayerTo, DefenseWinChance) :-
     adjacent_available_troops_different_player(T, TerritoryTo, PlayerFrom, AttackTroops),

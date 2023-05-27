@@ -108,6 +108,7 @@ territories_to_reinforce(T,Player, N) :-
 
 
 :- must_place(T,Player,_),
+
     not end_draft_phase(T,Player),
     placed_in_territory(T, Player, TerritoryCount),
     troops_to_place_with_cards(T, Player, MaxTroops),
@@ -133,19 +134,8 @@ territories_to_reinforce(T,Player, N) :-
     #min{N : territories_to_reinforce(T,Player, N); 
         Val: max_places_count(MTTPD), Val = MTTPD} > TerritoryCount.
 
-% al territorio T, quanti vicini amici ha? FATTO
-% al territorio T, quanti vicini nemici ha? FATTO
-% al territorio T, quante truppe nemiche vicine ha?
-% il territorio T è un territorio di confine?
-% il territorio T p un territorio di confine di un continente C?
-    % quanti territori mancano a P per completare il continente C (confinante con T)?
 
-% quanti territori mancano a P per conquistare il continente C?
-% quanti territori mancano a P per conquistare il mondo?
 
-% differenza di truppe 
-
-%quanto migliora la condizione di un paese piazzandogli delle truppe?
 
 
 territory_welfare_index(T, Territory, Index) :- 

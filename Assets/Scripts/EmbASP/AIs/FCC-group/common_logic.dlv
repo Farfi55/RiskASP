@@ -260,25 +260,51 @@ best_island_value(T, Id, Player, Value) :-
     island_value(T, Id, Player, Value),
     Value = #max{ValueIndex1, Id1 : island_value(T, Id1, Player, ValueIndex1)}.
 
-
-island_weakest_fronteer_troops(T, Id, Player, MinTroops) :-
+% territory_island(T, Id, Territory, Player)
+island_weakest_fronteer_troops_diff(T, Id, Player, MaxDiff) :-
     island_id(T, Id, Player),
-    MinTroops = #min{Troops, Territory : island_fronteer_troops(T, Id, Player, Territory, Troops)}.
+    % I take the minimum Diff, which is (probably) the smallest negative number
+    MaxDiff = #min{Diff, Territory : 
+        difference_troops_territory(T, Territory, Player, Diff),
+        territory_island(T, Id, Territory, Player)
+    }.
 
-% WARNING: there could be more than one if they have the same number of troops
-% territory with the smallest number of troops that is a fronteer of the island
-island_weakest_fronteer(T, Id, Player, Territory, Troops) :-
-    island_weakest_fronteer_troops(T, Id, Player, Troops),
-    island_fronteer_troops(T, Id, Player, Territory, Troops).
+island_weakest_fronteer(T, Id, Player, Territory, TroopsDiff) :-
+    island_weakest_fronteer_troops_diff(T, Id, Player, TroopsDiff),
+    difference_troops_territory(T, Territory, Player, TroopsDiff).
     
 
-island_strongest_internal_troops(T, Id, Player, MaxTroops) :-
+island_strongest_internal_troops_diff(T, Id, Player, MaxDiff) :-
     island_id(T, Id, Player),
-    MaxTroops = #max{Troops, Territory : island_internal_troops(T, Id, Player, Territory, Troops)}.
+    MaxDiff = #max{Diff, Territory : 
+        difference_troops_territory(T, Territory, Player, Diff),
+        territory_island(T, Id, Territory, Player)
+    }.
 
-% WARNING: there could be more than one if they have the same number of troops
-% territory with the biggest number of troops that is a interal territory of the island
-island_strongest_internal(T, Id, Player, Territory, Troops) :-
-    island_strongest_internal_troops(T, Id, Player, Troops),
-    island_internal_troops(T, Id, Player, Territory, Troops).
+
+island_strongest_internal(T, Id, Player, Territory, TroopsDiff) :-
+    island_strongest_internal_troops_diff(T, Id, Player, TroopsDiff),
+    difference_troops_territory(T, Territory, Player, TroopsDiff).
+
+% -----------------------------------------------------------------------
+
+
+adjacent_available_troops_different_player(T, Territory, Player, AvailableTroops) :-
+    curr_turn(T, _),
+    player(Player),
+    territory_control(T, Territory, _, _),
+    AvailableTroops = #sum{ AvailableTroops1, Territory1 : 
+        territory_control(T, Territory1, Player1, Troops), 
+        connection(Territory, Territory1), 
+        Player1 != Player,
+        AvailableTroops1 = Troops - 1
+    }.
+
+% troops on a territory - the available troops from other players that can attack territory 
+territory_adjecent_available_troops_diff(T, Territory, Player, TroopsDiff) :-
+    territory_control(T, Territory, Player, Troops),
+    adjacent_available_troops_different_player(T, Territory, Player, AvailableEnemyTroops),
+    TroopsDiff = Troops - AvailableEnemyTroops.
+
+#show territory_adjecent_available_troops_diff/4.
 

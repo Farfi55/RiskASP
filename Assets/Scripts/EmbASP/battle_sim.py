@@ -63,7 +63,7 @@ def print_result(result):
 
 def main():
     n_simulations = 5000
-    simulate_all_battles(n_simulations, 50, 70, 0, 30)
+    simulate_all_battles(n_simulations, 90, 70, 50, 0)
 
 
 if __name__ == "__main__":

@@ -18,7 +18,7 @@ fronteer_troops_diff_weight(2).
 troops_to_place_weight(10).
 
 
-min_troops_to_place_divider(5).
+min_troops_to_place_divider(6).
 
 % _________________ CONSTANTS ____________________
 

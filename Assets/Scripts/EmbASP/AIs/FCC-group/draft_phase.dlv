@@ -48,10 +48,11 @@ troops(Troops) :-
 
 %%%% BUG TO BE FIXED, OVERFLOW ON RANGE BOUNDS.
 
+end_draft_phase(T,Player):- troops_to_place_with_cards(T, Player, MaxTroops), MaxTroops = 0.
 
 min_troops_to_place(T, Player, MinTroops) :- 
     troops_to_place_with_cards(T, Player, MaxTroops),
-    min_troops_to_place_divider(MTTPD),
+    max_places_count(MTTPD),
     MaxTroops <25,
     MinTroops = MaxTroops / MTTPD.
 
@@ -62,12 +63,12 @@ fronteer_territory_count(T, Player, Count):-
 min_troops_to_place(T, Player, MinTroops) :- 
     troops_to_place_with_cards(T, Player, MaxTroops),
     MaxTroops >=25,
-    #min{Count : fronteer_territory_count(T, Player, Count); V: min_troops_to_place_divider(MTTPD), V = MTTPD-1} = Div,
+    #min{Count : fronteer_territory_count(T, Player, Count); V: max_places_count(MTTPD), V = MTTPD-1} = Div,
     MinTroops = MaxTroops / Div.
 
 
-{ place(T, Player, Territory, Troops) : 
-    fronteer_territory(T, Territory, Player) } <= 1 :- 
+{ place(T, Player, Territory, Troops)} <= 1 :- 
+    fronteer_territory(T, Territory, Player),
     curr_turn(T,Player),
     troops(Troops), 
     min_troops_to_place(T, Player, MinTroops),
@@ -93,33 +94,44 @@ must_place(T, Player, Territory):-
     territory_control(T,Territory1,PlayerEnemy,TroopsEnemy),
     PlayerEnemy != Player,
     connection(Territory, Territory1),
-    Troops-TroopsEnemy < 3.
+    battle_chance(Troops-1, TroopsEnemy, WinChance, _),
+    WinChance <= 600.
 
 
-placed_in_territory(T, Player, N):- curr_turn(T,Player), #count{Territory : place(T, Player, Territory, _), must_place(T,Player,Territory)} = N.
+placed_in_territory(T, Player, N) :- 
+    curr_turn(T,Player), 
+    #count{Territory : place(T, Player, Territory, _), must_place(T,Player,Territory)} = N.
 
-territories_to_reinforce(T,Player, N):- curr_turn(T,Player), #count{Territory : must_place(T,Player,Territory)} = N.
+territories_to_reinforce(T,Player, N) :- 
+    curr_turn(T,Player), 
+    #count{Territory : must_place(T,Player,Territory)} = N.
 
 
 :- must_place(T,Player,_),
-    placed_in_territory(T, Player, X),
+    not end_draft_phase(T,Player),
+    placed_in_territory(T, Player, TerritoryCount),
     troops_to_place_with_cards(T, Player, MaxTroops),
     MaxTroops < 3,
-    #min{N : territories_to_reinforce(T,Player, N); Val: min_troops_to_place_divider(MTTPD), Val = 1} > X.
+    #min{N : territories_to_reinforce(T,Player, N); 
+        Val: Val = 1} > TerritoryCount.
 
 
 :- must_place(T,Player,_),
-    placed_in_territory(T, Player, X),
+    not end_draft_phase(T,Player),
+    placed_in_territory(T, Player, TerritoryCount),
     troops_to_place_with_cards(T, Player, MaxTroops),
     MaxTroops >= 3,
-    MaxTroops < 10,
-    #min{N : territories_to_reinforce(T,Player, N); Val: min_troops_to_place_divider(MTTPD), Val = MTTPD/2-1} > X.
+    MaxTroops < 9,
+    #min{N : territories_to_reinforce(T,Player, N); 
+        Val: max_places_count(MTTPD), Val = MTTPD/2} > TerritoryCount.
 
 :- must_place(T,Player,_),
-    placed_in_territory(T, Player, X),
+    not end_draft_phase(T,Player),
+    placed_in_territory(T, Player, TerritoryCount),
     troops_to_place_with_cards(T, Player, MaxTroops),
-    MaxTroops >= 10,
-    #min{N : territories_to_reinforce(T,Player, N); Val: min_troops_to_place_divider(MTTPD), Val = MTTPD} > X.
+    MaxTroops >= 9,
+    #min{N : territories_to_reinforce(T,Player, N); 
+        Val: max_places_count(MTTPD), Val = MTTPD} > TerritoryCount.
 
 % al territorio T, quanti vicini amici ha? FATTO
 % al territorio T, quanti vicini nemici ha? FATTO

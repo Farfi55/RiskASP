@@ -60,9 +60,16 @@ namespace UI
             _backgroundImage.color = isSelected ? _selectedBackgroundColor : _backgroundColor;
         }
 
-        private void OnMouseDown()
+        public void OnMouseDown()
         {
             Debug.Log("UICard.OnMouseDown");
+            OnClicked?.Invoke(this);
+        }
+        
+        
+        public void Click()
+        {
+            Debug.Log("UICard.click");
             OnClicked?.Invoke(this);
         }
     }

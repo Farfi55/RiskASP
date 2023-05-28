@@ -37,15 +37,22 @@ troops_for_attack(T, Territory, Troops) :-
     Troops < MaxTroops,
     Troops <= 3.
 
+%
 won_territory(T, AT, From, To) :- attack_result(T, AT, From, To, _, 0,_,_,_).
+
+% count the number of territories won by the current player
+won_territory_counter(T, Count) :-
+    Count = #count{Territory : won_territory(T, _, P, Territory)},
+    currernt_turn(T, P).
 
 attack_reinforce(T,AT,From,To, Troops) :-
     curr_attack_turn(T, AT, _),
     attack_result(T,AT_prec,From,To,RemainingAttackerTroops,0,Attacking,DefendingTroops,MinReinforcementsTroops),
     AT_prec=AT-1,
-    Troops=RemainingAttackerTroops-1.
+    Troops=RemainingAttackerTroops / 2 + 1.
 
 has_attacked(T, AT) :- attack(T, AT, _, _, _).
+
 end_attack(T, AT) :- can_attack(T, AT), not has_attacked(T, AT).
 
 :- X = #count{T, AT, TerritoryFrom, TerritoryTo, Troops : attack(T, AT, TerritoryFrom, TerritoryTo, Troops)},
@@ -56,6 +63,8 @@ end_attack(T, AT) :- can_attack(T, AT), not has_attacked(T, AT).
     curr_player_territory(T, TerritoryFrom, MaxCurrentTroops),
     other_player_territory(T, TerritoryTo, _, MaxTroops),
     MaxTroops >= MaxCurrentTroops.
+
+:- attack(T, AT, TerritoryFrom, TerritoryTo, Troops), Troops < 3.
 
 % minimize the number of troops to attack
 :~ attack(T, AT, _, TerritoryTo, _), other_player_territory(T, TerritoryTo, _, MaxTroops). [MaxTroops@1, T, TerritoryTo, MaxTroops]

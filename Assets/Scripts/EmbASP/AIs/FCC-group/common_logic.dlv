@@ -5,11 +5,13 @@
 
 curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
 
+
+% current player, the one that is playing and making decisions
 curr_player(P) :- curr_turn(_, P).
+
+% all other players, can be viewed as the opponents
 other_player(P) :- player(P), curr_player(CP), P != CP.
 
-% to make sure we can use optimization
-:~ true. [1@1]
 
 
 curr_player_territory(T, Territory, Troops) :- 
@@ -41,13 +43,14 @@ other_player_troops_count(T, Player, Count) :-
     other_player(Player),
     curr_turn(T, _).
 
-
+% count of territories owned by a generic player in a continent 
 player_territories_in_continent(T, Player, Continent, Count) :-
     curr_turn(T, _),
     player(Player),
     continent(Continent, _),
     Count = #count{Territory : territory_control(T, Territory, Player, _), territory(Territory, Continent) }.
 
+% count of the missing territories player in a continent
 player_missing_territories_in_continent(T, Player, Continent, Missing) :- 
     curr_turn(T, _),
     player(Player),
@@ -55,6 +58,7 @@ player_missing_territories_in_continent(T, Player, Continent, Missing) :-
     player_territories_in_continent(T, Player, Continent, Count),
     Missing = Size - Count.
 
+% true if player controls all the territories in a continent
 player_continent_control(T, Player, Continent, Bonus) :- 
     curr_turn(T, _),
     player(Player),
@@ -65,18 +69,20 @@ player_continent_control(T, Player, Continent, Bonus) :-
 
 % ______________________________ BONUS ______________________________
 
+% bonus given by the control of continents
 player_continent_bonus(T, Player, ContinentBonus) :- 
     curr_turn(T, _),
     player(Player),
     ContinentBonus = #sum{Bonus, Continent : player_continent_control(T, Player, Continent, Bonus) }.
 
+% bonus given by the number of territories owned by a player
 player_territories_bonus(T, Player, TerritoriesBonus) :- 
     curr_turn(T, _),
     player(Player),
     player_territories_count(T, Player, TerritoriesCount),
     TerritoriesBonus = TerritoriesCount / 3.
     
-
+% final bonus of a player
 player_bonus(T, Player, Bonus) :- 
     curr_turn(T, _),
     player(Player),
@@ -87,11 +93,12 @@ player_bonus(T, Player, Bonus) :-
 
 % _____________________________________________________________________
 
-
+% count of territories adjacent to a territory owned by the same player 
 adjacent_friendly_territories(T, Territory, Player, N) :- 
     territory_control(T, Territory, Player, _),
     N = #count{T1 : territory_control(T, T1, Player, _), connection(Territory, T1)}.
 
+% count of territories adjacent to a territory owned by different players
 adjacent_enemy_territories(T, Territory, PlayerOwner, N) :- 
     territory_control(T, Territory, PlayerOwner, _),
     N = #count{T1 : 
@@ -100,18 +107,19 @@ adjacent_enemy_territories(T, Territory, PlayerOwner, N) :-
         PlayerOwner != Player
     }.
 
-
+% count of territories adjacent to a territory owned by a specific EnemyPlayer
 adjacent_enemy_player_territories(T, Territory, PlayerOwner, EnemyPlayer, N) :- 
     territory_control(T, Territory, PlayerOwner, _),
     player(EnemyPlayer),
     N = #count{T1 : territory_control(T, T1, EnemyPlayer, _), connection(Territory, T1)},
     PlayerOwner != EnemyPlayer.
 
+% sum of troops adjacent to a territory owned by the same player
 adjacent_friendly_troops(T, Territory, Player, N) :- 
     territory_control(T, Territory, Player, _),
     N = #sum{Troops, T1 : territory_control(T, T1, Player, Troops), connection(Territory, T1)}.
 
-
+% sum of enemy troops of  adjacent to a territory
 adjacent_enemy_troops(T, Territory, PlayerOwner, N) :- 
     territory_control(T, Territory, PlayerOwner, _),
     N = #sum{Troops, T1 : 

@@ -13,14 +13,6 @@ bonus_per_border("europe",3).
 bonus_per_border("africa",4).
 bonus_per_border("australia",4).
 bonus_per_border("asia",3).
-%=====================
-%continent(C, P).
-%territory(N, C).
-%connection(N1, N2).
-%player(Player)
-%turn(T, Player).
-%territory_control(T, Territory, Player, Troops).
-%troops_to_place(T, Player, Troops)
 
 %=====GUESS================
 curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P), player(P).
@@ -30,6 +22,7 @@ draft(T, Territory, N) | noDraft(T, Territory, N):- troops_to_place_card(T, Play
 %====HARD CONSTRAINS========
 %Troops placed always as the troops available
 :- #sum{Troops,Territory : draft(T,Territory,Troops)} = TotalTroops, troops_to_place_card(T,Player,AvailableTroops),curr_turn(T,Player), TotalTroops != AvailableTroops.
+
 %Double place facts for the same Territory
 :- draft(T, Territory, N1), draft(T, Territory, N2),curr_turn(T,_), N1!=N2.
 

@@ -5,6 +5,14 @@ continent_terr("africa",6).
 continent_terr("europe",7).
 continent_terr("asia",12).
 continent_terr("australia",4).
+
+%(più o meno)BonusTroops / N di punti di invasione 
+bonus_per_border("n_america",5).
+bonus_per_border("s_america",5).
+bonus_per_border("europe",3).
+bonus_per_border("africa",4).
+bonus_per_border("australia",4).
+bonus_per_border("asia",3).
 %=====================
 %continent(C, P).
 %territory(N, C).
@@ -53,8 +61,6 @@ troops_to_place_card(T,Player,Troops) :-
     not aux_can_exchange. 
 
 %====SUPPORT RULES=========
-
-
 controlled_continent(Continent) :- 
     curr_turn(Turn,Myself), 
     continent_info(Continent, NumberOfTotalTerritories,_,_), 
@@ -137,7 +143,7 @@ reinforced_territory(Territory) :-
 %territorio che è in un continente del quale si possiede almeno il 50%,
 %che è connesso ad uno nemico è con il quale la differenza di truppe
 %è di almeno una unità
-fighting_territory(PlayerTerritory,Continent,TroopsDiff) :- 
+fighting_territory(PlayerTerritory,OpponentTerritory,Continent,TroopsDiff) :- 
     curr_turn(Turn,Player),
     territory_and_continent(PlayerTerritory,Continent,Player),
     attempt_continent_conquest(Continent),
@@ -146,13 +152,58 @@ fighting_territory(PlayerTerritory,Continent,TroopsDiff) :-
     Player != OpponentPlayer,
     threatened_territory(PlayerTerritory,OpponentTerritory,TroopsDiff).
 
+%Calcolo dei due continenti più promettenti
+%calcolo dei territori più promettenti
+%Minimizza il numero di truppe non posizionate sui territori più promettenti dei continenti più promettenti 
+continent_rank(Continent,Rank) :- 
+    continent_info(Continent,_,TroopsBonus,Rateo),
+    bonus_per_border(Continent,BonusPerBorder),
+    Rank = Rateo * BonusPerBorder, 
+    not controlled_continent(Continent).
+
+max_promising_rank(MaxRank) :- 
+    #max{Rank,Continent : continent_rank(Continent,Rank)} = MaxRank.
+
+promising_continent(Continent) :- 
+    continent_rank(Continent,MaxRank),
+    max_promising_rank(MaxRank).
+
+fighting_territory_in_promising(Territory,Opponent,Continent,TroopsDiff) :- 
+    fighting_territory(Territory,Opponent,Continent,TroopsDiff), 
+    promising_continent(Continent).
+
+fighting_reinforced(Territory) :- 
+    curr_turn(Turn,Player),
+    fighting_territory_in_promising(Territory,Opponent,Continent,TroopsDiff),
+    draft(Turn,Territory,TroopsReinf),
+    TroopsReinf = TroopsDiff + 2.
+
+%Truppe in eccesso rispetto a quanto chiedo nei weak
+plus_troops_from_draft:- 
+    fighting_territory_in_promising(Territory,Opponent,Continent,TroopsDiff), 
+    fighting_reinforced(Territory).
+
+second_max_promising_rank(MaxRank) :-
+    plus_troops_from_draft,
+    #max{Rank,Continent : continent_rank(Continent,Rank), not promising_continent(Continent)} = MaxRank.
+
+second_promising_continent(Continent) :- 
+    continent_rank(Continent,Rank),
+    second_max_promising_rank(Rank).
+
+second_fighting_territory_in_promising(Territory,Opponent,Continent,TroopsDiff) :- 
+    fighting_territory(Territory,Opponent,Continent,TroopsDiff), 
+    second_promising_continent(Continent).
+    
 %====WEAK CONSTRAINS========
 %Minimizza il numero di territori bordi minacciati
 :~ aux_threatened_border(Territory), not reinforced_territory(Territory). [1@2,Territory]
 %Minimizza il numero di truppe posizionate su un territorio non threatened fino a quando non le hai rinforzate tutte
-:~ reinforced_territory_not_threatened(Territory,Troops), not all_threatened_reinforced, at_least_one_threat. [Troops@2,Territory,Troops]
+:~ reinforced_territory_not_threatened(Territory,Troops), not all_threatened_reinforced, at_least_one_threat. [Troops@3,Territory,Troops]
 
 %Dato un continente occupato almeno a metà, voglio
 %minimizzare il numero di territori che sono in quel continente, sono confinanti con territori nemici,
 %hanno una differenza di truppe maggiore di zero(svantaggio) e non sono rinforzati
-:~ fighting_territory(Territory,Continent,TroopsDiff), not reinforced_territory(Territory). [1@1,Territory,Continent]
+:~ fighting_territory_in_promising(Territory,Opponent,Continent,TroopsDiff), not fighting_reinforced(Territory). [1@2,Territory,Continent,TroopsDiff,Opponent]
+
+:~ second_fighting_territory_in_promising(Territory,Opponent,Continent,TroopsDiff), not reinforced_territory(Territory). [1@1,Territory,Continent,TroopsDiff,Opponent]

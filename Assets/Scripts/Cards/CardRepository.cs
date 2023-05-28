@@ -76,13 +76,13 @@ namespace Cards
             return new CardExchangeType[]
             {
                 new(requiredCards: new() { { CardType.Artillery, 3 } }, troops: 4),
-                new(requiredCards: new() { { CardType.Infantry, 3 } }, troops: 6),
-                new(requiredCards: new() { { CardType.Cavalry, 3 } }, troops: 8),
+                new(requiredCards: new() { { CardType.Infantry,  3 } }, troops: 6),
+                new(requiredCards: new() { { CardType.Cavalry,   3 } }, troops: 8),
                 new(requiredCards: new()
                     { { CardType.Artillery, 1 }, { CardType.Infantry, 1 }, { CardType.Cavalry, 1 } }, troops: 10),
                 new(requiredCards: new() { { CardType.Wild, 1 }, { CardType.Artillery, 2 } }, troops: 12),
-                new(requiredCards: new() { { CardType.Wild, 1 }, { CardType.Infantry, 2 } }, troops: 12),
-                new(requiredCards: new() { { CardType.Wild, 1 }, { CardType.Cavalry, 2 } }, troops: 12)
+                new(requiredCards: new() { { CardType.Wild, 1 }, { CardType.Infantry,  2 } }, troops: 12),
+                new(requiredCards: new() { { CardType.Wild, 1 }, { CardType.Cavalry,   2 } }, troops: 12)
             };
         }
 
@@ -167,6 +167,7 @@ namespace Cards
             return _cardNameToCardMap[name];
         }
 
+        
         
         [CanBeNull]
         public CardExchange GetExchangeFor(Card[] selectedCards, Player currentPlayer)

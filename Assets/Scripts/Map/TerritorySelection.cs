@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Action = it.unical.mat.embasp.languages.pddl.Action;
 
 namespace Map
@@ -35,6 +36,9 @@ namespace Map
         
         private void OnMouseDown()
         {
+            if(EventSystem.current.IsPointerOverGameObject())
+                return;
+            
             if (!_isDisabled)
                 OnClicked?.Invoke(this);
         }

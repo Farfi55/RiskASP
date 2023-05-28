@@ -19,12 +19,13 @@ troops_to_place_with_cards(T, Player, MaxTroops):-
     troops_to_place(T, Player, Troops),
     troops_from_cards(T,Player,Card_Troops),
     MaxTroops = Troops + Card_Troops.
-
 troops(0).
 troops(Troops) :- 
     troops_to_place_with_cards(T, Player, MaxTroops),
     curr_turn(T,P), 
     troops(Troops1),
+    fronteer_territory_count(T, Player, Count),
+    Count > 4,
     MaxTroops>10,
     MaxTroops<20,
     Troops=Troops1+1, 
@@ -34,9 +35,11 @@ troops(Troops) :-
     troops_to_place_with_cards(T, Player, MaxTroops),
     curr_turn(T,P), 
     troops(Troops1),
+    fronteer_territory_count(T, Player, Count),
+    Count > 4,
     MaxTroops>=20,
     Troops=Troops1+1, 
-    Troops<=MaxTroops/3+2.
+    Troops<=MaxTroops/3.
 
 troops(Troops) :- 
     troops_to_place_with_cards(T, Player, MaxTroops),
@@ -46,13 +49,29 @@ troops(Troops) :-
     Troops=Troops1+1, 
     Troops<=MaxTroops.
 
+troops(Troops) :- 
+    troops_to_place_with_cards(T, Player, MaxTroops),
+    curr_turn(T,P), 
+    troops(Troops1), 
+    fronteer_territory_count(T, Player, Count),
+    Count <= 4,
+    Troops=Troops1+1, 
+    Troops<=MaxTroops.
+
 end_draft_phase(T,Player):- troops_to_place_with_cards(T, Player, MaxTroops), MaxTroops = 0.
 
 min_troops_to_place(T, Player, MinTroops) :- 
     troops_to_place_with_cards(T, Player, MaxTroops),
     max_places_count(MTTPD),
-    MaxTroops <25,
-    MinTroops = MaxTroops / MTTPD.
+    MaxTroops <12,
+    MinTroops = MaxTroops / (MTTPD) +1.
+
+min_troops_to_place(T, Player, MinTroops) :- 
+    troops_to_place_with_cards(T, Player, MaxTroops),
+    max_places_count(MTTPD),
+    MaxTroops >=12,
+    MaxTroops <20,
+    MinTroops = MaxTroops / (MTTPD - 1).
 
 fronteer_territory_count(T, Player, Count):- 
     curr_turn(T, Player),
@@ -60,10 +79,16 @@ fronteer_territory_count(T, Player, Count):-
 
 min_troops_to_place(T, Player, MinTroops) :- 
     troops_to_place_with_cards(T, Player, MaxTroops),
-    MaxTroops >=25,
-    #min{Count : fronteer_territory_count(T, Player, Count); V: max_places_count(MTTPD), V = MTTPD-1} = Div,
+    MaxTroops >=20,
+    MaxTroops < 26,
+    #min{Count : fronteer_territory_count(T, Player, Count); V: max_places_count(MTTPD), V = MTTPD-2} = Div,
     MinTroops = MaxTroops / Div.
 
+min_troops_to_place(T, Player, MinTroops) :- 
+    troops_to_place_with_cards(T, Player, MaxTroops),
+    MaxTroops >=26,
+    #min{Count : fronteer_territory_count(T, Player, Count); V: max_places_count(MTTPD), V = MTTPD-2} = Div,
+    MinTroops = MaxTroops / Div.
 
 { place(T, Player, Territory, Troops) } <= 1 :- 
     fronteer_territory(T, Territory, Player),
@@ -114,13 +139,12 @@ territories_to_reinforce(T,Player, N) :-
     #min{N : territories_to_reinforce(T,Player, N); 
         Val: Val = 1} > TerritoryCount.
 
-
 :- must_place(T,Player,_),
     not end_draft_phase(T,Player),
     placed_in_territory(T, Player, TerritoryCount),
     troops_to_place_with_cards(T, Player, MaxTroops),
     MaxTroops >= 3,
-    MaxTroops < 9,
+    MaxTroops < 10,
     #min{N : territories_to_reinforce(T,Player, N); 
         Val: max_places_count(MTTPD), Val = MTTPD/2} > TerritoryCount.
 
@@ -128,51 +152,62 @@ territories_to_reinforce(T,Player, N) :-
     not end_draft_phase(T,Player),
     placed_in_territory(T, Player, TerritoryCount),
     troops_to_place_with_cards(T, Player, MaxTroops),
-    MaxTroops >= 9,
+    MaxTroops >= 10,
+    MaxTroops < 12,
+    #min{N : territories_to_reinforce(T,Player, N); 
+        Val: max_places_count(MTTPD), Val = MTTPD -1} > TerritoryCount.
+
+:- must_place(T,Player,_),
+    not end_draft_phase(T,Player),
+    placed_in_territory(T, Player, TerritoryCount),
+    troops_to_place_with_cards(T, Player, MaxTroops),
+    MaxTroops >= 12,
     #min{N : territories_to_reinforce(T,Player, N); 
         Val: max_places_count(MTTPD), Val = MTTPD} > TerritoryCount.
 
 
 
 
-
-territory_welfare_index(T, Territory, Index) :- 
+territory_welfare_index(T, Territory, Index, Order) :- 
     territory_control(T, Territory, Player, Troops),
     fronteer_territory(T, Territory, Player), 
     curr_turn(T, Player),
     adjacent_enemy_troops(T, Territory, PlayerOwner, Enemies),
-    Index = Troops - Enemies.
+    Index = Troops - Enemies,
+    Order = Troops.
 
 %
 territory_welfare_index_projection(T, Territory, Value) :- 
-    territory_welfare_index(T, Territory, Index),
-    territory_index_strong_weight(W), 
-    curr_turn(T, Player),
-    place(T, Player, Territory, Troops),
-    Index + Troops > 2,
-    Index + Troops < 5, 
-    Value = (Index + Troops) * W * (Index).
-
-
-territory_welfare_index_projection(T, Territory, Value) :- 
-    territory_welfare_index(T, Territory, Index),
+    territory_welfare_index(T, Territory, Index, Order),
     territory_index_weak_weight(W), 
     curr_turn(T, Player),
     place(T, Player, Territory, Troops),
-    Index + Troops > 4, 
+    Index + Troops > 6 * (Order/10), 
     Value = (Index + Troops) * W * (Index).
 
+
 territory_welfare_index_projection(T, Territory, Value) :- 
-    territory_welfare_index(T, Territory, Index),
+    territory_welfare_index(T, Territory, Index, Order),
+    territory_index_strong_weight(W), 
+    curr_turn(T, Player),
+    place(T, Player, Territory, Troops),
+    Index + Troops > 3 * (Order/10),
+    Index + Troops < 7 * (Order/10), 
+    Value = (Index + Troops) * W * (Index).
+
+
+
+territory_welfare_index_projection(T, Territory, Value) :- 
+    territory_welfare_index(T, Territory, Index, Order),
     territory_index_medium_weight(W), 
     curr_turn(T, Player),
     place(T, Player, Territory, Troops),
-    Index + Troops >= 0,
-    Index + Troops < 3, 
+    Index + Troops >= 0 * (Order/10),
+    Index + Troops < 4 * (Order/10), 
     Value = (Index + Troops) * W * (Index).
 
 territory_welfare_index_projection(T, Territory, Value) :- 
-    territory_welfare_index(T, Territory, Index),
+    territory_welfare_index(T, Territory, Index, Order),
     territory_index_bad_weight(W), 
     curr_turn(T, Player),
     place(T, Player, Territory, Troops),
@@ -202,7 +237,7 @@ territory_welfare_index_projection(T, Territory, Value) :-
 :~ place(T, Player, Territory, Troops), 
     territory_island(T, Id, Territory, Player),
     island_value_index(T, Id, Player, ValueIndex),
-    Val = ValueIndex * 15.
+    Val = ValueIndex * 17.
     [Val@3, Territory]
 
 

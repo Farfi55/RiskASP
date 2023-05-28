@@ -80,15 +80,9 @@ fronteer_territory_count(T, Player, Count):-
 min_troops_to_place(T, Player, MinTroops) :- 
     troops_to_place_with_cards(T, Player, MaxTroops),
     MaxTroops >=20,
-    MaxTroops < 26,
     #min{Count : fronteer_territory_count(T, Player, Count); V: max_places_count(MTTPD), V = MTTPD-2} = Div,
     MinTroops = MaxTroops / Div.
 
-min_troops_to_place(T, Player, MinTroops) :- 
-    troops_to_place_with_cards(T, Player, MaxTroops),
-    MaxTroops >=26,
-    #min{Count : fronteer_territory_count(T, Player, Count); V: max_places_count(MTTPD), V = MTTPD-2} = Div,
-    MinTroops = MaxTroops / Div.
 
 { place(T, Player, Territory, Troops) } <= 1 :- 
     fronteer_territory(T, Territory, Player),
@@ -107,7 +101,20 @@ placed_troops(T, Player, Troops) :-
 
 :- troops_to_place_with_cards(T,P,Troops), not placed_troops(T, P, Troops).
 
-must_place(T, Player, Territory):-
+% must_place(T, Player, Territory):-
+%     curr_turn(T, Player),
+%     territory(Territory, Continent),
+%     territory(Territory1, Continent),
+%     player_missing_territories_in_continent(T, Player, Continent, Missing),
+%     Missing <= 2,
+%     territory_control(T,Territory,Player,Troops),
+%     territory_control(T,Territory1,PlayerEnemy,TroopsEnemy),
+%     PlayerEnemy != Player,
+%     connection(Territory, Territory1),
+%     battle_chance(Troops-1, TroopsEnemy, WinChance, _),
+%     WinChance <= 600.
+
+must_place(T, Player, Continent):-
     curr_turn(T, Player),
     territory(Territory, Continent),
     territory(Territory1, Continent),
@@ -120,14 +127,22 @@ must_place(T, Player, Territory):-
     battle_chance(Troops-1, TroopsEnemy, WinChance, _),
     WinChance <= 600.
 
-
 placed_in_territory(T, Player, N) :- 
     curr_turn(T,Player), 
-    #count{Territory : place(T, Player, Territory, _), must_place(T,Player,Territory)} = N.
+    #count{Continent : place(T, Player, Territory, _), territory(Territory,Continent), must_place(T,Player,Continent)} = N.
 
 territories_to_reinforce(T,Player, N) :- 
     curr_turn(T,Player), 
-    #count{Territory : must_place(T,Player,Territory)} = N.
+    #count{Continent : must_place(T,Player,Continent)} = N.
+
+
+% placed_in_territory(T, Player, N) :- 
+%     curr_turn(T,Player), 
+%     #count{Territory : place(T, Player, Territory, _), must_place(T,Player,Territory)} = N.
+
+% territories_to_reinforce(T,Player, N) :- 
+%     curr_turn(T,Player), 
+%     #count{Territory : must_place(T,Player,Territory)} = N.
 
 
 :- must_place(T,Player,_),
@@ -162,8 +177,17 @@ territories_to_reinforce(T,Player, N) :-
     placed_in_territory(T, Player, TerritoryCount),
     troops_to_place_with_cards(T, Player, MaxTroops),
     MaxTroops >= 12,
+    MaxTroops < 20,
     #min{N : territories_to_reinforce(T,Player, N); 
-        Val: max_places_count(MTTPD), Val = MTTPD} > TerritoryCount.
+        Val: max_places_count(MTTPD), Val = MTTPD - 1} > TerritoryCount.
+
+:- must_place(T,Player,_),
+    not end_draft_phase(T,Player),
+    placed_in_territory(T, Player, TerritoryCount),
+    troops_to_place_with_cards(T, Player, MaxTroops),
+    MaxTroops >= 20,
+    #min{N : territories_to_reinforce(T,Player, N); 
+        Val: max_places_count(MTTPD), Val = MTTPD - 2} > TerritoryCount.
 
 
 
@@ -216,6 +240,13 @@ territory_welfare_index_projection(T, Territory, Value) :-
 
 
 
+:~ place(T, Player, Territory1, _),
+    place(T, Player, Territory2, _),
+    Territory1 != Territory2,
+    connection(Territory1 , Territory3),
+    connection(Territory2 , Territory3),
+    other_player_territory(T, Territory3, _, _).
+    [113@3, Territory1, Territory2]
 % island_welfare_index(T, Id, Index) :- 
 %     curr_turn(T, Player), 
 %     island_id(T, Id, Player),
@@ -233,7 +264,7 @@ territory_welfare_index_projection(T, Territory, Value) :-
 
 % ----------- MAX PRIORITY -----------
 
-% place troops preferring most valutable island
+%place troops preferring most valutable island
 :~ place(T, Player, Territory, Troops), 
     territory_island(T, Id, Territory, Player),
     island_value_index(T, Id, Player, ValueIndex),

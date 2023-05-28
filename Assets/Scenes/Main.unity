@@ -2801,7 +2801,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55ff44a7efcf4746b62b6bc681301590, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _botActionDelay: 2
+  _botActionDelay: 1.09
 --- !u!114 &280334215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9913,7 +9913,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6030655713958463109, guid: 729e66ac09ea56e7c95d6e785e98c838, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 729e66ac09ea56e7c95d6e785e98c838, type: 3}
@@ -10273,7 +10273,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6030655713958463109, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
@@ -15552,7 +15552,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6030655713958463109, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5ffc01374647572b2ace7c6226cb2c2e, type: 3}
@@ -25520,7 +25520,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6030655713958463109, guid: 729e66ac09ea56e7c95d6e785e98c838, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 729e66ac09ea56e7c95d6e785e98c838, type: 3}
@@ -31219,7 +31219,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &2109612600
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31233,7 +31233,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _botBrain: {fileID: 280334216}
-  _dumpFilesPath: Assets/Scripts/EmbASP/AIs/FCC-group/dumps
+  _dumpFilesPath: Assets/Scripts/EmbASP/AIs/MPS-group/dumps
   _logPhaseToConsole: 0
   _logFullToConsole: 1
   _logResponseToConsole: 1
@@ -31241,7 +31241,7 @@ MonoBehaviour:
   _logFullToFile: 1
   _logResponseToFile: 0
   _deleteOldDumpsOnStart: 1
-  _maxTurnsToLog: 8
+  _maxTurnsToLog: 9
   _logAllTurns: 0
   _programPhaseText: 
   _programFullText: 

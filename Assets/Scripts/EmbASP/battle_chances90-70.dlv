@@ -70,8 +70,8 @@ battle_chance(50, 67,    0, 1000).
 battle_chance(50, 68,    0, 1000).
 battle_chance(50, 69,    0, 1000).
 battle_chance(50, 70,    0, 1000).
-battle_chance(51,  0, 1000,    0).
 
+battle_chance(51,  0, 1000,    0).
 battle_chance(51,  1, 1000,    0).
 battle_chance(51,  2, 1000,    0).
 battle_chance(51,  3, 1000,    0).

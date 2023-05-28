@@ -232,40 +232,41 @@ territory_conquered(Territory,Troops) :-
     territory_control(Turn,Territory,Player,Troops).
 
 % tutti i miei territori
-my_territories(Territory) :- 
+my_territories(Turn,Territory) :- 
     curr_turn(Turn,Player),
     territory_control(Turn,Territory,Player,Troops).
 
 % ricavo i confini minacciati dei continenti che posseggo
 threatened_border(PlayerTerritory,OpponentTerritory,TroopsDiff) :-
     conquered_continent(PlayerContinent),
-    threatened_territory(PlayerTerritory,OpponentTerritory,TroopsDiff),
+    threatened_territory(Turn,PlayerTerritory,OpponentTerritory,TroopsDiff),
     territory(PlayerTerritory,PlayerContinent),
     territory(OpponentTerritory,OpponentContinent),
     PlayerContinent<>OpponentContinent.
 
 % tutti i miei territori minacciati
-threatened_territory(PlayerTerritory,OpponentTerritory,TroopsDiff) :-
-    curr_turn(T,Player),
-    territory_control(T,PlayerTerritory,Player,PlayerTroops), 
-    territory_control(T,OpponentTerritory,Opponent,OpponentTroops), 
+threatened_territory(Turn,PlayerTerritory,OpponentTerritory,TroopsDiff) :-
+    curr_turn(Turn,Player),
+    territory_control(Turn,PlayerTerritory,Player,PlayerTroops), 
+    territory_control(Turn,OpponentTerritory,Opponent,OpponentTroops), 
     connection(PlayerTerritory,OpponentTerritory), 
     TroopsDiff=OpponentTroops-PlayerTroops,
     Player!=Opponent.
 
 % tutti i miei territori che non sono minacciati
-not_threatened_territory(Territory) :- 
-    my_territories(Territory), 
-    not my_threatened(Territory).
+not_threatened_territory(Turn,Territory) :- 
+    my_territories(Turn,Territory),
+    not my_threatened(Turn,Territory).
+
 
 % tutti i miei territori che non sono minacciati (con truppe)
-not_threatened_territory_troops(Territory,Troops) :-
-    not_threatened_territory(Territory),
-    territory_control(_,Territory,_,Troops).
+not_threatened_territory_troops(Turn,Territory,Troops) :-
+    not_threatened_territory(Turn,Territory),
+    territory_control(Turn,Territory,_,Troops).
 
 % nomi di tutti i territori minacciati
-my_threatened(Territory) :- 
-    threatened_territory(Territory,_,_).
+my_threatened(Turn,Territory) :- 
+    threatened_territory(Turn,Territory,_,_).
 
 % nome e continente di ogni territorio
 territory_and_continent(Territory,Continent,Player) :- 
@@ -310,7 +311,7 @@ enemy_with_at_least_an_adiacent_enemy_territory(Turn,TerritoryEnemy,AdiacentTerr
     TerritoryEnemy!=AdiacentTerritory.
 
 % ricavo i territori deboli (isolati)
-weak_enemy_territory(TerritoryEnemy,Troops) :- 
+weak_enemy_territory(Turn,TerritoryEnemy,Troops) :- 
     turn(Turn,Player),
     territory_control(Turn,TerritoryEnemy,PlayerEnemy,Troops),
     #count {TerritoryEnemy : enemy_with_at_least_an_adiacent_enemy_territory(Turn,TerritoryEnemy,Territory2) }=CNT,
@@ -334,16 +335,18 @@ fortify(T, From, To, Troops) | not_fortify(T,From,To,Troops) :-
     From != To.
 
 % sposto le truppe da un territorio non minacciato ad uno minacciato (dove la differenza tra le truppe avversarie e quelle alleate è maggiore)
-% territori più minacciati
-greatest_diff_troops(MIN_TROOPS) :- 
-    #max{Troops,Territory,OpponentTerritory : threatened_territory(Territory,OpponentTerritory,Troops)}=MIN_TROOPS.
+% territori più minacciati 
+% TODO: rivedere (output #inf)
+greatest_diff_troops(Turn,MIN_TROOPS) :- 
+    curr_turn(Turn,_),
+    #max{ Troops,Territory,OpponentTerritory : threatened_territory(Turn,Territory,OpponentTerritory,Troops) }=MIN_TROOPS.
 
-most_threatened_territory(Territory,OpponentTerritory,Troops) :- 
+most_threatened_territory(Turn,Territory,OpponentTerritory,Troops) :- 
     greatest_diff_troops(Troops), 
-    threatened_territory(Territory,OpponentTerritory,Troops).
+    threatened_territory(Turn,Territory,OpponentTerritory,Troops).
 
 % non è possibile che ci sia almeno un territorio non minacciato che abbia Troops>=2 e non venga effettuata nessuna fortificazione
-:- not_threatened_territory_troops(Territory,Troops),
+:- not_threatened_territory_troops(Turn,Territory,Troops),
     #count{Turn,From,To,Troops : fortify(Turn,From,To,Troops)} = 0, 
     #count{Turn : fortify(Turn,_,_,_)}=0,
     Troops>1.
@@ -369,27 +372,27 @@ most_threatened_territory(Territory,OpponentTerritory,Troops) :-
     curr_turn(Turn,PlayerName),
     threatened_border(BorderTerritory,OpponentTerritory,TroopsDiff),
     can_fortify_the_threatened_border(BorderTerritory,NeighbourTerritory,AvailableTroops),
-    not fortify(Turn,NeighbourTerritory,BorderTerritory,AvailableTroops). [AvailableTroops@2, NeighbourTerritory,BorderTerritory]
+    not fortify(Turn,NeighbourTerritory,BorderTerritory,AvailableTroops). [AvailableTroops@3, NeighbourTerritory,BorderTerritory]
 
     % se c'è un territorio minacciato A che confina con un territorio non minacciato B e non effettuo una fortificazione da A a B con il massimo numero di truppe possibili, pago il numero di truppe che non sposto
 :~
     curr_turn(Turn,PlayerName),
     threatened_territory(PlayerTerritory,OpponentTerritory,TroopsDiff),
     can_fortify_the_threatened_border(PlayerTerritory,NeighbourTerritory,AvailableTroops),
-    not fortify(Turn,NeighbourTerritory,PlayerTerritory,AvailableTroops). [AvailableTroops@1, NeighbourTerritory,PlayerTerritory]
+    not fortify(Turn,NeighbourTerritory,PlayerTerritory,AvailableTroops). [AvailableTroops@2, NeighbourTerritory,PlayerTerritory]
     
 
 % se c'è un territorio debole, rinforza il territorio confinante che ha il minor numero di truppe
-% :~ 
-%     curr_turn(Turn,PlayerName),
-%     weak_enemy_territory(TerritoryEnemy,AdiacentTerritory),
-%     connected(TerritoryEnemy,AdiacentTerritory),
-%     not fortify(Turn,NeighbourTerritory,PlayerTerritory,AvailableTroops).
-
-
+:~ 
+    curr_turn(Turn,PlayerName),
+    weak_enemy_territory(Turn,TerritoryEnemy,AdiacentTerritory),
+    connected(TerritoryEnemy,AdiacentTerritory),
+    territory_control(NeighbourTerritory,Troops), Troops>1, AvailableTroops=Troops-1,
+    not fortify(Turn,NeighbourTerritory,AdiacentTerritory,AvailableTroops). [AvailableTroops@1, NeighbourTerritory,AdiacentTerritory]
 
 
 % SHOW
+%#show weak_enemy_territory/3.
 %#show controlled_continent/2.
 %#show can_fortify_the_threatened_border/3.
 %#show fortify/4.
@@ -411,4 +414,3 @@ most_threatened_territory(Territory,OpponentTerritory,Troops) :-
 
 
 % == == ==  WORK IN PROGRESS  == == == %
-% idea - rinforzare i territori confinanti agli avversari deboli: identificare i territori dei tuoi avversari che sono più vulnerabili o deboli e rinforza i territori adiacenti a questi punti deboli. Ciò ti permetterà di prepararti per un attacco futuro e di sfruttare eventuali opportunità.

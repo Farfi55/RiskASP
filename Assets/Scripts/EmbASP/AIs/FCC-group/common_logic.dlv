@@ -300,6 +300,16 @@ adjacent_available_troops_different_player(T, Territory, Player, AvailableTroops
         AvailableTroops1 = Troops - 1
     }.
 
+adjacent_territories_different_player(T, Territory, Player, Territories) :-
+    curr_turn(T, _),
+    player(Player),
+    territory_control(T, Territory, _, _),
+    Territories = #count{ Territory1 : 
+        territory_control(T, Territory1, Player1, Troops), 
+        connection(Territory, Territory1), 
+        Player1 != Player
+    }.
+
 % troops on a territory - the available troops from other players that can attack territory 
 territory_adjecent_available_troops_diff(T, Territory, Player, TroopsDiff) :-
     territory_control(T, Territory, Player, Troops),

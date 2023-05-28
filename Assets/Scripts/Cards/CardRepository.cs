@@ -126,6 +126,15 @@ namespace Cards
 
             return ExchangeTypes.FirstOrDefault(exchangeType => exchangeType.CanExchange(cards));
         }
+        
+        
+        public bool CanExchange(Card[] cards)
+        {
+            if (cards.Length != 3)
+                return false;
+
+            return ExchangeTypes.Any(exchangeType => exchangeType.CanExchange(cards));
+        }
 
         public int GetExchangeTypeIndex(Card[] cards)
         {
@@ -156,6 +165,17 @@ namespace Cards
         public Card GetCardByName(string name)
         {
             return _cardNameToCardMap[name];
+        }
+
+        
+        [CanBeNull]
+        public CardExchange GetExchangeFor(Card[] selectedCards, Player currentPlayer)
+        {
+            var exchangeType = GetExchangeType(selectedCards);
+            if (exchangeType == null)
+                return null;
+
+            return new CardExchange(selectedCards, exchangeType, currentPlayer);
         }
     }
 }

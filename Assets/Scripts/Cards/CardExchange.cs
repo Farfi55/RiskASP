@@ -11,6 +11,7 @@ namespace Cards
         public Player Player { get; }
         public int ExchangeValue { get; }
         
+        
         public CardExchange(Card[] cards, CardExchangeType exchangeType, Player player, int exchangeValue)
         {
             Cards = cards;
@@ -28,6 +29,22 @@ namespace Cards
             if(exchangeValue != value)
                 throw new ArgumentException($"Exchange value ({exchangeValue}) is not the correct value ({value})");
                 
+        }
+        
+        public CardExchange(Card[] cards, CardExchangeType exchangeType, Player player)
+        {
+            Cards = cards;
+            ExchangeType = exchangeType;
+            Player = player;
+            
+            if(cards.Length != 3)
+                throw new ArgumentException($"Cards length must be 3, but was {cards.Length}");
+            
+            if(!exchangeType.CanExchange(cards))
+                throw new ArgumentException($"Cards {cards} cannot be exchanged for {exchangeType}");
+            
+            
+            ExchangeValue = exchangeType.ExchangeValue(cards, player);
         }
         
     }

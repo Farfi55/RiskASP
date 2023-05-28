@@ -16,11 +16,12 @@ MonoBehaviour:
   _aspSolver: 1
   _commonBrainsPaths:
   - Assets/Scripts/EmbASP/AIs/MPS-group/constants.dlv
-  - Assets/Scripts/EmbASP/AIs/MPS-group/info.dlv
   _draftBrainsPaths:
   - Assets/Scripts/EmbASP/AIs/MPS-group/draft_phase_template.dlv
   _attackBrainsPaths:
   - Assets/Scripts/EmbASP/AIs/MPS-group/attack_phase_template.dlv
+  - Assets/Scripts/EmbASP/AIs/MPS-group/info.dlv
   _fortifyBrainsPaths:
   - Assets/Scripts/EmbASP/AIs/MPS-group/fortify_phase_template.dlv
+  - Assets/Scripts/EmbASP/AIs/MPS-group/info.dlv
   _useOptimalAnswerSet: 1

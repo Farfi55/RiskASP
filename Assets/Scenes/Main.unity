@@ -30150,7 +30150,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &2109612600
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30164,7 +30164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _botBrain: {fileID: 280334216}
-  _dumpFilesPath: Assets/Scripts/EmbASP/AIs/FCC-group/dumps
+  _dumpFilesPath: Assets/Scripts/EmbASP/AIs/MPS-group/dumps
   _logPhaseToConsole: 0
   _logFullToConsole: 1
   _logResponseToConsole: 1

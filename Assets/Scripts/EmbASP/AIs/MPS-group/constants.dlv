@@ -175,7 +175,7 @@ connection("japan",                   "mongolia").
 connection("kamchatka",               "yakutsk").
 connection("kamchatka",               "mongolia").
 
-connection("monogolia",               "siberia").
+connection("mongolia",               "siberia").
 
 connection("siam",                    "indonesia").
 

@@ -6,9 +6,10 @@ using UnityEngine;
 namespace player
 {
     [CreateAssetMenu(fileName = "BotConfiguration", menuName = "BotConfiguration", order = 1)]
-    public class BotConfiguration : ScriptableObject
+    public class BotConfiguration : PlayerConfiguration
     {
-        public string Name => _name;
+        public override string Name => _name;
+        
         [SerializeField] private string _name;
         
         public ASPSolver ASPSolver => _aspSolver;

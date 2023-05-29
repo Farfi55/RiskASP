@@ -171,7 +171,7 @@ attack_chance(T, AT, TerritoryFrom, TerritoryTo, Troops, WinChance) :-
     TroopsFrom <=40,
     not disrupting_continent_control_any(T, AT),
     not conquering_continent_any(T, AT),
-    WinChance < 500.
+    WinChance < 600.
 
 
 :- attack_chance(T, AT, TerritoryFrom, TerritoryTo, Troops, WinChance),
@@ -180,13 +180,13 @@ attack_chance(T, AT, TerritoryFrom, TerritoryTo, Troops, WinChance) :-
     TroopsFrom <=40,
     not disrupting_continent_control_any(T, AT),
     not conquering_continent_any(T, AT),
-    WinChance < 650.
+    WinChance < 700.
 
 :- attack_chance(T, AT, TerritoryFrom, TerritoryTo, Troops, WinChance),
     territory_control(T, TerritoryFrom, T, TroopsFrom),
     territory_control(T, TerritoryTo, T, TroopsTo),
     TroopsFrom > 40,
-    TroopsFrom < (TroopsTo + TroopsFrom/100 * 75).
+    TroopsTo > (TroopsFrom * 75 / 100). 
 
 
 :- conquering_continent(T, AT, PlayerFrom, TerritoryTo, Continent),

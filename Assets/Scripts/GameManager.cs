@@ -21,6 +21,8 @@ public class GameManager : MonoBehaviour
     public int NPlayers => _nPlayers;
     [SerializeField, Range(2, 6)] private int _nPlayers = 2;
 
+    [SerializeField] private StartingPlayersConfiguration _startingPlayersConfiguration;
+
     public List<Player> Players;
 
     private Queue<Player> _playerQueue = new();
@@ -47,14 +49,14 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private int _startingCardsPerPlayer = 4;
     [SerializeField] private int _maxCardsPerPlayer = 5;
-    
-    
+
+
     public Action<IPhase> OnPhaseStarted;
     public Action<IPhase> OnPhaseEnded;
     public Action<IPhase, IPhase> OnTurnPhaseChanged;
     public Action<Player, Player> OnPlayerTurnChanged;
     public Action<Player> OnPlayerTurnEnded;
-    
+
     public Action<GamePhase> OnGamePhaseChanged;
 
 
@@ -94,8 +96,8 @@ public class GameManager : MonoBehaviour
         var cards = new List<Card>(eliminated.Cards);
         eliminatedBy.AddCards(cards);
         eliminated.RemoveCards(cards);
-        
-        if(Players.Count(player => player.IsAlive()) == 1)
+
+        if (Players.Count(player => player.IsAlive()) == 1)
             GameOver();
     }
 
@@ -143,18 +145,23 @@ public class GameManager : MonoBehaviour
 
         var playerCreator = PlayerCreator.Instance;
         
-        for (var i = Players.Count; i < NPlayers; i++) 
+        if (_startingPlayersConfiguration != null)
+            foreach (var playerCreationConfiguration in _startingPlayersConfiguration.PlayersConfiguration)
+                Players.Add(playerCreator.CreatePlayerFromConfiguration(playerCreationConfiguration));
+
+        for (var i = Players.Count; i < NPlayers; i++)
             Players.Add(playerCreator.CreateBotPlayer());
 
         foreach (var player in Players)
             if (player.Name == "")
             {
-                if(player.Color == null || player.Color.name == "UNDEFINED")
+                if (player.Color == null || player.Color.name == "UNDEFINED")
                     playerCreator.SetUpPlayerFromRandomColor(player);
                 else
                     playerCreator.SetUpPlayerFromColor(player, player.Color);
             }
     }
+
 
     private void EnqueuePlayers()
     {
@@ -202,7 +209,7 @@ public class GameManager : MonoBehaviour
 
     private void TryDrawCardOnTurnEnd(Player player)
     {
-        if (AttackPhase.ConqueredTerritoriesCount == 0 
+        if (AttackPhase.ConqueredTerritoriesCount == 0
             || (_maxCardsPerPlayer >= 0 && player.Cards.Count >= _maxCardsPerPlayer))
             return;
 
@@ -275,7 +282,6 @@ public class GameManager : MonoBehaviour
     {
         return _currentPlayer == player;
     }
-    
 }
 
 public enum GamePhase

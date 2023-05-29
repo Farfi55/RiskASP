@@ -70,9 +70,9 @@ has_exchanged(T,Player) :- exchange(T,Player, _, _).
     %max truppe in possesso di un giocatore al turno T diverso da P
     % other_player_territory(T, Territory, Player, Troops).
 
-    other_player_max_troops(T,Max) :- 
-        curr_turn(T,_), 
-        Max = #max{Troops : other_player_territory(T, Territory, Player, Troops) }.
+    % other_player_max_troops(T,Max) :- 
+    %     curr_turn(T,_), 
+    %     Max = #max{Troops : other_player_territory(T, Territory, Player, Troops) }.
 
     % differenza truppe in possesso
     % positive: curr_player has more troops than other player

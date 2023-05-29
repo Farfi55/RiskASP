@@ -43,6 +43,22 @@ namespace player
             SetUpPlayerFromRandomColor(player);
             return player;
         }
+        
+        public Player CreatePlayerFromConfiguration(PlayerCreationConfiguration playerCreationConfiguration)
+        {
+            var playerConfiguration = playerCreationConfiguration.PlayerConfiguration;
+            Player player;
+            if(playerConfiguration is BotConfiguration)
+                player = CreateBotPlayer();
+            else if(playerConfiguration is HumanPlayerConfiguration)
+                player = CreateHumanPlayer();
+            else
+                throw new Exception("PlayerConfiguration not supported");
+        
+            player.Color = playerCreationConfiguration.PlayerColor;
+            player.SetName(playerCreationConfiguration.PlayerName);
+            return player;
+        }
 
         
         public void SetUpPlayerFromRandomColor(Player player)

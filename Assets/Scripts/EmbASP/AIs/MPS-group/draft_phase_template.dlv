@@ -15,19 +15,34 @@ bonus_per_border("australia",4).
 bonus_per_border("asia",3).
 
 %=====GUESS================
-curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P), player(P).
-troops(Z):- &int(1,Troops;Z), troops_to_place_card(T, Player, Troops), curr_turn(T,Player), Troops>0.
-draft(T, Territory, N) | noDraft(T, Territory, N):- troops_to_place_card(T, Player, _), territory_control(T, Territory, Player, Troops), troops(N),curr_turn(T,Player).
+curr_turn(T, P) :- 
+    turn(T,P), 
+    player(P),
+    #max{Turn : turn(Turn,_) } = T. 
+
+%Genera fatti truppa per la guess
+troops(Z) :- 
+    &int(1,Troops;Z), 
+    troops_to_place_card(T, Player, Troops), 
+    curr_turn(T,Player), Troops>0.
+
+draft(T, Territory, N) | noDraft(T, Territory, N):- 
+    troops_to_place_card(T, Player, _), 
+    territory_control(T, Territory, Player, Troops), 
+    troops(N),
+    curr_turn(T,Player).
 
 %====HARD CONSTRAINS========
-%Troops placed always as the troops available
-:- #sum{Troops,Territory : draft(T,Territory,Troops)} = TotalTroops, troops_to_place_card(T,Player,AvailableTroops),curr_turn(T,Player), TotalTroops != AvailableTroops.
+:-  #sum{Troops,Territory : draft(T,Territory,Troops)} = TotalTroops, 
+    troops_to_place_card(T,Player,AvailableTroops),curr_turn(T,Player), 
+    TotalTroops != AvailableTroops.
 
-%Double place facts for the same Territory
-:- draft(T, Territory, N1), draft(T, Territory, N2),curr_turn(T,_), N1!=N2.
-
+:-  draft(T, Territory, N1), 
+    draft(T, Territory, N2),
+    curr_turn(T,_), N1!=N2.
 
 %====CARDS DRAFT========
+
 can_exchange(ExchangeId,Troops) :- 
     curr_turn(T,Player),
     possible_card_exchange(T, Player, ExchangeId, ExchangeTypeId, Card1, Card2, Card3, Troops),
@@ -54,24 +69,14 @@ troops_to_place_card(T,Player,Troops) :-
     not aux_can_exchange. 
 
 %====SUPPORT RULES=========
+
 controlled_continent(Continent) :- 
     curr_turn(Turn,Myself), 
     continent_info(Continent, NumberOfTotalTerritories,_,_), 
     #count{OwnedTerritory : territory_control(Turn,OwnedTerritory, Myself, _),territory(OwnedTerritory, Continent)} = NumberOfOwnedTerritories,
     NumberOfOwnedTerritories == NumberOfTotalTerritories.
 
-% ricavo i confini minacciati dei continenti che possiedi
-threatened_border(PlayerTerritory,OpponentTerritory,TroopsDiff) :-
-    controlled_continent(PlayerContinent),
-    threatened_territory(PlayerTerritory,OpponentTerritory,TroopsDiff),
-    territory(PlayerTerritory,PlayerContinent),
-    territory(OpponentTerritory,OpponentContinent),
-    PlayerContinent<>OpponentContinent.
-
-%ausiliaria per vincolo debole
-at_least_one_threat :- threatened_border(_,_,_).
-
-% tutti i miei territori minacciati
+%tutti i miei territori minacciati(almeno stesso numero di truppe di differenza)
 threatened_territory(PlayerTerritory,OpponentTerritory,TroopsDiff) :-
     curr_turn(T,Player),
     territory_control(T,PlayerTerritory,Player,PlayerTroops), 
@@ -80,6 +85,14 @@ threatened_territory(PlayerTerritory,OpponentTerritory,TroopsDiff) :-
     TroopsDiff >=0,
     TroopsDiff=OpponentTroops-PlayerTroops,
     Player!=Opponent.
+
+%ricavo i confini minacciati dei continenti che possiedi
+threatened_border(PlayerTerritory,PlayerContinent,OpponentTerritory,TroopsDiff) :-
+    controlled_continent(PlayerContinent),
+    threatened_territory(PlayerTerritory,OpponentTerritory,TroopsDiff),
+    territory(PlayerTerritory,PlayerContinent),
+    territory(OpponentTerritory,OpponentContinent),
+    PlayerContinent<>OpponentContinent.
 
 % nome e continente di ogni territorio
 territory_and_continent(Territory,Continent,Player) :- 
@@ -92,27 +105,34 @@ conquered_territories_for_continent(Continent,Num_Of_Conquered_Territories) :-
     continent(Continent,_),
     #count {Territory,Continent : territory_and_continent(Territory,Continent,Player), curr_turn(T,Player)}=Num_Of_Conquered_Territories.
 
-% quando si controlla metà dei territori di un continente
-attempt_continent_conquest(Continent) :- 
-    continent_info(Continent,_,_,ConqRatio),
-    not controlled_continent(Continent), 
-    conquered_territories_for_continent(Continent,Num_Of_Conquered_Territories), 
-    ConqRatio >= 50.
-
-%un territorio minacciato che verrà riforzato COPRENDO LA DIFFERENZA DI TRUPPE
-threatened_reinforced(Territory) :- 
+%territorio threatened_border che è stato rinforzato
+threatened_reinforced(Territory,Continent,TroopsDiff) :- 
     curr_turn(Turn,Player),
-    threatened_border(Territory,_,TroopsDiff),
+    threatened_border(Territory,Continent,_,TroopsDiff),
     draft(Turn,Territory,TroopsReinf),
-    TroopsReinf = TroopsDiff + 1.
+    TroopsDiff - TroopsReinf < 0,
+    TroopsDiff - TroopsReinf >= -2.
 
-%tutti territori minacciati rinforzati COPRENDO LA DIFFERENZA DI TRUPPE
-all_threatened_reinforced :- 
-    #count{Territory : threatened_reinforced(Territory)} = TerritoryReinforced,
-    #count{Territory : threatened_border(Territory,_,_)} = TerritoryThreatened,
-    TerritoryReinforced = TerritoryThreatened.
+%rinforzo finito per tutti i territori threatened_border di un continente
+threatened_reinforced_complete(Continent,Rank) :- 
+    bonus_per_border(Continent,Rank),
+    #count{Territory : threatened_reinforced(Territory,Continent,TroopsDiff)} = NOfTerritoriesReinforced,
+    #count{Territory : threatened_border(Territory,Continent,OpponentTerr,TroopsDiff)} = NOfTerritoriesThreatened,
+    NOfTerritoriesReinforced == NOfTerritoriesThreatened,
+    NOfTerritoriesThreatened != 0.
 
-%nuovo continent info
+%ausiliare per regola successiva
+name_threatened_reinforce_complete(Continent) :- 
+    threatened_reinforced_complete(Continent,_).
+
+%peso calcolato su quanti continenti sono totalmente rinforzati(preferendo in base al rank),
+%e su ogni territorio threatened_border rinforzato(in questo caso preferisco territori in difficoltà)
+reinforce_border_weight(Sum) :-
+    #sum{Rank,Continent : threatened_reinforced_complete(Continent,Rank)} = PartialSum,
+    #sum{TroopsDiff,Territory : threatened_reinforced(Territory,Continent,TroopsDiff), not name_threatened_reinforce_complete(Continent)} = OtherPartialSum,
+    Sum = PartialSum + OtherPartialSum.
+
+
 continent_info(Continent,NumberOfTotalTerr,TroopsBonus, ConqRatio) :- 
     curr_turn(Turn,Player),
     continent(Continent,TroopsBonus), 
@@ -120,83 +140,64 @@ continent_info(Continent,NumberOfTotalTerr,TroopsBonus, ConqRatio) :-
     conquered_territories_for_continent(Continent,NumOfConqueredTerritories),
     ConqRatio = NumOfConqueredTerritories*100 / NumberOfTotalTerr.
 
-% predicato ausiliario per vincolo debole
-aux_threatened_border(Territory) :- 
-    threatened_border(Territory,_,_).
 
-% ogni volta che si rinforza un territorio non minacciato
-reinforced_territory_not_threatened(Territory,Troops) :- 
-    draft(_,Territory,Troops),
-    not aux_threatened_border(Territory).
-
-% regola ausiliaria per vincolo debole
-reinforced_territory(Territory) :- 
-    draft(_,Territory,_).
-
-%territorio che è in un continente del quale si possiede almeno il 50%,
-%che è connesso ad uno nemico è con il quale la differenza di truppe
-%è di almeno una unità
-fighting_territory(PlayerTerritory,OpponentTerritory,Continent,TroopsDiff) :- 
-    curr_turn(Turn,Player),
-    territory_and_continent(PlayerTerritory,Continent,Player),
-    attempt_continent_conquest(Continent),
-    territory_and_continent(OpponentTerritory,Continent,OpponentPlayer),
-    connection(PlayerTerritory,OpponentTerritory),
-    Player != OpponentPlayer,
-    threatened_territory(PlayerTerritory,OpponentTerritory,TroopsDiff).
-
-%Calcolo dei due continenti più promettenti
-%calcolo dei territori più promettenti
-%Minimizza il numero di truppe non posizionate sui territori più promettenti dei continenti più promettenti 
+%calcolo dei territori più promettenti in base alla percentuale di conquista e al bonus per bordo di un continente
 continent_rank(Continent,Rank) :- 
     continent_info(Continent,_,TroopsBonus,Rateo),
     bonus_per_border(Continent,BonusPerBorder),
     Rank = Rateo * BonusPerBorder, 
     not controlled_continent(Continent).
 
-max_promising_rank(MaxRank) :- 
-    #max{Rank,Continent : continent_rank(Continent,Rank)} = MaxRank.
+%utilizzato nel calcolo dei pesi
+mini_continent_rank(Continent,NewRank) :- 
+    continent_rank(Continent,Rank),
+    NewRank = Rank / 100.
 
 promising_continent(Continent) :- 
-    continent_rank(Continent,MaxRank),
-    max_promising_rank(MaxRank).
+    continent_rank(Continent,_).
 
-fighting_territory_in_promising(Territory,Opponent,Continent,TroopsDiff) :- 
-    fighting_territory(Territory,Opponent,Continent,TroopsDiff), 
-    promising_continent(Continent).
 
-fighting_reinforced(Territory) :- 
+fighting_territory(Territory,OppTerritory,Continent,TroopsDiff) :-
     curr_turn(Turn,Player),
-    fighting_territory_in_promising(Territory,Opponent,Continent,TroopsDiff),
+    promising_continent(Continent),
+    territory_control(Turn,Territory,Player,Troops),
+    territory_and_continent(Territory,Continent,Player),
+    connection(Territory,OppTerritory),
+    territory_control(Turn,OppTerritory,OppPlayer,OppTroops),
+    territory_and_continent(OppTerritory,Continent,OppPlayer),
+    Player != OppPlayer,
+    Territory != OppTerritory,
+    TroopsDiff = OppTroops - Troops,
+    TroopsDiff >= -1.
+
+%territorio fighting rinforzato
+fighting_reinforced(Territory,Continent) :- 
+    curr_turn(Turn,Player),
+    fighting_territory(Territory,OppTerritory,Continent,TroopsDiff),
     draft(Turn,Territory,TroopsReinf),
-    TroopsReinf = TroopsDiff + 2.
+    TroopsReinf < 4,
+    TroopsReinf > 1.
 
-%Truppe in eccesso rispetto a quanto chiedo nei weak
-plus_troops_from_draft:- 
-    fighting_territory_in_promising(Territory,Opponent,Continent,TroopsDiff), 
-    fighting_reinforced(Territory).
-
-second_max_promising_rank(MaxRank) :-
-    plus_troops_from_draft,
-    #max{Rank,Continent : continent_rank(Continent,Rank), not promising_continent(Continent)} = MaxRank.
-
-second_promising_continent(Continent) :- 
+%un continente completamente rinfornzato
+fighting_reinforce_completed(Continent,Rank) :-  
+    promising_continent(Continent),
     continent_rank(Continent,Rank),
-    second_max_promising_rank(Rank).
+    #count{Territory : fighting_reinforced(Territory,Continent)} = NOfTerritoryReinforced,
+    #count{Territory : fighting_territory(Territory,OppTerritory,Continent,TroopsDiff)} = NOfFightingTerritory,
+    NOfTerritoryReinforced == NOfFightingTerritory,
+    NOfFightingTerritory != 0.
 
-second_fighting_territory_in_promising(Territory,Opponent,Continent,TroopsDiff) :- 
-    fighting_territory(Territory,Opponent,Continent,TroopsDiff), 
-    second_promising_continent(Continent).
-    
+%ausiliare per il predicato succesivo
+name_fighting_reinforce_completed(Continent) :-
+    fighting_reinforce_completed(Continent,_).
+
+%peso calcolato su quanti continenti promettenti sono completamente rinforzati(dando priorità a quelli con rank maggiore),
+%e su quanti territori fighting sono rinforzati(dando priorità a quelli con il mini rank maggiore)
+reinforce_fighting_weight(Sum) :-  
+    #sum{Rank,Continent : fighting_reinforce_completed(Continent,Rank)} = PartialSum,
+    #sum{Rank : fighting_reinforced(Territory,Continent), not name_fighting_reinforce_completed(Continent), mini_continent_rank(Continent,Rank)} = OtherPartialSum,
+    Sum = PartialSum + OtherPartialSum.
+
 %====WEAK CONSTRAINS========
-%Minimizza il numero di territori bordi minacciati
-:~ aux_threatened_border(Territory), not reinforced_territory(Territory). [1@2,Territory]
-%Minimizza il numero di truppe posizionate su un territorio non threatened fino a quando non le hai rinforzate tutte
-:~ reinforced_territory_not_threatened(Territory,Troops), not all_threatened_reinforced, at_least_one_threat. [Troops@3,Territory,Troops]
-
-%Dato un continente occupato almeno a metà, voglio
-%minimizzare il numero di territori che sono in quel continente, sono confinanti con territori nemici,
-%hanno una differenza di truppe maggiore di zero(svantaggio) e non sono rinforzati
-:~ fighting_territory_in_promising(Territory,Opponent,Continent,TroopsDiff), not fighting_reinforced(Territory). [1@2,Territory,Continent,TroopsDiff,Opponent]
-
-:~ second_fighting_territory_in_promising(Territory,Opponent,Continent,TroopsDiff), not reinforced_territory(Territory). [1@1,Territory,Continent,TroopsDiff,Opponent]
+:~ reinforce_border_weight(Sum). [1000-Sum@2]
+:~ reinforce_fighting_weight(Sum). [10000-Sum@1]

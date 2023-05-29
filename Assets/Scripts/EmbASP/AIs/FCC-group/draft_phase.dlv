@@ -2,9 +2,11 @@
 %                           DRAFT PHASE
 % ====================================================================
 
+%% && ALL THE WEIGHTS AND RANGES ARE BASED AND OPTIMIZED RELYNG ON MANY EMPIRICAL TESTS
 
-
-
+% ###############################################################################
+% ## This part keeps in consideration the troops earned from a card exchanging ##
+% ###############################################################################
 
 troops_from_cards(T,Player,Troops):-
     possible_card_exchange(T, Player, ExchangeId, _, _, _, _, Troops),
@@ -19,6 +21,14 @@ troops_to_place_with_cards(T, Player, MaxTroops):-
     troops_to_place(T, Player, Troops),
     troops_from_cards(T,Player,Card_Troops),
     MaxTroops = Troops + Card_Troops.
+
+% =====================================================================
+
+% ##############################################################################
+% ## Calculation of the upper bound of troops to place on a single territory, ##
+% ## based of various range of troops, adjusted through empirical tests.      ##
+% ##############################################################################
+
 troops(0).
 troops(Troops) :- 
     troops_to_place_with_cards(T, Player, MaxTroops),
@@ -57,8 +67,17 @@ troops(Troops) :-
     Count <= 4,
     Troops=Troops1+1, 
     Troops<=MaxTroops.
+% ==============================================================================
 
+% #### Case when there are no troops to place, 99% you are loosing the game... :-(
 end_draft_phase(T,Player):- troops_to_place_with_cards(T, Player, MaxTroops), MaxTroops = 0.
+
+% ==============================================================================
+
+% ##############################################################################
+% ## Calculation of the lower bound of troops to place on a single territory, ##
+% ## based of various range of troops, adjusted through empirical tests.      ##
+% ##############################################################################
 
 min_troops_to_place(T, Player, MinTroops) :- 
     troops_to_place_with_cards(T, Player, MaxTroops),
@@ -82,7 +101,13 @@ min_troops_to_place(T, Player, MinTroops) :-
     MaxTroops >=20,
     #min{Count : fronteer_territory_count(T, Player, Count); V: max_places_count(MTTPD), V = MTTPD-2} = Div,
     MinTroops = MaxTroops / Div.
+% =======================================================================================================
 
+% ################################################################################################
+% ## Guess of the troops to place, for optimization we only consider the fronteer* territories. ##
+% ################################################################################################
+
+% ## *fronteer territory: is a territory that is connected with at least an enemy territory
 
 { place(T, Player, Territory, Troops) } <= 1 :- 
     fronteer_territory(T, Territory, Player),
@@ -92,6 +117,7 @@ min_troops_to_place(T, Player, MinTroops) :-
     Troops >= MinTroops,
     Troops > 0.
 
+% #### Strong constraints for checking the basic rules of the game
 :- place(T, P, Territory, N1), place(T, P, Territory, N2), N1!=N2.
 
 
@@ -101,19 +127,12 @@ placed_troops(T, Player, Troops) :-
 
 :- troops_to_place_with_cards(T,P,Troops), not placed_troops(T, P, Troops).
 
-% must_place(T, Player, Territory):-
-%     curr_turn(T, Player),
-%     territory(Territory, Continent),
-%     territory(Territory1, Continent),
-%     player_missing_territories_in_continent(T, Player, Continent, Missing),
-%     Missing <= 2,
-%     territory_control(T,Territory,Player,Troops),
-%     territory_control(T,Territory1,PlayerEnemy,TroopsEnemy),
-%     PlayerEnemy != Player,
-%     connection(Territory, Territory1),
-%     battle_chance(Troops-1, TroopsEnemy, WinChance, _),
-%     WinChance <= 600.
+% ==================================================================================
 
+% ############################################################################################
+% ## When we miss up to two territories for the conquer of a continent we want to reinforce ##
+% ## those territories that can attack the enemy in order to conquer the continent.         ##
+% ############################################################################################
 must_place(T, Player, Continent):-
     curr_turn(T, Player),
     territory(Territory, Continent),
@@ -135,18 +154,9 @@ territories_to_reinforce(T,Player, N) :-
     curr_turn(T,Player), 
     #count{Continent : must_place(T,Player,Continent)} = N.
 
-
-% placed_in_territory(T, Player, N) :- 
-%     curr_turn(T,Player), 
-%     #count{Territory : place(T, Player, Territory, _), must_place(T,Player,Territory)} = N.
-
-% territories_to_reinforce(T,Player, N) :- 
-%     curr_turn(T,Player), 
-%     #count{Territory : must_place(T,Player,Territory)} = N.
-
-
+% ## minimum number of territories to reinforce following the aforementioned strategy,
+% ## this number is based on various ranges of troops we can place.
 :- must_place(T,Player,_),
-
     not end_draft_phase(T,Player),
     placed_in_territory(T, Player, TerritoryCount),
     troops_to_place_with_cards(T, Player, MaxTroops),
@@ -189,9 +199,21 @@ territories_to_reinforce(T,Player, N) :-
     #min{N : territories_to_reinforce(T,Player, N); 
         Val: max_places_count(MTTPD), Val = MTTPD - 2} > TerritoryCount.
 
+% ## We want to minimize the number of territories on which the troops will be split.
+:~ place(T, Player, Territory1, _),
+    place(T, Player, Territory2, _),
+    Territory1 != Territory2,
+    connection(Territory1 , Territory3),
+    connection(Territory2 , Territory3),
+    other_player_territory(T, Territory3, _, _).
+    [113@3, Territory1, Territory2]
 
+% ========================================================================================
 
-
+% ##############################################################################
+% ## Index that indicates how muchn a territory is in danger, considering     ##
+% ## all the territories that can directly attack it.                         ##
+% ##############################################################################
 territory_welfare_index(T, Territory, Index, Order) :- 
     territory_control(T, Territory, Player, Troops),
     fronteer_territory(T, Territory, Player), 
@@ -200,7 +222,8 @@ territory_welfare_index(T, Territory, Index, Order) :-
     Index = Troops - Enemies,
     Order = Troops.
 
-%
+% ## projections of the improvement of the just calculated index when placing troops.
+% ## Again, we have different cases, so we give a weight to the various scenario
 territory_welfare_index_projection(T, Territory, Value) :- 
     territory_welfare_index(T, Territory, Index, Order),
     territory_index_weak_weight(W), 
@@ -239,22 +262,7 @@ territory_welfare_index_projection(T, Territory, Value) :-
     Value = (Index + Troops) * W * (Index).
 
 
-
-:~ place(T, Player, Territory1, _),
-    place(T, Player, Territory2, _),
-    Territory1 != Territory2,
-    connection(Territory1 , Territory3),
-    connection(Territory2 , Territory3),
-    other_player_territory(T, Territory3, _, _).
-    [113@3, Territory1, Territory2]
-% island_welfare_index(T, Id, Index) :- 
-%     curr_turn(T, Player), 
-%     island_id(T, Id, Player),
-%     #sum{Value, Territory : territory_welfare_index_projection(T, Territory, Value)} = Index.
-
-
-% :~ island_welfare_index(T, Id, Index), Val = -Index. [Val@3, Id]
-
+% ## Improving the global welfare of the territories.
 :~ territory_welfare_index_projection(T, Territory, Value). [Value@3, Territory]
 % ==================== AI DESIGN CONSTRAINTS ====================
 
@@ -263,41 +271,21 @@ territory_welfare_index_projection(T, Territory, Value) :-
 
 
 % ----------- MAX PRIORITY -----------
+% #############################################################################################
+% ## Place troops preferring most valutable island*, we want to prioritize the reinforcement ##
+% ## on the most valuable islands.                                                           ##
+% #############################################################################################
+% ## *Island: a group of adjacent territories of the same player with an own value
+% ##          calculated in the common logic file.
 
-%place troops preferring most valutable island
 :~ place(T, Player, Territory, Troops), 
     territory_island(T, Id, Territory, Player),
     island_value_index(T, Id, Player, ValueIndex),
     Val = ValueIndex * 17.
     [Val@3, Territory]
 
-
+%% Offset due to EmbASP unsupported features...
 :~ true. [100000@3]
-% ----------- MID PRIORITY -----------
 
-
-
-% prioritize territories where the difference between friendly and enemy troops is greater
-% :~ place(T, Player, Territory, Troops), 
-%    difference_troops_territory(T, Territory, PlayerOwner, Diff),
-%    Cost = Diff + 100.
-%    [Cost@2, Territory]
-
-
-% :-  curr_turn(T, Player),
-%     Count = #count{Territory : place(T, Player, Territory, _)}, Count > 7.
-
-
-% massimizzare il numero di territori diversi in cui si fa draft
-
-% :~ troops_to_place_with_cards(T, Player, MaxPlacesCount), 
-%      drafts_count(T, Player, PlacesCount),
-%      Cost = (MaxPlacesCount - PlacesCount) * 150.
-%      [Cost@2, Cost]
-
-
-
+% ## Predicate passed to Unity
 draft(T, Territory, N) :- place(T, _, Territory, N).
-
-% 1. isola
-% 2. n_truppe + frontiera

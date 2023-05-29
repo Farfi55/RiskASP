@@ -232,7 +232,6 @@ territory_welfare_index_projection(T, Territory, Value) :-
     Index + Troops > 6 * (Order/10), 
     Value = (Index + Troops) * W * (Index).
 
-
 territory_welfare_index_projection(T, Territory, Value) :- 
     territory_welfare_index(T, Territory, Index, Order),
     territory_index_strong_weight(W), 
@@ -241,8 +240,6 @@ territory_welfare_index_projection(T, Territory, Value) :-
     Index + Troops > 3 * (Order/10),
     Index + Troops < 7 * (Order/10), 
     Value = (Index + Troops) * W * (Index).
-
-
 
 territory_welfare_index_projection(T, Territory, Value) :- 
     territory_welfare_index(T, Territory, Index, Order),

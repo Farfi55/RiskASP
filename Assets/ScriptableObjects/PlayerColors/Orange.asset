@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: feb182a9a4514fb4b2037d20a24a640e, type: 3}
   m_Name: Orange
   m_EditorClassIdentifier: 
-  Disabled: {r: 0.4666527, g: 0.4716981, b: 0.11347453, a: 1}
-  Normal: {r: 0.8075817, g: 0.81960785, b: 0.09803922, a: 1}
-  Highlight: {r: 0.8947072, g: 0.9056604, b: 0.2776789, a: 1}
-  Selected: {r: 0.9972231, g: 1, b: 0.6556604, a: 1}
+  Disabled: {r: 0.50980395, g: 0.28573117, b: 0.09411765, a: 1}
+  Normal: {r: 0.8, g: 0.43120515, b: 0.0039215568, a: 1}
+  Highlight: {r: 0.9254902, g: 0.5401763, b: 0.18039215, a: 1}
+  Selected: {r: 0.9433962, g: 0.594647, b: 0.32484868, a: 1}

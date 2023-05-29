@@ -20,11 +20,11 @@ namespace UI
         
         private void Awake()
         {
-            _startGameButton.interactable = PlayerCount >= 2;
-            _startGameButton.onClick.AddListener(StartGame);
-            
             _startingPlayersConfiguration.PlayersConfiguration.Clear();
             
+            _startGameButton.interactable = PlayerCount >= 2;
+            _startGameButton.onClick.AddListener(StartGame);
+
             foreach (var uiPlayerCreationSlot in _slots)
             {
                 uiPlayerCreationSlot.OnPlayerAdded += OnPlayerAdded;

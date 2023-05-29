@@ -8,7 +8,8 @@ public class ActionReader : MonoBehaviour
 {
     public static ActionReader Instance { get; private set; }
 
-    [SerializeField][Range(0f,5f)] private float _botActionDelay = 0.5f;
+    [SerializeField] public bool Paused = false;
+    [SerializeField][Range(0f,5f)] public float BotActionDelay = 0.5f;
     private float _remainingActionDelay = 0f;
     
     private Queue<PlayerAction> _actions = new();
@@ -33,6 +34,9 @@ public class ActionReader : MonoBehaviour
 
     private void Update()
     {
+        if(Paused) 
+            return;
+        
         _remainingActionDelay -= Time.deltaTime;
         
         while (_actions.Count > 0 && _remainingActionDelay < 0f)
@@ -40,7 +44,7 @@ public class ActionReader : MonoBehaviour
             var action = _actions.Dequeue();
             GameManager.Instance.HandlePlayerAction(action);
             if(action.Player.IsBot())
-                _remainingActionDelay = _botActionDelay;
+                _remainingActionDelay = BotActionDelay;
         }
     }
 }

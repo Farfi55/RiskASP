@@ -203,4 +203,4 @@ reinforce_fighting_weight(Sum) :-
 :~ reinforce_fighting_weight(Sum). [10000-Sum@1]
 
 
-:~ true. [1@1000]
+% :~ true. [1@1000]

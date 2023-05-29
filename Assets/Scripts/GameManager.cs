@@ -160,7 +160,7 @@ public class GameManager : MonoBehaviour
     {
         _playerQueue = new Queue<Player>();
 
-        var playerOrder = Enumerable.Range(0, NPlayers).ToList();
+        var playerOrder = Enumerable.Range(0, Players.Count).ToList();
         playerOrder.Shuffle();
         foreach (var i in playerOrder)
             _playerQueue.Enqueue(Players[i]);
@@ -172,7 +172,7 @@ public class GameManager : MonoBehaviour
 
         foreach (var player in Players)
         {
-            int troopsPerPlayer = troopsPerNumberOfPlayer[NPlayers];
+            int troopsPerPlayer = troopsPerNumberOfPlayer[Players.Count];
             player.ClearTroops();
             troopsPerPlayer = player.DistributeNTroopsPerTerritory(1, troopsPerPlayer);
             player.RandomlyDistributeTroops(troopsPerPlayer);

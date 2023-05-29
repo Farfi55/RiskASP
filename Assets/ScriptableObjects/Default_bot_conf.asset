@@ -13,9 +13,13 @@ MonoBehaviour:
   m_Name: Default_bot_conf
   m_EditorClassIdentifier: 
   _name: default (stupid ai)
+  _aspSolver: 1
   _commonBrainsPaths:
-  - Assets/Scripts/EmbASP/AIs/constants.dlv
-  _reinforceBrainPath: Assets/Scripts/EmbASP/AIs/draft_phase_template.dlv
-  _attackBrainPath: Assets/Scripts/EmbASP/AIs/attack_phase_template.dlv
-  _fortifyBrainPath: Assets/Scripts/EmbASP/AIs/fortify_phase_template.dlv
+  - Assets/Scripts/EmbASP/AIs/dumb/constants.dlv
+  _draftBrainsPaths:
+  - Assets/Scripts/EmbASP/AIs/dumb/draft_phase_template.dlv
+  _attackBrainsPaths:
+  - Assets/Scripts/EmbASP/AIs/dumb/attack_phase_template.dlv
+  _fortifyBrainsPaths:
+  - Assets/Scripts/EmbASP/AIs/dumb/fortify_phase_template.dlv
   _useOptimalAnswerSet: 0

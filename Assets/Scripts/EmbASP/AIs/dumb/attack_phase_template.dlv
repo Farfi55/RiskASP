@@ -2,27 +2,27 @@
 %                           ATTACK PHASE
 % ====================================================================
 
-%% Quanto è utile attaccare un territorio?
-%%%% -- quanto miglioro la mia situazione? (Si considera un caso di successo per fare delle proiezioni)
-%%%% -- quanto peggioro la sua?
-%%
-%% Quanto è alto il rischio a cui mi espongo attaccando un territorio?
-%%%% -- (consideriamo un caso di fallimento per fare delle proiezioni) 
-%%
-%% Se conquisto il territorio, quante truppe dovrei mettere su quest'ultimo affinché sia sicuro?
-%%
-%% $$HARD$$ stabilire un obiettivo (un paese preciso da conquistare, piuttosto che far perdere un bonus continente ad esempio) e fare gli attacchi in modo tale da avvicinarsi il più possibile.
-%%
-
 curr_attack_turn(T, AT, P) :- curr_turn(T,P), AT = #max{AT1 : attack_turn(T, AT1, P) }.
 
 
-% player_action(T, AT, attack(T, AT, From, To, Troops)) :- attack(T, AT, From, To, Troops).
-% player_action(T, AT, attack_reinforce(T, AT, From, To, Troops)) :- attack_reinforce(T, AT, From, To, Troops).
-% player_action(T, AT, end_attack(T, AT)) :- end_attack(T, AT).
+curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
 
-% % max 1 action per turn
-% :- player_action(T,AT,ACTION1), player_action(T,AT,ACTION2), ACTION1 != ACTION2.
+
+% current player, the one that is playing and making decisions
+curr_player(P) :- curr_turn(_, P).
+
+% all other players, can be viewed as the opponents
+other_player(P) :- player(P), curr_player(CP), P != CP.
+
+
+
+curr_player_territory(T, Territory, Troops) :- 
+    territory_control(T, Territory, Player, Troops), 
+    curr_turn(T, Player).
+
+other_player_territory(T, Territory, Player, Troops) :- 
+    territory_control(T, Territory, Player, Troops), 
+    curr_turn(T, Player1), Player != Player1.
 
 
 % ====================================================================

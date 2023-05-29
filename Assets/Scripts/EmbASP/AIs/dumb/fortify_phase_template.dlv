@@ -21,3 +21,13 @@ fortify(T, From, To, Troops) | not_fortify(T,From,To,Troops) :-
 :- fortify(_,From,To,Troops), fortify(_,From,To,Troops2), Troops != Troops2.
 
 :- fortify(_, From, _, Troops), territory_control(_,From,_,Troops).
+
+
+has_fortified(T, Player) :- curr_turn(T, Player), fortify(T, _, _, _).
+end_fortify(T) :- curr_turn(T, Player), not has_fortified(T, Player).
+
+
+% #show fortify_troops/5.
+#show fortify/4.
+#show end_fortify/1.
+

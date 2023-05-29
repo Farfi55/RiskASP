@@ -201,3 +201,6 @@ reinforce_fighting_weight(Sum) :-
 %====WEAK CONSTRAINS========
 :~ reinforce_border_weight(Sum). [1000-Sum@2]
 :~ reinforce_fighting_weight(Sum). [10000-Sum@1]
+
+
+:~ true. [1@1000]

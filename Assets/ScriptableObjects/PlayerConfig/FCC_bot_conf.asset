@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2f7fb0d47ef4a5f9eebec06b51c1a9a, type: 3}
+  m_Name: FCC_bot_conf
+  m_EditorClassIdentifier: 
+  _name: FCC BOT
+  _aspSolver: 0
+  _commonBrainsPaths:
+  - Assets/Scripts/EmbASP/AIs/FCC-group/constants.dlv
+  - Assets/Scripts/EmbASP/AIs/FCC-group/common_logic.dlv
+  - Assets/Scripts/EmbASP/AIs/FCC-group/battle_chances_90vs70.dlv
+  _draftBrainsPaths:
+  - Assets/Scripts/EmbASP/AIs/FCC-group/draft_phase.dlv
+  - Assets/Scripts/EmbASP/AIs/FCC-group/card_phase.dlv
+  _attackBrainsPaths:
+  - Assets/Scripts/EmbASP/AIs/FCC-group/attack_phase.dlv
+  _fortifyBrainsPaths:
+  - Assets/Scripts/EmbASP/AIs/FCC-group/fortify_phase.dlv
+  _useOptimalAnswerSet: 1

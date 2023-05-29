@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ac91611355744a2bc977d71dca3018a, type: 3}
+  m_Name: StartingPlayersConfiguration
+  m_EditorClassIdentifier: 
+  PlayersConfiguration:
+  - _playerConfiguration: {fileID: 11400000, guid: 52db439aef6df01fab8268ebd802ed16, type: 2}
+    _playerName: Player 1
+    _playerColor: {fileID: 11400000, guid: 93992ebf17158f92bab2b49d11fa39d5, type: 2}
+  - _playerConfiguration: {fileID: 11400000, guid: 9c1e0697c9c614d3dadc6231b4715dff, type: 2}
+    _playerName: Player 2
+    _playerColor: {fileID: 11400000, guid: 838fc262253afc0cebc4f03693468712, type: 2}
+  - _playerConfiguration: {fileID: 11400000, guid: 52db439aef6df01fab8268ebd802ed16, type: 2}
+    _playerName: Player 3
+    _playerColor: {fileID: 11400000, guid: 9e2a4f97665cb68cabc0e0e4a6a329ee, type: 2}
+  - _playerConfiguration: {fileID: 11400000, guid: 9c1e0697c9c614d3dadc6231b4715dff, type: 2}
+    _playerName: Player 4
+    _playerColor: {fileID: 11400000, guid: 31501e87779cfb6ec835211c1a570318, type: 2}

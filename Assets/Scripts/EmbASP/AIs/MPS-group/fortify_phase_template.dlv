@@ -186,6 +186,13 @@ most_threatened_territory(Turn,Territory,OpponentTerritory,Troops) :-
     not fortify(Turn,NeighbourTerritory,AdiacentTerritory,AvailableTroops). [AvailableTroops@1, NeighbourTerritory,AdiacentTerritory]
 
 
+
+has_fortified(T, Player) :- curr_turn(T, Player), fortify(T, _, _, _).
+end_fortify(T) :- curr_turn(T, Player), not has_fortified(T, Player).
+
+
+
+
 % SHOW
 %#show weak_enemy_territory/3.
 %#show controlled_continent/2.

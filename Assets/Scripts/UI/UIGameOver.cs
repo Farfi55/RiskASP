@@ -2,7 +2,6 @@ using System;
 using player;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace UI
@@ -13,14 +12,12 @@ namespace UI
         
         [SerializeField] private Image _backgroundTintImage;
         [SerializeField] private TMP_Text _gameOverInfoText;
-        [SerializeField] private Button _mainMenuButton;
 
         private void Awake()
         {
             
             _gameManager = GameManager.Instance;
             _gameManager.OnGamePhaseChanged += OnGamePhaseChanged;
-            _mainMenuButton.onClick.AddListener(OnMainMenuButtonClicked);
             gameObject.SetActive(false);
         }
 
@@ -48,11 +45,6 @@ namespace UI
             _backgroundTintImage.gameObject.SetActive(true);
             
             gameObject.SetActive(true);
-        }
-        
-        private void OnMainMenuButtonClicked()
-        {
-            SceneManager.LoadScene("Menu");
         }
     }
 }

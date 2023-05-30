@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using player;
-using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -161,60 +159,60 @@ namespace Map
         }
 
 
-        [MenuItem("CONTEXT/Territory/Auto Setup")]
-        static void AutoSetup(MenuCommand command)
-        {
-            Territory territory = (Territory)command.context;
-            territory.Name = territory.gameObject.name;
-            territory.Continent = territory.transform.parent.GetComponent<Continent>();
-
-            // load sprite from name
-            var spriteRenderer = territory.GetComponent<SpriteRenderer>();
-            if (spriteRenderer == null)
-                spriteRenderer = territory.gameObject.GetComponentInChildren<SpriteRenderer>();
-            if (spriteRenderer != null)
-            {
-                string continentName = territory.Continent.Name;
-                string spritePath = $"Assets/Sprites/territories/cropped/{continentName}/{territory.Name}.png";
-                // string spritePath = $"Assets/Sprites/territories/cropped/n_america/alaska.png";
-                var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(spritePath);
-                if (sprite) 
-                    spriteRenderer.sprite = sprite;
-                else 
-                    Debug.LogWarning($"Could not find sprite at {spritePath}");
-            }
-
-            PrefabUtility.RecordPrefabInstancePropertyModifications(territory);
-            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
-            EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
-        }
-
-        [MenuItem("CONTEXT/Territory/remove duplicated neighbours")]
-        static void RemoveDuplicatedNeighbours(MenuCommand command)
-        {
-            Territory territory = (Territory)command.context;
-            territory.NeighbourTerritories = territory.NeighbourTerritories.Distinct().ToList();
-            PrefabUtility.RecordPrefabInstancePropertyModifications(territory);
-            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
-            EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
-        }
-
-        [MenuItem("CONTEXT/Territory/add territory to neighbours")]
-        static void AddTerritoryToNeighbours(MenuCommand command)
-        {
-            Territory territory = (Territory)command.context;
-            foreach (var neighbourTerritory in territory.NeighbourTerritories)
-            {
-                if (!neighbourTerritory.NeighbourTerritories.Contains(territory))
-                {
-                    neighbourTerritory.NeighbourTerritories.Add(territory);
-                    PrefabUtility.RecordPrefabInstancePropertyModifications(neighbourTerritory);
-                }
-            }
-
-            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
-            EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
-        }
+        // [MenuItem("CONTEXT/Territory/Auto Setup")]
+        // static void AutoSetup(MenuCommand command)
+        // {
+        //     Territory territory = (Territory)command.context;
+        //     territory.Name = territory.gameObject.name;
+        //     territory.Continent = territory.transform.parent.GetComponent<Continent>();
+        //
+        //     // load sprite from name
+        //     var spriteRenderer = territory.GetComponent<SpriteRenderer>();
+        //     if (spriteRenderer == null)
+        //         spriteRenderer = territory.gameObject.GetComponentInChildren<SpriteRenderer>();
+        //     if (spriteRenderer != null)
+        //     {
+        //         string continentName = territory.Continent.Name;
+        //         string spritePath = $"Assets/Sprites/territories/cropped/{continentName}/{territory.Name}.png";
+        //         // string spritePath = $"Assets/Sprites/territories/cropped/n_america/alaska.png";
+        //         var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(spritePath);
+        //         if (sprite) 
+        //             spriteRenderer.sprite = sprite;
+        //         else 
+        //             Debug.LogWarning($"Could not find sprite at {spritePath}");
+        //     }
+        //
+        //     PrefabUtility.RecordPrefabInstancePropertyModifications(territory);
+        //     EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+        //     EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
+        // }
+        //
+        // [MenuItem("CONTEXT/Territory/remove duplicated neighbours")]
+        // static void RemoveDuplicatedNeighbours(MenuCommand command)
+        // {
+        //     Territory territory = (Territory)command.context;
+        //     territory.NeighbourTerritories = territory.NeighbourTerritories.Distinct().ToList();
+        //     PrefabUtility.RecordPrefabInstancePropertyModifications(territory);
+        //     EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+        //     EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
+        // }
+        //
+        // [MenuItem("CONTEXT/Territory/add territory to neighbours")]
+        // static void AddTerritoryToNeighbours(MenuCommand command)
+        // {
+        //     Territory territory = (Territory)command.context;
+        //     foreach (var neighbourTerritory in territory.NeighbourTerritories)
+        //     {
+        //         if (!neighbourTerritory.NeighbourTerritories.Contains(territory))
+        //         {
+        //             neighbourTerritory.NeighbourTerritories.Add(territory);
+        //             PrefabUtility.RecordPrefabInstancePropertyModifications(neighbourTerritory);
+        //         }
+        //     }
+        //
+        //     EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+        //     EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
+        // }
 
 
         private void OnDrawGizmosSelected()

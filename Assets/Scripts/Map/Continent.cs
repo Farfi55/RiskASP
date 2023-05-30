@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using player;
-using UnityEditor;
 using UnityEngine;
 
 namespace Map
@@ -52,20 +51,20 @@ namespace Map
         }
 
 
-
-        [MenuItem("CONTEXT/Continent/load child territories")]
-        static void DoubleMass(MenuCommand command)
-        {
-            Continent continent = (Continent)command.context;
-            continent.Territories = new ();
-            foreach (Transform child in continent.transform)
-            {
-                continent.Territories.Add(child.GetComponent<Territory>());
-            }
-            // not needed as Continent is not a prefab
-            // PrefabUtility.RecordPrefabInstancePropertyModifications(continent);
-        
-        }
+        //
+        // [MenuItem("CONTEXT/Continent/load child territories")]
+        // static void DoubleMass(MenuCommand command)
+        // {
+        //     Continent continent = (Continent)command.context;
+        //     continent.Territories = new ();
+        //     foreach (Transform child in continent.transform)
+        //     {
+        //         continent.Territories.Add(child.GetComponent<Territory>());
+        //     }
+        //     // not needed as Continent is not a prefab
+        //     // PrefabUtility.RecordPrefabInstancePropertyModifications(continent);
+        //
+        // }
 
     }
 }

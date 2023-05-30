@@ -1,6 +1,5 @@
 using System;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Map
@@ -35,7 +34,9 @@ namespace Map
         private void UpdateAlpha()
         {
             var a = Math.Clamp(_remainingTimeToDisappear, 0f, _fadeOutTime) / _fadeOutTime;
-            _spriteRenderer.color = _spriteRenderer.color.WithAlpha(a);
+            var srColor = _spriteRenderer.color;
+            var color = new Color(srColor.r, srColor.g, srColor.b, a);
+            _spriteRenderer.color = color;
             _troopsCountText.alpha = a;
         }
 

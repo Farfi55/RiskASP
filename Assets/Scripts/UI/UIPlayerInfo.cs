@@ -18,7 +18,8 @@ namespace UI
         [SerializeField] private RectTransform _backgroundRectTransform;
         [SerializeField] private Image _backgroundImage;
         [SerializeField] private float _backgroundOffsetOnCurrentPlayer = 20f;
-
+        private float _backgroundStartOffset;
+        
         private Color _defaultBackgroundColor;
         [SerializeField] private Color _currentPlayerBackgroundColor;
         
@@ -45,6 +46,8 @@ namespace UI
             _player.OnCardsChanged += UpdateCardsData;
             _player.OnEliminated += (_) => _colorImage.color = _player.Color.Disabled;
 
+            _backgroundStartOffset = _backgroundRectTransform.anchoredPosition.x;
+            
             var gameManager = GameManager.Instance;
            
             OnPlayerTurnChanged(gameManager.CurrentPlayer);
@@ -60,13 +63,15 @@ namespace UI
             if (newPlayer == _player)
             {
                 _colorImage.color = _player.Color.Selected;
-                _backgroundRectTransform.anchoredPosition = Vector2.right * _backgroundOffsetOnCurrentPlayer;
+                var pos = Vector2.right * (_backgroundOffsetOnCurrentPlayer + _backgroundStartOffset);
+                _backgroundRectTransform.anchoredPosition = pos;
                 _backgroundImage.color = _currentPlayerBackgroundColor;
             }
             else
             {
                 _colorImage.color = _player.Color.Normal;
-                _backgroundRectTransform.anchoredPosition = Vector2.zero;
+                var pos = Vector2.right * _backgroundStartOffset;
+                _backgroundRectTransform.anchoredPosition = pos;
                 _backgroundImage.color = _defaultBackgroundColor;
             }
 

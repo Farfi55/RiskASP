@@ -21,7 +21,8 @@ namespace UI
         [SerializeField] private TMP_InputField _playerNameInputField;
         [SerializeField] private TMP_Dropdown _playerColorDropdown;
         [SerializeField] private TMP_Dropdown _playerConfigurationDropdown;
-
+        [SerializeField] private Image _playerColorImage;
+        
         public Action<PlayerCreationConfiguration> OnPlayerAdded;
         public Action<PlayerCreationConfiguration> OnPlayerRemove;
         
@@ -78,6 +79,7 @@ namespace UI
         {
             var playerColor = _uiPlayerCreationManager.PlayerColors[index];
             PlayerCreationConfiguration.PlayerColor = playerColor;
+            _playerColorImage.color = playerColor.Selected;
             OnPlayerCreationConfigurationChanged?.Invoke(PlayerCreationConfiguration);
         }
 

@@ -2,11 +2,15 @@
 
 ## Description
 
-Risk ASP is an implementation of the board game [Risk](https://en.wikipedia.org/wiki/Risk_(game))) using the [Unity Game Engine](https://unity.com/).
+Risk ASP is an implementation of the board game 🎲 [Risk](https://en.wikipedia.org/wiki/Risk_(game))) using the [Unity Game Engine](https://unity.com/).
 
 ### AI
 
 The AI is implemented using [Answer Set Programming](https://en.wikipedia.org/wiki/Answer_set_programming) (ASP) and integrated using the [EmbASP](https://github.com/DeMaCS-UNICAL/EmbASP) framework [for C#](https://github.com/DeMaCS-UNICAL/EmbASP-CSharp/tree/master).
+
+## Play 🎮
+
+You can download and play over <https://farfi55.itch.io/riskasp>, on your favourite OS (Windows, Linux, Mac)
 
 ## Installation
 
@@ -31,7 +35,7 @@ The AI is implemented using [Answer Set Programming](https://en.wikipedia.org/wi
 
 ## How to Play
 
-### Game Rules
+### Game Rules 
 
 The rules of the game are the same as the original game ([Italian Edition](https://en.wikipedia.org/wiki/RisiKo!)), with the following exceptions:
 

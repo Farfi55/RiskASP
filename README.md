@@ -2,7 +2,7 @@
 
 ## Description
 
-Risk ASP is an implementation of the board game 🎲 [Risk](https://en.wikipedia.org/wiki/Risk_(game))) using the [Unity Game Engine](https://unity.com/).
+Risk ASP is an implementation of the board game 🎲 [Risk](https://en.wikipedia.org/wiki/Risk_(game)) using the [Unity Game Engine](https://unity.com/).
 
 ### AI
 

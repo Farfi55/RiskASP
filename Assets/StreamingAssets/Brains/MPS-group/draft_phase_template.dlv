@@ -1,0 +1,233 @@
+%====ADDED CONSTANT===
+%continent_terr(Continente,NumeroDiTerritori).
+continent_terr("n_america",9).
+continent_terr("s_america",4).
+continent_terr("africa",6).
+continent_terr("europe",7).
+continent_terr("asia",12).
+continent_terr("australia",4).
+
+%bonus_per_border(Contienente,Rank).
+% Il rank iniziale è stato dato da (BonusTroops/N di punti di invasione ),
+% successivamente attraverso prove empiriche abbiamo stimato 
+% i rank ottimali utilizzati come costanti
+bonus_per_border("n_america",5).
+bonus_per_border("s_america",5).
+bonus_per_border("europe",3).
+bonus_per_border("africa",4).
+bonus_per_border("australia",4).
+bonus_per_border("asia",3).
+%=====GUESS================
+
+curr_turn(T, P) :- 
+    turn(T,P), 
+    player(P),
+    #max{Turn : turn(Turn,_) } = T. 
+
+%Genera fatti truppa da 1 al massimo numero di truppe posizionabili,
+%usati per la guess
+troops(Z) :- 
+    &int(1,Troops;Z), 
+    troops_to_place_card(T, Player, Troops), 
+    curr_turn(T,Player), Troops>0.
+
+draft(T, Territory, N) | noDraft(T, Territory, N):- 
+    troops_to_place_card(T, Player, _), 
+    territory_control(T, Territory, Player, Troops), 
+    troops(N),
+    curr_turn(T,Player).
+
+%====HARD CONSTRAINS========
+
+%Il numero di truppe piazzate deve essere uguale al numero di truppe disponibili
+:-  #sum{Troops,Territory : draft(T,Territory,Troops)} = TotalTroops, 
+    troops_to_place_card(T,Player,AvailableTroops),curr_turn(T,Player), 
+    TotalTroops != AvailableTroops.
+
+%Non posso rinforzare un territorio con due draft diverse
+:-  draft(T, Territory, N1), 
+    draft(T, Territory, N2),
+    curr_turn(T,_), N1!=N2.
+
+%====CARDS DRAFT========
+
+%Filtra tra le possibili combinazioni (passate da Unity) per prendere solo quelle
+%dove scambi come minimo 6 truppe
+can_exchange(ExchangeId,Troops) :- 
+    curr_turn(T,Player),
+    possible_card_exchange(T, Player, ExchangeId, ExchangeTypeId, Card1, Card2, Card3, Troops),
+    Troops >=6.
+aux_can_exchange :- can_exchange(_,_).
+
+%Calcolo la combinazione di carte che scambia il maggior numero di truppe
+max_exchange_troops(T,Player,MaxTroopsExchangeable) :- 
+    curr_turn(T,Player),
+    #max{Troops,ExchangeId : can_exchange(ExchangeId,Troops)} = MaxTroopsExchangeable.
+
+%Usato per la comunicazione con Unity
+exchange_cards(T,Player,ExchangeId) :- 
+    curr_turn(T,Player),
+    max_exchange_troops(T,Player,MaxTroopsExchangeable),
+    can_exchange(ExchangeId,MaxTroopsExchangeable).
+
+%Se ho scelto di scambiare le carte, aggiorna il numero di truppe utilizzabili...
+troops_to_place_card(T,Player,NewTroops) :- 
+    troops_to_place(T,Player,OldTroops),
+    exchange_cards(T,Player,ExchangeId), 
+    can_exchange(ExchangeId,Troops),
+    NewTroops = OldTroops + Troops.
+
+%...altrimenti lascia il vecchio valore
+troops_to_place_card(T,Player,Troops) :- 
+    troops_to_place(T,Player,Troops),
+    not aux_can_exchange. 
+
+%====SUPPORT RULES=========
+%Tutti i continenti che controllo
+controlled_continent(Continent) :- 
+    curr_turn(Turn,Myself), 
+    continent_info(Continent, NumberOfTotalTerritories,_,_), 
+    #count{OwnedTerritory : territory_control(Turn,OwnedTerritory, Myself, _),territory(OwnedTerritory, Continent)} = NumberOfOwnedTerritories,
+    NumberOfOwnedTerritories == NumberOfTotalTerritories.
+
+%Un territorio che controllo confinante con uno avversario, nel quale il numero di truppe di differenza
+%è almeno uguale
+threatened_territory(PlayerTerritory,OpponentTerritory,TroopsDiff) :-
+    curr_turn(T,Player),
+    territory_control(T,PlayerTerritory,Player,PlayerTroops), 
+    territory_control(T,OpponentTerritory,Opponent,OpponentTroops), 
+    connection(PlayerTerritory,OpponentTerritory),
+    TroopsDiff >=0,
+    TroopsDiff=OpponentTroops-PlayerTroops,
+    Player!=Opponent.
+
+%Un territorio minacciato(di un continente che possiedo) che è anche un territorio confinante con
+%un territorio nemico
+threatened_border(PlayerTerritory,PlayerContinent,OpponentTerritory,TroopsDiff) :-
+    controlled_continent(PlayerContinent),
+    threatened_territory(PlayerTerritory,OpponentTerritory,TroopsDiff),
+    territory(PlayerTerritory,PlayerContinent),
+    territory(OpponentTerritory,OpponentContinent),
+    PlayerContinent<>OpponentContinent.
+
+%Nome e continente di ogni territorio
+territory_and_continent(Territory,Continent,Player) :- 
+    territory_control(Turn,Territory,Player,Troops),
+    territory(Territory, Continent),
+    curr_turn(T,_).
+
+%Numero di territori conquistati per ogni continente
+conquered_territories_for_continent(Continent,Num_Of_Conquered_Territories) :-
+    continent(Continent,_),
+    #count {Territory,Continent : territory_and_continent(Territory,Continent,Player), curr_turn(T,Player)}=Num_Of_Conquered_Territories.
+
+%==========FASE DI DIFESA===========
+
+%Un territorio confinante che è stato rinforzato da una draft
+%E' rinforzato se dopo il rinforzo il territorio è almeno pari o al massimo due truppe "sopra" il 
+%territorio opponente
+threatened_reinforced(Territory,Continent,TroopsDiff) :- 
+    curr_turn(Turn,Player),
+    threatened_border(Territory,Continent,_,TroopsDiff),
+    draft(Turn,Territory,TroopsReinf),
+    TroopsDiff - TroopsReinf < 0,
+    TroopsDiff - TroopsReinf >= -2.
+
+%Rinforzo finito per tutti i territori confinanti minacciati di un continente
+threatened_reinforced_complete(Continent,Rank) :- 
+    bonus_per_border(Continent,Rank),
+    #count{Territory : threatened_reinforced(Territory,Continent,TroopsDiff)} = NOfTerritoriesReinforced,
+    #count{Territory : threatened_border(Territory,Continent,OpponentTerr,TroopsDiff)} = NOfTerritoriesThreatened,
+    NOfTerritoriesReinforced == NOfTerritoriesThreatened,
+    NOfTerritoriesThreatened != 0.
+
+%Predicato ausiliare per regola successiva
+name_threatened_reinforce_complete(Continent) :- 
+    threatened_reinforced_complete(Continent,_).
+
+%Peso sottratto al weak al livello 2,
+%calcolato su quanti continenti sono totalmente rinforzati(preferendo in base alle constanti bonus_per_border),
+%e su ogni territorio threatened_border rinforzato(in questo caso preferisco territori con una differenza di truppe maggiore)
+reinforce_border_weight(Sum) :-
+    #sum{Rank,Continent : threatened_reinforced_complete(Continent,Rank)} = PartialSum,
+    #sum{TroopsDiff,Territory : threatened_reinforced(Territory,Continent,TroopsDiff), not name_threatened_reinforce_complete(Continent)} = OtherPartialSum,
+    Sum = PartialSum + OtherPartialSum.
+
+%==========FASE DI ATTACCO===========
+
+%Informazioni sul continente
+%L'informazione principale è il ConqRatio, che verrà utilizzato nella regola successiva per
+%generare una "classifica" dei continenti
+continent_info(Continent,NumberOfTotalTerr,TroopsBonus, ConqRatio) :- 
+    curr_turn(Turn,Player),
+    continent(Continent,TroopsBonus), 
+    continent_terr(Continent,NumberOfTotalTerr),
+    conquered_territories_for_continent(Continent,NumOfConqueredTerritories),
+    ConqRatio = NumOfConqueredTerritories*100 / NumberOfTotalTerr.
+
+%Genera una "classifica" dei continenti(che non ho conquistato) moltiplicando il ConqRatio con le constanti in bonus_per_border,
+%in questo modo proverò a rinforzare(per un successivo attacco) un continente che è più vantaggioso(e facile)
+%mantenere, a parità di tasso di conquista uguale
+continent_rank(Continent,Rank) :- 
+    continent_info(Continent,_,TroopsBonus,Rateo),
+    bonus_per_border(Continent,BonusPerBorder),
+    Rank = Rateo * BonusPerBorder, 
+    not controlled_continent(Continent).
+
+%Un continent_rank meno "pesante"
+mini_continent_rank(Continent,NewRank) :- 
+    continent_rank(Continent,Rank),
+    NewRank = Rank / 100.
+
+%Ogni territorio che ha al massimo una truppa di differenza con un territorio nemico (in un continente che non possiedo)
+fighting_territory(Territory,OppTerritory,Continent,TroopsDiff) :-
+    curr_turn(Turn,Player),
+    continent_rank(Continent,_),
+    territory_control(Turn,Territory,Player,Troops),
+    territory_and_continent(Territory,Continent,Player),
+    connection(Territory,OppTerritory),
+    territory_control(Turn,OppTerritory,OppPlayer,OppTroops),
+    territory_and_continent(OppTerritory,Continent,OppPlayer),
+    Player != OppPlayer,
+    Territory != OppTerritory,
+    TroopsDiff = OppTroops - Troops,
+    TroopsDiff >= -1.
+
+%Un territorio fighting rinforzato, cioè sul quale vengono piazzate al minimo una e al massimo 4 truppe
+fighting_reinforced(Territory,Continent) :- 
+    curr_turn(Turn,Player),
+    fighting_territory(Territory,OppTerritory,Continent,TroopsDiff),
+    draft(Turn,Territory,TroopsReinf),
+    TroopsReinf < 4,
+    TroopsReinf > 1.
+
+%Un continente completamente rinforzato
+fighting_reinforce_completed(Continent,Rank) :-  
+    continent_rank(Continent,Rank),
+    #count{Territory : fighting_reinforced(Territory,Continent)} = NOfTerritoryReinforced,
+    #count{Territory : fighting_territory(Territory,OppTerritory,Continent,TroopsDiff)} = NOfFightingTerritory,
+    NOfTerritoryReinforced == NOfFightingTerritory,
+    NOfFightingTerritory != 0.
+
+%Predicato ausiliare per il predicato succesivo
+name_fighting_reinforce_completed(Continent) :-
+    fighting_reinforce_completed(Continent,_).
+
+%Peso sottratto al weak al livello 1,
+%somma i rank dei continenti nei quali tutti i territori fighting sono stati rinforzati(quindi dando priorità al
+%continente con rank maggiore),
+%se non riesco a completare un continente dò priorità di rinforzo ai territori fighting in base al mini_continent_rank
+reinforce_fighting_weight(Sum) :-  
+    #sum{Rank,Continent : fighting_reinforce_completed(Continent,Rank)} = PartialSum,
+    #sum{Rank : fighting_reinforced(Territory,Continent), not name_fighting_reinforce_completed(Continent), mini_continent_rank(Continent,Rank)} = OtherPartialSum,
+    Sum = PartialSum + OtherPartialSum.
+
+%====WEAK CONSTRAINS========
+
+%Weak per la fase di difesa
+:~ reinforce_border_weight(Sum). [1000-Sum@2]
+
+%Weak per la fase di attacco
+:~ reinforce_fighting_weight(Sum). [10000-Sum@1]
+
+

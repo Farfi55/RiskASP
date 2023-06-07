@@ -1,0 +1,26 @@
+%continent(C, P).
+%territory(N, C).
+%connection(N1, N2).
+
+%player(Player)
+%turn(T, Player).
+%territory_control(T, Territory, Player, Troops).
+%troops_to_place(T, Player, Troops).
+curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
+
+troops(0).
+troops(N):- troops_to_place(T, Player, Troops), troops(F), N=F+1, N<=Troops.
+
+place(T, Player, Territory, N) | noPlace(T, Player, Territory, N):- troops_to_place(T, Player, _), territory_control(T, Territory, Player, _), troops(N), N>0, curr_turn(T,Player).
+
+:- place(T, P, Territory, N1), place(T, P, Territory, N2), N1!=N2.
+
+:- troops_to_place(T,P,Troops), #sum{N,Terr : place(T,P,Terr,N)} <> Troops.
+%% :- place(_,_,_,D), D>4.
+
+
+
+
+
+
+draft(T, Territory, N):- place(T, _, Territory, N).

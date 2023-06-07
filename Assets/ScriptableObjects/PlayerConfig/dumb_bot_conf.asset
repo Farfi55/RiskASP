@@ -15,11 +15,11 @@ MonoBehaviour:
   _name: Dumb BOT
   _aspSolver: 1
   _commonBrainsPaths:
-  - Assets/Scripts/EmbASP/AIs/dumb/constants.dlv
+  - Brains/dumb/constants.dlv
   _draftBrainsPaths:
-  - Assets/Scripts/EmbASP/AIs/dumb/draft_phase_template.dlv
+  - Brains/dumb/draft_phase_template.dlv
   _attackBrainsPaths:
-  - Assets/Scripts/EmbASP/AIs/dumb/attack_phase_template.dlv
+  - Brains/dumb/attack_phase_template.dlv
   _fortifyBrainsPaths:
-  - Assets/Scripts/EmbASP/AIs/dumb/fortify_phase_template.dlv
+  - Brains/dumb/fortify_phase_template.dlv
   _useOptimalAnswerSet: 0

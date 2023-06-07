@@ -1,0 +1,60 @@
+% ================== CONSTANTS ==================
+
+territory(Territory, Continent).
+
+continent(Continent, Bonus).
+
+connection(Territory1, Territory2).
+
+
+% ================== EVERY PHASE ==================
+
+%Player: Player's name
+player(Player).
+
+turn(T, Player).
+
+territory_control(T, Territory, Player, Troops).
+
+territory_island(T, Id, Territory, Player).
+
+cards_count(T, Player, Cards).
+
+card(T, Player, CardName, CardType, CardTerritory).
+
+% ================== DRAFT PHASE ==================
+
+possible_card_exchange(T, Player, ExchangeId, ExchangeTypeId, Card1, Card2, Card3, Troops).
+
+exchange_cards(T, Player, ExchangeId).
+
+troops_to_place(T, Player, Troops).
+
+% Territory: Territory's name
+draft(T, Territory, Troops).
+
+
+% ================== ATTACK PHASE ==================
+
+% T: Turn
+% AT: Attack Turn
+attack_turn(T, AT, Player).
+
+won_territory(T, AT, Player, Territory).
+
+attack(T, AT, From, To, Troops).
+
+attack_reinforce(T, AT, From, To, Troops).
+
+attack_result(T, AT, From, To, RemainingAttackerTroops, RemainingTroopsDefender, 
+    AttackingTroops, DefendingTroops, MinReinforcementsTroops).
+
+end_attack(T, AT).
+
+
+% ================== FORTIFY PHASE ==================
+
+fortify(T, From, To, Troops).
+
+end_fortify(T).
+

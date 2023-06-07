@@ -1,0 +1,84 @@
+curr_turn(T, P) :- T = #max{Turn : turn(Turn,_) }, turn(T,P).
+
+curr_attack_turn(T, AT, P) :- curr_turn(T,P), AT = #max{AT1 : attack_turn(T, AT1, P) }.
+
+last_attack_result(T, PrecAT, From, To, RemAttTroops, RemDefTroops, AttTroops, DefTroops, MinReinfTroops) :-
+    attack_result(T, PrecAT, From, To, RemAttTroops, RemDefTroops, AttTroops, DefTroops, MinReinfTroops),
+    curr_attack_turn(T, AT, _),
+    PrecAT = AT - 1.
+
+last_attack_result_simple(T, AT, From, To, RemAttTroops, RemDefTroops) :-
+    last_attack_result(T, AT, From, To, RemAttTroops, RemDefTroops, _, _, _).
+
+has_to_reinforce(T, AT, From, To) :- 
+    curr_attack_turn(T, AT, Player),
+    last_attack_result(T, PrecAT, From, To, _, 0, _, _, _),
+    PrecAT = AT - 1.
+
+has_to_reinforce_any(T, AT) :- has_to_reinforce(T, AT, _, _).
+
+can_attack(T, AT) :- curr_attack_turn(T, AT, _), not has_to_reinforce_any(T, AT).
+
+% === GUESS ===
+attack(T, AT, TerritoryFrom, TerritoryTo, Troops) | no_attack(T, AT, TerritoryFrom, TerritoryTo, Troops) :- 
+    can_attack(T, AT),
+    curr_player_territory(T, TerritoryFrom, _),
+    other_player_territory(T, TerritoryTo, PTo, _),
+    connection(TerritoryFrom, TerritoryTo),
+    Troops = #max{Troops1 : troops_for_attack(T, TerritoryFrom, Troops1)},
+    Troops >= 1.
+
+troops_for_attack(T, Territory, 1) :- 
+    curr_player_territory(T, Territory, Troops), Troops > 1.
+
+troops_for_attack(T, Territory, Troops) :- 
+    troops_for_attack(T, Territory, Troops1),
+    curr_player_territory(T, Territory, MaxTroops), 
+    Troops = Troops1 + 1,
+    Troops < MaxTroops,
+    Troops <= 3.
+
+%
+won_territory(T, AT, From, To) :- attack_result(T, AT, From, To, _, 0,_,_,_).
+
+% count the number of territories won by the current player
+won_territory_counter(T, Count) :-
+    Count = #count{Territory : won_territory(T, _, P, Territory)},
+    currernt_turn(T, P).
+
+
+% === ATTACK REINFORCE ===
+attack_reinforce(T,AT,From,To, Troops) :-
+    curr_attack_turn(T, AT, _),
+    AT_prec=AT-1,
+    attack_result(T,AT_prec,From,To,RemainingAttackerTroops,0,Attacking,DefendingTroops,MinReinforcementsTroops),
+    Troops = #max{ReinforcementTroops : ReinforcementTroops = MinReinforcementsTroops;
+        ReinforcementTroops : ReinforcementTroops = RemainingAttackerTroops / 2 + 1}.
+
+has_attacked(T, AT) :- attack(T, AT, _, _, _).
+
+end_attack(T, AT) :- can_attack(T, AT), not has_attacked(T, AT).
+
+
+% === STRONG CONSTRAINTS === 
+
+% i want to guess just one attack per phase if possible
+:- X = #count{T, AT, TerritoryFrom, TerritoryTo, Troops : attack(T, AT, TerritoryFrom, TerritoryTo, Troops)}, X > 1.
+
+% i don't want to attack a territory that has more troops than mine
+:- attack(T, AT, TerritoryFrom, TerritoryTo, _),
+    curr_player_territory(T, TerritoryFrom, MaxCurrentTroops),
+    other_player_territory(T, TerritoryTo, _, MaxOpponentTroops),
+    MaxOpponentTroops >= MaxCurrentTroops.
+
+% it's not optimal to attack with just one or two troops
+:- attack(T, AT, TerritoryFrom, TerritoryTo, Troops), Troops < 3.
+
+
+
+% === WEAK CONSTRAINTS ===
+
+% minimize the number of troops to attack
+:~ attack(T, AT, _, TerritoryTo, _), other_player_territory(T, TerritoryTo, _, MaxTroops). [MaxTroops@1, T, TerritoryTo, MaxTroops]
+
+:~ end_attack(T, AT). [1@2, AT]

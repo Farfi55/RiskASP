@@ -1,0 +1,105 @@
+
+true.
+:~ true. [1@1000]
+
+
+curr_player_territory(T, Territory, Troops) :- 
+    territory_control(T, Territory, Player, Troops), 
+    curr_turn(T, Player).
+
+other_player_territory(T, Territory, Player, Troops) :- 
+    territory_control(T, Territory, Player, Troops), 
+    curr_turn(T, Player1), Player != Player1.
+
+
+%%%%%  MARCO  %%%%%
+controlled_continent(Continent) :- 
+    curr_turn(Turn,Myself), 
+    continent_info(Continent, NumberOfTotalTerritories,_,_), 
+    #count{OwnedTerritory : territory_control(Turn,OwnedTerritory, Myself, _),territory(OwnedTerritory, Continent)} = NumberOfOwnedTerritories,
+    NumberOfOwnedTerritories == NumberOfTotalTerritories.
+
+%%%%%  SIMONE  %%%%%
+% == == ==  INFO  == == ==
+
+% ricava i territori conquistati
+territory_conquered(Territory,Troops) :- 
+    territory_control(_,Territory,Player,Troops),
+    player(Player).
+
+% tutti i miei territori
+my_territories(Territory) :- 
+    territory_control(Turn,Territory,Player,Troops), 
+    curr_turn(Turn,Player). 
+
+% ricavo i confini minacciati - solo dei continenti conquistati
+threatened_border(PlayerTerritory,OpponentTerritory,TroopsDiff) :-
+    controlled_continent(PlayerContinent),
+    threatened_territory(PlayerTerritory,OpponentTerritory,TroopsDiff),
+    territory(PlayerTerritory,PlayerContinent),
+    territory(OpponentTerritory,OpponentContinent),
+    PlayerContinent<>OpponentContinent.
+
+% tutti i miei territori minacciati(differenza truppe almeno una)
+threatened_territory(PlayerTerritory,OpponentTerritory,TroopsDiff) :-
+    curr_turn(T,Player),
+    territory_control(T,PlayerTerritory,Player,PlayerTroops), 
+    territory_control(T,OpponentTerritory,Opponent,OpponentTroops), 
+    connection(PlayerTerritory,OpponentTerritory), 
+    TroopsDiff >=0,
+    TroopsDiff=OpponentTroops-PlayerTroops,
+    Player!=Opponent.
+
+% tutti i miei territori che non sono minacciati
+not_threatened_territory(Territory) :- 
+    my_territories(Territory), 
+    not my_threatened(Territory).
+
+% tutti i miei territori che non sono minacciati (con truppe)
+not_threatened_territory_troops(Territory,Troops) :-
+    not_threatened_territory(Territory),
+    territory_control(_,Territory,_,Troops).
+
+% nomi di tutti i territori minacciati
+my_threatened(Territory) :- 
+    threatened_territory(Territory,_,_).
+
+% nome e continente di ogni territorio
+territory_and_continent(Territory,Continent,Player) :- 
+    territory_control(Turn,Territory,Player,Troops),
+    territory(Territory, Continent),
+    curr_turn(T,_).
+
+% numero di territori conquistati per ogni continente
+conquered_territories_for_continent(Continent,Num_Of_Conquered_Territories) :-
+    continent(Continent,_),
+    #count {Territory,Continent : territory_and_continent(Territory,Continent,Player), curr_turn(T,Player)}=Num_Of_Conquered_Territories.
+
+% ricavo i territori confinanti che hanno bisogno di supporto
+fortify_needing_border(PlayerTurn,PlayerTerritory,PlayerTroops) :- 
+    threatened_border(PlayerTerritory,OpponentTerritory,TroopsDiff),
+    connection(PlayerTerritory,PlayerConfinantTerritory),
+    my_territories(PlayerConfinantTerritory),
+    territory_control(PlayerTurn,PlayerConfinantTerritory,PlayerName,PlayerTroops),
+    PlayerTroops>1, curr_turn(PlayerTurn,PlayerName).
+
+% ricavo i territori adiacenti al confine che possono fortificare il confine
+can_fortify_the_threatened_border(ThreatenedTerritory,Territory,AvailableTroops) :- 
+    fortify_needing_border(PlayerTurn,ThreatenedTerritory,PlayerTroops),
+    connection(ThreatenedTerritory,Territory),
+    territory_control(PlayerTurn,Territory,PlayerName,Troops),
+    curr_turn(PlayerTurn,PlayerName),
+    AvailableTroops=Troops-1,
+    Troops>1.
+
+% trovo i territori deboli nemici
+weak_enemy_territory(TerritoryEnemy,AdiacentTerritory) :-
+    turn(Turn,Player),
+    territory_control(Turn,TerritoryEnemy,marco,TroopsX),
+    connection(TerritoryEnemy,AdiacentTerritory),
+    territory_control(Turn,AdiacentTerritory,marco,TroopsY).
+
+
+%%%%%  PASQUALE  %%%%%
+
+

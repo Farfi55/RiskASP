@@ -1,0 +1,46 @@
+% ================== CONSTANTS ==================
+
+territory(Territory, Continent).
+continent(Continent, Bonus).
+connection(Territory1, Territory2).
+
+
+% ================== EVERY PHASE ==================
+
+%Player: Player's name
+player(Player).
+
+turn(T, Player).
+
+territory_control(T, Territory, Player, Troops).
+
+
+% ================== DRAFT PHASE ==================
+
+troops_to_place(T, Player, Troops).
+
+% Territory: Territory's name
+draft(T, Territory, Troops).
+
+
+% ================== ATTACK PHASE ==================
+
+% T: Turn
+% AT: Attack Turn
+attack_turn(T, AT, Player).
+
+attack(T, AT, From, To, Troops).
+
+attack_reinforce(T, AT, From, To, Troops).
+
+attack_result(T, AT, From, To, RemainingAttackerTroops, RemainingTroopsDefender).
+
+end_attack(T, AT).
+
+
+% ================== FORTIFY PHASE ==================
+
+fortify(T, From, To, Troops).
+
+end_fortify(T).
+

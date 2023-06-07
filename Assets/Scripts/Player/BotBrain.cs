@@ -273,20 +273,23 @@ namespace player
 
         private void LoadBrain(string brainPath, InputProgram inputProgram)
         {
+            
             if (brainPath == "")
                 throw new Exception("Brain path not set");
-            if (!File.Exists(brainPath))
-                throw new IOException($"Brain file not found at {brainPath}");
-            string text = File.ReadAllText(brainPath);
+            
+            var finalPath = Path.Combine(Application.streamingAssetsPath, brainPath);
+            
+            if (!File.Exists(finalPath))
+                throw new IOException($"Brain file not found at {finalPath}");
+            string text = File.ReadAllText(finalPath);
             inputProgram.AddProgram(text);
         }
 
 
         private void LoadExecutables()
         {
-            var sep = Path.DirectorySeparatorChar;
-            string dlv2ExecutablePath = $"Executables{sep}dlv2{sep}dlv2";
-            string clingoExecutablePath = $"Executables{sep}clingo{sep}clingo";
+            string dlv2ExecutablePath = Path.Combine(Application.streamingAssetsPath,"Bin","dlv2","dlv2");
+            string clingoExecutablePath = Path.Combine(Application.streamingAssetsPath,"Bin","clingo","clingo");
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {

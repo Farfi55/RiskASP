@@ -1,0 +1,193 @@
+﻿% continent(ID, reward) 
+
+continent("n_america", 5).
+continent("s_america", 2).
+continent("africa",    3).
+continent("europe",    5).
+continent("asia",      7).
+continent("australia", 2).
+
+
+% territory(ID, Continent).
+territory("alaska",                   "n_america").
+territory("alberta",                  "n_america").
+territory("central_america",          "n_america").
+territory("eastern_us",               "n_america").
+territory("greenland",                "n_america").
+territory("northwest_territory",      "n_america").
+territory("ontario",                  "n_america").
+territory("quebec",                   "n_america").
+territory("western_us",               "n_america").
+
+territory("argentina",                "s_america").
+territory("brazil",                   "s_america").
+territory("peru",                     "s_america").
+territory("venezuela",                "s_america").
+
+territory("congo",                    "africa").
+territory("east_africa",              "africa").
+territory("egypt",                    "africa").
+territory("madagascar",               "africa").
+territory("north_africa",             "africa").
+territory("south_africa",             "africa").
+
+territory("great_britain",            "europe").
+territory("iceland",                  "europe").
+territory("northern_europe",          "europe").
+territory("scandinavia",              "europe").
+territory("southern_europe",          "europe").
+territory("ukraine",                  "europe").
+territory("western_europe",           "europe").
+
+territory("afghanistan",              "asia").
+territory("china",                    "asia").
+territory("india",                    "asia").
+territory("irkutsk",                  "asia").
+territory("japan",                    "asia").
+territory("kamchatka",                "asia").
+territory("middle_east",              "asia").
+territory("mongolia",                 "asia").
+territory("siam",                     "asia").
+territory("siberia",                  "asia").
+territory("ural",                     "asia").
+territory("yakutsk",                  "asia").
+
+territory("eastern_australia",        "australia").
+territory("indonesia",                "australia").
+territory("new_guinea",               "australia").
+territory("western_australia",        "australia").
+
+
+
+connection(ID1, ID2) :- connection(ID2, ID1).
+
+
+% n_america
+
+connection("alaska",                   "northwest_territory").
+connection("alaska",                   "alberta").
+connection("alaska",                   "kamchatka").
+
+connection("alberta",                  "northwest_territory").
+connection("alberta",                  "ontario").
+connection("alberta",                  "western_us").
+
+connection("central_america",          "western_us").
+connection("central_america",          "eastern_us").
+connection("central_america",          "venezuela").
+
+connection("eastern_us",               "ontario").
+connection("eastern_us",               "quebec").
+connection("eastern_us",               "western_us").
+
+connection("greenland",                "quebec").
+connection("greenland",                "ontario").
+connection("greenland",                "northwest_territory").
+connection("greenland",                "iceland").
+
+connection("northwest_territory",      "ontario").
+connection("northwest_territory",      "alberta").
+
+connection("ontario",                  "quebec").
+connection("ontario",                  "western_us").
+connection("ontario",                  "eastern_us").
+
+% s_america
+
+connection("argentina",                "brazil").
+connection("argentina",                "peru").
+
+connection("brazil",                   "venezuela").
+connection("brazil",                   "peru").
+connection("brazil",                   "north_africa").
+
+connection("peru",                     "venezuela").
+
+% africa
+
+connection("congo",                    "north_africa").
+connection("congo",                    "east_africa").
+connection("congo",                    "south_africa").
+
+connection("east_africa",              "north_africa").
+connection("east_africa",              "egypt").
+connection("east_africa",              "middle_east").
+connection("east_africa",              "madagascar").
+connection("east_africa",              "south_africa").
+
+connection("egypt",                    "north_africa").
+connection("egypt",                    "middle_east").
+connection("egypt",                    "southern_europe").
+
+connection("madagascar",               "south_africa").
+
+connection("north_africa",             "southern_europe").
+connection("north_africa",             "western_europe").
+
+% europe
+
+connection("great_britain",           "iceland").
+connection("great_britain",           "scandinavia").
+connection("great_britain",           "northern_europe").
+connection("great_britain",           "western_europe").
+
+connection("iceland",                 "scandinavia").
+
+connection("northern_europe",         "scandinavia").
+connection("northern_europe",         "ukraine").
+connection("northern_europe",         "southern_europe").
+connection("northern_europe",         "western_europe").
+
+connection("scandinavia",             "ukraine").
+
+connection("southern_europe",         "ukraine").
+connection("southern_europe",         "western_europe").
+connection("southern_europe",         "middle_east").
+
+connection("ukraine",                 "afghanistan").
+connection("ukraine",                 "ural").
+connection("ukraine",                 "middle_east").
+
+% asia
+
+connection("afghanistan",             "ural").
+connection("afghanistan",             "china").
+connection("afghanistan",             "india").
+connection("afghanistan",             "middle_east").
+
+connection("china",                   "ural").
+connection("china",                   "siberia").
+connection("china",                   "mongolia").
+connection("china",                   "india").
+connection("china",                   "siam").
+
+connection("india",                   "middle_east").
+connection("india",                   "siam").
+
+connection("irkutsk",                 "siberia").
+connection("irkutsk",                 "yakutsk").
+connection("irkutsk",                 "kamchatka").
+connection("irkutsk",                 "mongolia").
+
+connection("japan",                   "kamchatka").
+connection("japan",                   "mongolia").
+
+connection("kamchatka",               "yakutsk").
+connection("kamchatka",               "mongolia").
+
+connection("mongolia",               "siberia").
+
+connection("siam",                    "indonesia").
+
+connection("siberia",                 "ural").
+connection("siberia",                 "yakutsk").
+
+% australia
+
+connection("eastern_australia",       "new_guinea").
+connection("eastern_australia",       "western_australia").
+
+connection("indonesia",               "new_guinea").
+connection("indonesia",               "western_australia").
+
+connection("new_guinea",              "western_australia").

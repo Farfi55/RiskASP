@@ -109,10 +109,10 @@
 *.so lfs
 *.pdb lfs
 *.mdb lfs
+Assets/StreamingAssets/Bin/** lfs
 # Packaging
 *.zip lfs
 *.7z lfs
 *.gz lfs
 *.rar lfs
 *.tar lfs
-Executables/** filter=lfs diff=lfs merge=lfs -text

@@ -15,13 +15,13 @@ MonoBehaviour:
   _name: MPS BOT
   _aspSolver: 1
   _commonBrainsPaths:
-  - Assets/Scripts/EmbASP/AIs/MPS-group/constants.dlv
+  - Brains/MPS-group/constants.dlv
   _draftBrainsPaths:
-  - Assets/Scripts/EmbASP/AIs/MPS-group/draft_phase_template.dlv
+  - Brains/MPS-group/draft_phase_template.dlv
   _attackBrainsPaths:
-  - Assets/Scripts/EmbASP/AIs/MPS-group/attack_phase_template.dlv
-  - Assets/Scripts/EmbASP/AIs/MPS-group/info.dlv
+  - Brains/MPS-group/attack_phase_template.dlv
+  - Brains/MPS-group/info.dlv
   _fortifyBrainsPaths:
-  - Assets/Scripts/EmbASP/AIs/MPS-group/fortify_phase_template.dlv
-  - Assets/Scripts/EmbASP/AIs/MPS-group/info.dlv
+  - Brains/MPS-group/fortify_phase_template.dlv
+  - Brains//MPS-group/info.dlv
   _useOptimalAnswerSet: 1
